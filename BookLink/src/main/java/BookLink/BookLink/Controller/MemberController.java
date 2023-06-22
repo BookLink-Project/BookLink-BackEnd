@@ -1,10 +1,10 @@
 package BookLink.BookLink.Controller;
 
-import BookLink.BookLink.Domain.Member.EmailDto;
+import BookLink.BookLink.Domain.Email.EmailDto;
 import BookLink.BookLink.Domain.Member.MemberDto;
+import BookLink.BookLink.Service.EmailService.Emailservice;
 import BookLink.BookLink.Service.MemberService.MemberService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class MemberController {
 
     private final MemberService memberService;
+    private final Emailservice emailservice;
 
     @PostMapping()
     public ResponseEntity<Void> joinMember(@RequestBody MemberDto.Request memberDTO) {
@@ -30,7 +31,7 @@ public class MemberController {
     }
 
     @PostMapping(value = "/email/double-check")
-    public ResponseEntity<Void> emailDoubleCheck(@RequestBody EmailDto emailDto) {
+    public ResponseEntity<Void> emailDoubleCheck(@RequestBody EmailDto.Request emailDto) {
         boolean is_exist = memberService.emailDoubleCheck(emailDto.getEmail());
 
         if(is_exist) {
@@ -40,5 +41,15 @@ public class MemberController {
             return ResponseEntity.ok().build();
         }
     }
+
+    @PostMapping("/email/confirm")
+    public ResponseEntity<EmailDto.Response> emailConfirm(@RequestBody EmailDto.Request emailDto) throws Exception {
+
+        EmailDto.Response responseDto = emailservice.sendSimpleMessage(emailDto.getEmail());
+
+        return ResponseEntity.ok()
+                .body(responseDto);
+    }
+
 
 }
