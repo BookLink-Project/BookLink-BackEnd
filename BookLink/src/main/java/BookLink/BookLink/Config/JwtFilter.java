@@ -4,7 +4,7 @@ import BookLink.BookLink.Service.MemberService.MemberService;
 import BookLink.BookLink.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,46 +18,61 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-@RequiredArgsConstructor
 @Slf4j
-public class JwtFilter extends OncePerRequestFilter { // 토큰을 매번 인증해야 함
+@RequiredArgsConstructor
+public class JwtFilter extends OncePerRequestFilter { // 토큰을 매번 인증해야 함 TODO authorization test
 
-    private final MemberService memberService;
-    private final String secretKey;
+    private final JwtUtil jwtUtil;
 
     @Override // 얘가 문이라고 생각하면 됨. 여기서 권한 부여 가능.
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        final String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
-        log.info("Authorization: {}", authorization);
+        String accessToken = jwtUtil.getHeaderToken(request, "Access"); // Access_Token
+        String refreshToken = jwtUtil.getHeaderToken(request, "Refresh"); // Refresh_Token
 
-        // Token 전송 여부 체크
-        if (authorization == null || !authorization.startsWith("Bearer ")) {
-            log.error("Authorization: 잘못된 형식입니다.");
-            filterChain.doFilter(request, response);
-            return;
+        if(accessToken != null) {
+
+            if (jwtUtil.tokenValid(accessToken)) { // Access Token 유효
+                setAuthentication(request, accessToken);
+
+            } else if (refreshToken != null) { // Access Token 만료 && Refresh Token 존재
+
+                boolean isRefreshTokenValid = jwtUtil.refreshTokenValid(refreshToken);
+
+                if (isRefreshTokenValid) { // Refresh Token 유효 && DB 정보와 일치
+                    String loginEmail = jwtUtil.getEmail(refreshToken);
+                    String newAccessToken = jwtUtil.createToken(loginEmail, "Access");
+                    jwtUtil.setHeaderAccessToken(response, newAccessToken);
+                    setAuthentication(request, newAccessToken); // 인증 정보 넣기
+
+                } else { // Refresh Token 만료 || DB 정보와 불일치
+                    // jwtExceptionHandler(response, "RefreshToken Expired", HttpStatus.BAD_REQUEST);
+                    return;
+                }
+            }
         }
+        filterChain.doFilter(request,response);
+    }
 
-        String token = authorization.split(" ")[1]; // Token 꺼내기
-
-        // Token Expired 여부 체크
-        if (JwtUtil.isExpired(token, secretKey)) {
-            log.error("Token이 만료되었습니다.");
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        // Token에서 email 꺼내기
-        String email = JwtUtil.getEmail(token, secretKey);
-        log.info("Email: {}", email);
-
-        // 권한 부여
+    public void setAuthentication(HttpServletRequest request, String token) {
+        // SecurityContext에 Authentication 객체(인증 정보) 저장
         UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(email, null, List.of(new SimpleGrantedAuthority("USER")));
+                new UsernamePasswordAuthenticationToken(jwtUtil.getEmail(token), null, List.of(new SimpleGrantedAuthority("USER")));
 
-        // detail 넣기
         authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-        filterChain.doFilter(request, response);
     }
+
+    /*
+    public void jwtExceptionHandler(HttpServletResponse response, String msg, HttpStatus status) {
+        response.setStatus(status.value());
+        response.setContentType("application/json");
+        try {
+            String json = new ObjectMapper().writeValueAsString(new GlobalResDto(msg, status.value()));
+            response.getWriter().write(json);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
+    }
+     */
 }

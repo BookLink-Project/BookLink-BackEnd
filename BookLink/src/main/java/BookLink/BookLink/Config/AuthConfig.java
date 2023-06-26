@@ -3,6 +3,7 @@ package BookLink.BookLink.Config;
 
 import BookLink.BookLink.Service.MemberService.MemberService;
 
+import BookLink.BookLink.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -11,6 +12,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -19,10 +22,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class AuthConfig {
 
-    private final MemberService memberService;
+    private final JwtUtil jwtUtil;
 
-    @Value("${jwt.secret}")
-    private String secretKey;
+    @Bean
+    public PasswordEncoder passwordEncoder() { // 회원가입 시 비밀번호 암호화
+        return new BCryptPasswordEncoder();
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -31,14 +36,14 @@ public class AuthConfig {
                 .csrf().disable()
                 .cors().and()
                 .authorizeRequests()
-                 .antMatchers("/api/member", "/api/member/login").permitAll()
-//                .antMatchers("/api/member/**").permitAll() // 임의로 정의
+//                 .antMatchers("/api/member", "/api/member/login").permitAll()
+                .antMatchers("/api/member/**").permitAll() // 임의로 정의
                 .antMatchers(HttpMethod.POST, "/api/**").authenticated()
                 .and()
                 .sessionManagement() // 세션을 사용하지 않기 때문에 STATELESS
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .addFilterBefore(new JwtFilter(memberService, secretKey), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 }

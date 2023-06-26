@@ -34,6 +34,10 @@ public class MemberDto {
                     .address(requestDto.address)
                     .build();
         }
+
+        public void setEncodePwd(String encodePwd) {
+            this.password = encodePwd;
+        }
     }
 
 

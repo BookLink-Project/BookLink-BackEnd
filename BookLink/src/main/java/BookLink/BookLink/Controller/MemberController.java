@@ -3,6 +3,7 @@ package BookLink.BookLink.Controller;
 import BookLink.BookLink.Domain.Email.EmailDto;
 import BookLink.BookLink.Domain.Member.LoginDto;
 import BookLink.BookLink.Domain.Member.MemberDto;
+import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Domain.Token.TokenDto;
 import BookLink.BookLink.Service.EmailService.Emailservice;
 import BookLink.BookLink.Service.MemberService.MemberService;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequiredArgsConstructor // 생성자 주입
@@ -54,19 +57,15 @@ public class MemberController {
                 .body(responseDto);
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<TokenDto> loginMember(@RequestBody LoginDto loginDto) throws Exception {
+    @PostMapping("/login") // TODO refactoring without response
+    public ResponseEntity<ResponseDto> loginMember(@RequestBody LoginDto.Request loginDto,
+                                                HttpServletResponse response) throws Exception {
 
         System.out.println("MemberController.loginJwt");
 
-        TokenDto tokenDto = memberService.loginJwt(loginDto.getEmail(), loginDto.getPassword());
+        ResponseDto responseDto = memberService.loginJwt(loginDto, response);
 
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add(HttpHeaders.AUTHORIZATION, "Bearer " + tokenDto.getToken());
-
-//        return new ResponseEntity<>(tokenDto, httpHeaders, HttpStatus.OK);
-        return ResponseEntity.ok()
-                .headers(httpHeaders)
-                .body(tokenDto);
+        return ResponseEntity.status(responseDto.getStatusCode())
+                .body(responseDto);
     }
 }

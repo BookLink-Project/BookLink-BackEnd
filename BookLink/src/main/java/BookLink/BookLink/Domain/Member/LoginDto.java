@@ -3,12 +3,18 @@ package BookLink.BookLink.Domain.Member;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Getter
-@AllArgsConstructor
-@NoArgsConstructor
+import java.util.Date;
+
 public class LoginDto {
 
-    private String email;
-    private String password;
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Request {
+        private String email;
+
+        private String password;
+    }
 }
