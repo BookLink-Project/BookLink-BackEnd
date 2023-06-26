@@ -1,10 +1,13 @@
 package BookLink.BookLink.Controller;
 
 import BookLink.BookLink.Domain.Email.EmailDto;
+import BookLink.BookLink.Domain.Member.LoginDto;
 import BookLink.BookLink.Domain.Member.MemberDto;
+import BookLink.BookLink.Domain.Token.TokenDto;
 import BookLink.BookLink.Service.EmailService.Emailservice;
 import BookLink.BookLink.Service.MemberService.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -51,5 +54,19 @@ public class MemberController {
                 .body(responseDto);
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<TokenDto> loginMember(@RequestBody LoginDto loginDto) throws Exception {
 
+        System.out.println("MemberController.loginJwt");
+
+        TokenDto tokenDto = memberService.loginJwt(loginDto.getEmail(), loginDto.getPassword());
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add(HttpHeaders.AUTHORIZATION, "Bearer " + tokenDto.getToken());
+
+//        return new ResponseEntity<>(tokenDto, httpHeaders, HttpStatus.OK);
+        return ResponseEntity.ok()
+                .headers(httpHeaders)
+                .body(tokenDto);
+    }
 }
