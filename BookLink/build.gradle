@@ -1,14 +1,28 @@
+import org.springframework.boot.gradle.tasks.bundling.BootJar
+import org.hidetake.gradle.swagger.generator.GenerateSwaggerUI
+
+
+// 2.1.1 restdocsApiSpecVersion 버전 변수 설정
+buildscript {
+	ext {
+		restdocsApiSpecVersion = '0.16.2'
+	}
+}
+
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '2.7.12'
 	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+	id 'com.epages.restdocs-api-spec' version "${restdocsApiSpecVersion}"
+	id 'org.hidetake.swagger.generator' version '2.18.2'
+
 }
 
 group = 'BookLink'
 version = '0.0.1-SNAPSHOT'
 
 java {
-	sourceCompatibility = '17'
+	sourceCompatibility = '11'
 }
 
 configurations {
@@ -21,14 +35,61 @@ repositories {
 	mavenCentral()
 }
 
+swaggerSources {
+	sample {
+		setInputFile(file("${project.buildDir}/api-spec/openapi3.yaml"))
+	}
+}
+
+openapi3 {
+	setServer("http://localhost:8080")
+	title = "Interview-Project"
+	description = "Interview-Project SwaggerUI."
+	version = "0.0.1"
+	format = "yaml"
+}
+
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	implementation 'io.jsonwebtoken:jjwt:0.9.1'
+
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.restdocs:spring-restdocs-restassured'
+	testImplementation "com.epages:restdocs-api-spec-restassured:${restdocsApiSpecVersion}"
+	testImplementation 'io.rest-assured:rest-assured'
+	swaggerUI 'org.webjars:swagger-ui:4.18.1'
 }
+
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+// 3.4. Task 및 설정 추가
+// GenerateSwaggerUI 태스크가, openapi3 task 를 의존하도록 설정
+tasks.withType(GenerateSwaggerUI) {
+	dependsOn 'openapi3'
+}
+
+// 생성된 SwaggerUI 를 jar 에 포함시키기 위해 build/resources 경로로 로 복사
+tasks.register('copySwaggerUI', Copy) {
+	dependsOn 'generateSwaggerUISample'
+
+	def generateSwaggerUISampleTask = tasks.named('generateSwaggerUISample', GenerateSwaggerUI).get()
+
+	from("${generateSwaggerUISampleTask.outputDir}")
+	into("${project.buildDir}/resources/main/static/docs")
+}
+
+
+// bootJar 실행 전, copySwaggerUI 를 실행하도록 설정
+tasks.withType(BootJar) {
+	dependsOn 'copySwaggerUI'
 }
