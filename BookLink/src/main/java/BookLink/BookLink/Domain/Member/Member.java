@@ -1,16 +1,18 @@
 package BookLink.BookLink.Domain.Member;
 
 import BookLink.BookLink.Domain.Card.Card;
+import BookLink.BookLink.Domain.Common.BaseTimeEntity;
 import lombok.*;
 
 import javax.persistence.*;
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Member {
+public class Member extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,7 +26,7 @@ public class Member {
 
     private String name; // 사용자 실명
 
-    private Date birth; // 생년월일
+    private LocalDate birth; // 생년월일
 
     private String address;
 
@@ -35,7 +37,7 @@ public class Member {
     private Card card;
 
     @Builder
-    public Member(String email, String password, String nickname, String name, Date birth, String address) {
+    public Member(String email, String password, String nickname, String name, LocalDate birth, String address) {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
