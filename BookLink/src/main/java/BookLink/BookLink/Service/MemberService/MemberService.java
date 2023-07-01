@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public interface MemberService {
 
-    ResponseDto joinMember(MemberDto.Request memberDTO);
+    ResponseDto joinMember(MemberDto.Request memberDto);
 
     ResponseDto emailDoubleCheck(String email);
 
