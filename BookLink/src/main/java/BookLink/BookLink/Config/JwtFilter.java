@@ -23,7 +23,7 @@ import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
-public class JwtFilter extends OncePerRequestFilter { // 토큰을 매번 인증 TODO authorization test
+public class JwtFilter extends OncePerRequestFilter { // 토큰 매번 인증
 
     private final JwtUtil jwtUtil;
 
@@ -36,37 +36,34 @@ public class JwtFilter extends OncePerRequestFilter { // 토큰을 매번 인증
          String refreshToken = jwtUtil.getHeaderToken(request, "Refresh");
          */
 
-        // Cookie에서 Token 가져오기
         String accessToken = jwtUtil.getCookieToken(request, "Access");
         String refreshToken = jwtUtil.getCookieToken(request, "Refresh");
 
         if(accessToken != null) {
 
-            if (jwtUtil.tokenValid(accessToken)) { // Access Token 유효
+            if (jwtUtil.tokenValid(accessToken)) {
+                log.info("Access Token 유효");
                 setAuthentication(request, accessToken);
 
-            } else if (refreshToken != null) { // Access Token 만료 && Refresh Token 존재
+            } else if (refreshToken != null) {
+
+                log.info("Access Token 만료");
 
                 boolean isRefreshTokenValid = jwtUtil.refreshTokenValid(refreshToken);
 
-                if (isRefreshTokenValid) { // Refresh Token 유효 (DB 정보와 일치)
+                if (isRefreshTokenValid) {
+                    log.info("Access Token 만료 + Refresh Token 유효");
                     String loginEmail = jwtUtil.getEmailFromToken(refreshToken);
                     String newAccessToken = jwtUtil.createToken(loginEmail, "Access");
-                    jwtUtil.setHeaderAccessToken(response, newAccessToken);
+                    jwtUtil.setCookieAccessToken(response, newAccessToken);
                     setAuthentication(request, newAccessToken);
 
-                } else { // Refresh Token 만료 || DB 정보와 불일치
-                    // jwtExceptionHandler(response, "RefreshToken Expired", HttpStatus.BAD_REQUEST);
+                } else {
 
-                    String loginEmail = jwtUtil.getEmailFromToken(refreshToken);
-                    String newRefreshToken = jwtUtil.createToken(loginEmail, "Refresh");
-                    jwtUtil.setHeaderRefreshToken(response, newRefreshToken);
-//                    ResponseDto responseDto = new ResponseDto();
-//
-//                    responseDto.setStatus(HttpStatus.BAD_REQUEST);
-//                    responseDto.setMessage("refresh token 재발급 필요");
-//                    response.setStatus(HttpStatus.BAD_REQUEST);
-//                    response.setContentType("application/json");
+                    log.info("Access Token 만료 + Refresh Token 만료");
+
+                    // TODO 로그아웃 처리
+
                     return;
                 }
             }
@@ -82,17 +79,4 @@ public class JwtFilter extends OncePerRequestFilter { // 토큰을 매번 인증
         authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
     }
-
-    /*
-    public void jwtExceptionHandler(HttpServletResponse response, String msg, HttpStatus status) {
-        response.setStatus(status.value());
-        response.setContentType("application/json");
-        try {
-            String json = new ObjectMapper().writeValueAsString(new GlobalResDto(msg, status.value()));
-            response.getWriter().write(json);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-        }
-    }
-     */
 }

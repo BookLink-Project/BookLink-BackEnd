@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     @PostMapping
-    public ResponseEntity<String> authTest() { // with header input
+    public ResponseEntity<String> authTest() { // with cookie input
 
         return ResponseEntity.ok().body("접근 성공");
 
