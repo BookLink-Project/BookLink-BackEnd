@@ -1,13 +1,13 @@
 package BookLink.BookLink.Service.Book;
 
+import BookLink.BookLink.Domain.Book.Book;
 import BookLink.BookLink.Domain.Book.BookDto;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import BookLink.BookLink.Domain.Book.BookSearchDto;
+import BookLink.BookLink.Domain.ResponseDto;
+import BookLink.BookLink.Repository.Book.BookRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.apache.tomcat.util.json.JSONParser;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -24,15 +24,20 @@ public class BookServiceImpl implements BookService{
 //    private String key;
 //    private String url = "https://dapi.kakao.com/v3/search/book";
 
-    private String url = "http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=[ttbelwlahstmxjf2057002] &Query=aladdin&QueryType=Title&MaxResults=10&start=1&SearchTarget=Book&output=js&InputEncoding=utf-8&Version=20131101";
+    private final BookRepository bookRepository;
+
+    private String url = "http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=ttbelwlahstmxjf2304001&&QueryType=Title&MaxResults=10&start=1&SearchTarget=Book&output=js&InputEncoding=utf-8&Version=20131101";
     private String key = "ttbelwlahstmxjf2057001";
 
     @Override
-    public Map callApi(String query) {
+    public ResponseDto callApi(String query) {
+
+        ResponseDto responseDto = new ResponseDto();
+
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders httpHeaders = new HttpHeaders();
 //        httpHeaders.set("Authorization", "KakaoAK " + key); //Authorization 설정
-        HttpEntity<String> httpEntity = new HttpEntity<>(httpHeaders); //엔티티로 만들기
+//        HttpEntity<String> httpEntity = new HttpEntity<>(httpHeaders); //엔티티로 만들기
         URI targetUrl = UriComponentsBuilder
                 .fromUriString(url) //기본 url
                 .queryParam("query", query) //인자
@@ -40,10 +45,28 @@ public class BookServiceImpl implements BookService{
                 .encode(StandardCharsets.UTF_8) //인코딩
                 .toUri();
 
-        //GetForObject는 헤더를 정의할 수 없음
-        ResponseEntity<Map> result = restTemplate.exchange(targetUrl, HttpMethod.GET, httpEntity, Map.class);
-        Map body = result.getBody();
-        return body;
+        ResponseEntity<BookSearchDto> result = restTemplate.exchange(targetUrl, HttpMethod.GET,null, BookSearchDto.class);
+        BookSearchDto body = result.getBody();
+
+        responseDto.setStatus(HttpStatus.OK);
+        responseDto.setData(body);
+
+        return responseDto;
+    }
+
+    @Override
+    public ResponseDto joinMyBook(BookDto.Request bookDto) {
+
+        ResponseDto responseDto = new ResponseDto();
+
+        Book book = BookDto.Request.toEntity(bookDto);
+        bookRepository.save(book);
+
+        responseDto.setStatus(HttpStatus.OK);
+        responseDto.setMessage("DB 저장 완료");
+        return responseDto;
+
+
     }
 
 

@@ -8,26 +8,25 @@ import BookLink.BookLink.Service.EmailService.Emailservice;
 import BookLink.BookLink.Service.MemberService.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequiredArgsConstructor // 생성자 주입
-@RequestMapping("api/member")
+@RequestMapping("/api/v1/member")
 public class MemberController {
 
     private final MemberService memberService;
     private final Emailservice emailservice;
 
     @PostMapping()
-    public ResponseEntity<Void> joinMember(@RequestBody MemberDto.Request memberDTO) {
-        memberService.joinMember(memberDTO);
-        return ResponseEntity.ok().build(); // 상태코드만 반환해줄때 build() 필요
+    public ResponseEntity<ResponseDto> joinMember(@RequestBody MemberDto.Request memberDto) {
+        ResponseDto responseDto = memberService.joinMember(memberDto);
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto); // 상태코드만 반환해줄때 build() 필요
         /*
         return ResponseEntity.ok()
             .headers(headers)
@@ -39,7 +38,8 @@ public class MemberController {
     public ResponseEntity<ResponseDto> emailDoubleCheck(@RequestBody EmailDto.Request emailDto) {
         ResponseDto responseDto = memberService.emailDoubleCheck(emailDto.getEmail());
 
-        return ResponseEntity.status(responseDto.getStatus()).body(responseDto);
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
     }
 
     @PostMapping(value = "/double-check/{nickname}")
@@ -66,16 +66,16 @@ public class MemberController {
 
         ResponseDto responseDto = memberService.loginJwt(loginDto, response);
 
-        if(responseDto.getStatus() == StatusEnum.OK) {
-            return ResponseEntity.ok()
-                    .body(responseDto);
-        }
-        else {
-            return ResponseEntity.badRequest()
-                    .body(responseDto);
-        }
+//        if(responseDto.getStatus() == HttpStatus.OK) {
+//            return ResponseEntity.ok()
+//                    .body(responseDto);
+//        }
+//        else {
+//            return ResponseEntity.badRequest()
+//                    .body(responseDto);
+//        }
 
-//        return ResponseEntity.status(responseDto.getStatus())
-//                .body(responseDto);
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
     }
 }

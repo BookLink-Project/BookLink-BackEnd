@@ -1,11 +1,13 @@
 package BookLink.BookLink.Service.Book;
 
 import BookLink.BookLink.Domain.Book.BookDto;
+import BookLink.BookLink.Domain.ResponseDto;
 
-import java.util.Map;
 
 public interface BookService {
 
-    Map callApi(String query);
+    ResponseDto callApi(String query);
+
+    ResponseDto joinMyBook(BookDto.Request bookDto);
 
 }

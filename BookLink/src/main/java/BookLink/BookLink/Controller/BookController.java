@@ -1,40 +1,41 @@
 package BookLink.BookLink.Controller;
 
 import BookLink.BookLink.Domain.Book.BookDto;
+import BookLink.BookLink.Domain.Book.BookSearchDto;
+import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Service.Book.BookService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor // 생성자 주입
-@RequestMapping("api/book")
+@RequestMapping("/api/v1/book")
 public class BookController {
 
     private final BookService bookService;
 
     // 책 검색
-    @GetMapping("/aladin/book-search")
-    public ResponseEntity<Map> callApi(@RequestParam String query) {
+    @GetMapping("/aladdin/search")
+    public ResponseEntity<ResponseDto> callApi(@RequestParam String query) {
 
-        Map response = bookService.callApi(query);
+        ResponseDto responseDto = bookService.callApi(query);
 
-        return ResponseEntity.ok()
-                .body(response);
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+    }
+
+    // 소장 도서 등록(일부정보만 일단 구현)
+    // 임의로 BookSearchDto로 구현했습니다. 추후에 리펙토링할 예정.
+    @PostMapping()
+    public ResponseEntity<ResponseDto> registerMyBook(@RequestBody BookDto.Request bookDto) {
+
+        ResponseDto responseDto = bookService.joinMyBook(bookDto);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
     }
 
 

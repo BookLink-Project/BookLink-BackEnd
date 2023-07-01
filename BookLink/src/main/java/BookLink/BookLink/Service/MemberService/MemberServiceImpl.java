@@ -1,6 +1,5 @@
 package BookLink.BookLink.Service.MemberService;
 
-import BookLink.BookLink.Domain.Common.StatusEnum;
 import BookLink.BookLink.Domain.Member.LoginDto;
 import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.Member.MemberDto;
@@ -10,13 +9,10 @@ import BookLink.BookLink.Domain.Token.TokenDto;
 import BookLink.BookLink.Repository.Member.MemberRepository;
 import BookLink.BookLink.Repository.Token.RefreshTokenRepository;
 import BookLink.BookLink.utils.JwtUtil;
-import io.jsonwebtoken.Jwt;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
@@ -31,19 +27,30 @@ public class MemberServiceImpl implements MemberService{
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public void joinMember(MemberDto.Request memberDto) {
+    public ResponseDto joinMember(MemberDto.Request memberDto) {
+
+        ResponseDto responseDto = new ResponseDto();
+
+        // 예외처리
+        Optional<Member> member_email = memberRepository.findByEmail(memberDto.getEmail());
+        Optional<Member> member_nickname = memberRepository.findByNickname(memberDto.getNickname());
+
+        if(member_email.isPresent() || member_nickname.isPresent()){
+            responseDto.setStatus(HttpStatus.CONFLICT);
+            responseDto.setMessage("이미 이메일 존재");
+            return responseDto;
+        }
 
         memberDto.setEncodePwd(passwordEncoder.encode(memberDto.getPassword())); // PW 암호화
-
         Member member = MemberDto.Request.toEntity(memberDto);
-
         memberRepository.save(member);
+
         responseDto.setMessage("DB 저장 완료");
         return responseDto;
     }
 
     @Override
-    public boolean emailDoubleCheck(String email) {
+    public ResponseDto emailDoubleCheck(String email) {
         boolean is_exist  = memberRepository.existsByEmail(email);
 
         ResponseDto responseDto = new ResponseDto();
@@ -80,25 +87,21 @@ public class MemberServiceImpl implements MemberService{
         Optional<Member> selectedMember = memberRepository.findByEmail(loginDto.getEmail());
 
         ResponseDto responseDto = new ResponseDto();
-        // 없는 email exception
+
         if (selectedMember.isEmpty()) {
-            //  Member selectedMember = memberRepository.findByEmail(loginDto.getEmail())
-            //          .orElseThrow(() -> new Exception(" 해당 계정이 존재하지 않습니다. - " + loginDto.getEmail()));
-            //return new ResponseDto("invalid email", HttpStatus.UNAUTHORIZED.value());
-            responseDto.setStatus(StatusEnum.UNAUTHORIZED);
-            responseDto.setMessage("유효하지 않은 이메일");
+            responseDto.setStatus(HttpStatus.UNAUTHORIZED);
+            responseDto.setMessage("없는 이메일");
+            return responseDto;
         }
 
-        // 잘못된 password exception
         if (!passwordEncoder.matches(loginDto.getPassword(), selectedMember.get().getPassword())) {
-            // throw new Exception("잘못된 비밀번호입니다.");
-            //return new ResponseDto("wrong password", HttpStatus.UNAUTHORIZED.value());
-            responseDto.setStatus(StatusEnum.UNAUTHORIZED);
-            responseDto.setMessage("유효하지 않은 비밀번호");
+            responseDto.setStatus(HttpStatus.UNAUTHORIZED);
+            responseDto.setMessage("잘못된 비밀번호");
+            return responseDto;
         }
 
-        // Exception 미발생(성공) 시 토큰 생성
-        TokenDto newTokenDto = jwtUtil.createAllToken(loginDto.getEmail()); // access, refresh 둘 다
+        // 성공 시 access, refresh 토큰 생성
+        TokenDto newTokenDto = jwtUtil.createAllToken(loginDto.getEmail());
 
         // Refresh Token 존재 유무 확인
         Optional<RefreshToken> refreshToken = refreshTokenRepository.findByMemberEmail(loginDto.getEmail());
@@ -114,6 +117,10 @@ public class MemberServiceImpl implements MemberService{
         response.addHeader("Access_Token", newTokenDto.getAccessToken());
         response.addHeader("Refresh_Token", newTokenDto.getRefreshToken());
 
-        return new ResponseDto("login success", HttpStatus.OK.value());
+        responseDto.setStatus(HttpStatus.OK);
+        responseDto.setMessage("로그인 성공");
+        responseDto.setData(newTokenDto);
+
+        return responseDto;
     }
 }
