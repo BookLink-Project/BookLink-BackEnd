@@ -9,7 +9,6 @@ import BookLink.BookLink.Domain.Token.TokenDto;
 import BookLink.BookLink.Repository.Member.MemberRepository;
 import BookLink.BookLink.Repository.Token.RefreshTokenRepository;
 import BookLink.BookLink.utils.JwtUtil;
-import io.jsonwebtoken.Jwt;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,22 +29,22 @@ public class MemberServiceImpl implements MemberService{
     @Override
     public ResponseDto joinMember(MemberDto.Request memberDto) {
 
+        ResponseDto responseDto = new ResponseDto();
+
         // 예외처리
         Optional<Member> member_email = memberRepository.findByEmail(memberDto.getEmail());
         Optional<Member> member_nickname = memberRepository.findByNickname(memberDto.getNickname());
 
-        ResponseDto responseDto = new ResponseDto();
-
         if(member_email.isPresent() || member_nickname.isPresent()){
+            responseDto.setStatus(HttpStatus.CONFLICT);
             responseDto.setMessage("이미 이메일 존재");
             return responseDto;
         }
 
         memberDto.setEncodePwd(passwordEncoder.encode(memberDto.getPassword())); // PW 암호화
-
         Member member = MemberDto.Request.toEntity(memberDto);
-
         memberRepository.save(member);
+
         responseDto.setMessage("DB 저장 완료");
         return responseDto;
     }
@@ -56,12 +55,10 @@ public class MemberServiceImpl implements MemberService{
 
         ResponseDto responseDto = new ResponseDto();
         if (is_exist) {
-//            responseDto.setStatus(StatusEnum.BAD_REQUEST);
-            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setStatus(HttpStatus.CONFLICT);
             responseDto.setMessage("이미 이메일 존재");
         }
         else {
-//            responseDto.setStatus(StatusEnum.OK);
             responseDto.setStatus(HttpStatus.OK);
             responseDto.setMessage("중복되지않는 이메일");
         }
@@ -74,12 +71,10 @@ public class MemberServiceImpl implements MemberService{
 
         ResponseDto responseDto = new ResponseDto();
         if (is_exist) {
-//            responseDto.setStatus(StatusEnum.BAD_REQUEST);
-            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setStatus(HttpStatus.CONFLICT);
             responseDto.setMessage("이미 닉네임 존재");
         }
         else {
-//            responseDto.setStatus(StatusEnum.OK);
             responseDto.setStatus(HttpStatus.OK);
             responseDto.setMessage("중복되지않는 닉네임");
         }
@@ -87,7 +82,7 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
-    public ResponseDto loginJwt(LoginDto.Request loginDto, HttpServletResponse response) {
+    public ResponseDto loginJwt(LoginDto.Request loginDto, HttpServletResponse response) throws Exception {
 
         Optional<Member> selectedMember = memberRepository.findByEmail(loginDto.getEmail());
 

@@ -36,7 +36,9 @@ public class AuthConfig {
                 .csrf().disable()
                 .cors().and()
                 .authorizeRequests()
-                .antMatchers("/api/member/**").permitAll()
+//                 .antMatchers("/api/member", "/api/member/login").permitAll()
+                .antMatchers("/api/v1/member/**").permitAll() // 임의로 정의
+                .antMatchers("/api/v1/book/**").permitAll() // 임의로 정의
                 .antMatchers(HttpMethod.POST, "/api/**").authenticated()
                 .and()
                 .sessionManagement() // 세션을 사용하지 않기 때문에 STATELESS

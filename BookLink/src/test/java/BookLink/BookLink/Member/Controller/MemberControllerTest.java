@@ -27,7 +27,7 @@ public class MemberControllerTest extends BaseControllerTest {
     @Autowired
     private MemberRepository memberRepository;
 
-//    private EntityManager entityManager;
+//    private EntityManager;
 
 //    @AfterEach
 //    public void afterEach() {
