@@ -1,6 +1,5 @@
 package BookLink.BookLink.Controller;
 
-import BookLink.BookLink.Domain.Common.StatusEnum;
 import BookLink.BookLink.Domain.Email.EmailDto;
 import BookLink.BookLink.Domain.Member.LoginDto;
 import BookLink.BookLink.Domain.Member.MemberDto;
@@ -43,7 +42,7 @@ public class MemberController {
     public ResponseEntity<ResponseDto> emailDoubleCheck(@RequestBody EmailDto.Request emailDto) {
         ResponseDto responseDto = memberService.emailDoubleCheck(emailDto.getEmail());
 
-        if(responseDto.getStatus() == StatusEnum.OK) {
+        if(responseDto.getStatus() == HttpStatus.OK) {
             return ResponseEntity.ok()
                     .body(responseDto);
         }
@@ -57,7 +56,7 @@ public class MemberController {
     public ResponseEntity<ResponseDto> emailDoubleCheck(@PathVariable String nickname) {
         ResponseDto responseDto = memberService.nicknameDoubleCheck(nickname);
 
-        if(responseDto.getStatus() == StatusEnum.OK) {
+        if(responseDto.getStatus() == HttpStatus.OK) {
             return ResponseEntity.ok()
                     .body(responseDto);
         }
@@ -85,16 +84,16 @@ public class MemberController {
 
         ResponseDto responseDto = memberService.loginJwt(loginDto, response);
 
-        if(responseDto.getStatus() == StatusEnum.OK) {
-            return ResponseEntity.ok()
-                    .body(responseDto);
-        }
-        else {
-            return ResponseEntity.badRequest()
-                    .body(responseDto);
-        }
+//        if(responseDto.getStatus() == HttpStatus.OK) {
+//            return ResponseEntity.ok()
+//                    .body(responseDto);
+//        }
+//        else {
+//            return ResponseEntity.badRequest()
+//                    .body(responseDto);
+//        }
 
-//        return ResponseEntity.status(responseDto.getStatus())
-//                .body(responseDto);
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
     }
 }

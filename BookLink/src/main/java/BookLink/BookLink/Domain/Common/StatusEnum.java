@@ -1,5 +1,6 @@
 package BookLink.BookLink.Domain.Common;
 
+/*
 public enum StatusEnum {
 
     OK(200, "OK"),
@@ -16,3 +17,5 @@ public enum StatusEnum {
         this.code = code;
     }
 }
+
+ */

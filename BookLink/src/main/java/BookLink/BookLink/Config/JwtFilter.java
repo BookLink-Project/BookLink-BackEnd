@@ -39,11 +39,11 @@ public class JwtFilter extends OncePerRequestFilter { // 토큰을 매번 인증
 
                 boolean isRefreshTokenValid = jwtUtil.refreshTokenValid(refreshToken);
 
-                if (isRefreshTokenValid) { // Refresh Token 유효 && DB 정보와 일치
+                if (isRefreshTokenValid) { // Refresh Token 유효 (DB 정보와 일치)
                     String loginEmail = jwtUtil.getEmail(refreshToken);
                     String newAccessToken = jwtUtil.createToken(loginEmail, "Access");
                     jwtUtil.setHeaderAccessToken(response, newAccessToken);
-                    setAuthentication(request, newAccessToken); // 인증 정보 넣기
+                    setAuthentication(request, newAccessToken);
 
                 } else { // Refresh Token 만료 || DB 정보와 불일치
                     // jwtExceptionHandler(response, "RefreshToken Expired", HttpStatus.BAD_REQUEST);
