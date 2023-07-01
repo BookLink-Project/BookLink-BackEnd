@@ -1,5 +1,6 @@
 package BookLink.BookLink.Service.MemberService;
 
+import BookLink.BookLink.Domain.Common.StatusEnum;
 import BookLink.BookLink.Domain.Member.LoginDto;
 import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.Member.MemberDto;
@@ -35,13 +36,42 @@ public class MemberServiceImpl implements MemberService{
         memberDto.setEncodePwd(passwordEncoder.encode(memberDto.getPassword())); // PW 암호화
 
         Member member = MemberDto.Request.toEntity(memberDto);
+
         memberRepository.save(member);
+        responseDto.setMessage("DB 저장 완료");
+        return responseDto;
     }
 
     @Override
     public boolean emailDoubleCheck(String email) {
         boolean is_exist  = memberRepository.existsByEmail(email);
-        return is_exist;
+
+        ResponseDto responseDto = new ResponseDto();
+        if (is_exist) {
+            responseDto.setStatus(HttpStatus.CONFLICT);
+            responseDto.setMessage("이미 이메일 존재");
+        }
+        else {
+            responseDto.setStatus(HttpStatus.OK);
+            responseDto.setMessage("중복되지않는 이메일");
+        }
+        return responseDto;
+    }
+
+    @Override
+    public ResponseDto nicknameDoubleCheck(String nickname) {
+        boolean is_exist = memberRepository.existsByNickname(nickname);
+
+        ResponseDto responseDto = new ResponseDto();
+        if (is_exist) {
+            responseDto.setStatus(HttpStatus.CONFLICT);
+            responseDto.setMessage("이미 닉네임 존재");
+        }
+        else {
+            responseDto.setStatus(HttpStatus.OK);
+            responseDto.setMessage("중복되지않는 닉네임");
+        }
+        return responseDto;
     }
 
     @Override
@@ -49,17 +79,22 @@ public class MemberServiceImpl implements MemberService{
 
         Optional<Member> selectedMember = memberRepository.findByEmail(loginDto.getEmail());
 
+        ResponseDto responseDto = new ResponseDto();
         // 없는 email exception
         if (selectedMember.isEmpty()) {
             //  Member selectedMember = memberRepository.findByEmail(loginDto.getEmail())
             //          .orElseThrow(() -> new Exception(" 해당 계정이 존재하지 않습니다. - " + loginDto.getEmail()));
-            return new ResponseDto("invalid email", HttpStatus.UNAUTHORIZED.value());
+            //return new ResponseDto("invalid email", HttpStatus.UNAUTHORIZED.value());
+            responseDto.setStatus(StatusEnum.UNAUTHORIZED);
+            responseDto.setMessage("유효하지 않은 이메일");
         }
 
         // 잘못된 password exception
         if (!passwordEncoder.matches(loginDto.getPassword(), selectedMember.get().getPassword())) {
             // throw new Exception("잘못된 비밀번호입니다.");
-            return new ResponseDto("wrong password", HttpStatus.UNAUTHORIZED.value());
+            //return new ResponseDto("wrong password", HttpStatus.UNAUTHORIZED.value());
+            responseDto.setStatus(StatusEnum.UNAUTHORIZED);
+            responseDto.setMessage("유효하지 않은 비밀번호");
         }
 
         // Exception 미발생(성공) 시 토큰 생성
