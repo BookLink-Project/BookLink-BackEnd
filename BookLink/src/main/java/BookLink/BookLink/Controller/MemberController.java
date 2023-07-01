@@ -84,15 +84,6 @@ public class MemberController {
 
         ResponseDto responseDto = memberService.loginJwt(loginDto, response);
 
-//        if(responseDto.getStatus() == HttpStatus.OK) {
-//            return ResponseEntity.ok()
-//                    .body(responseDto);
-//        }
-//        else {
-//            return ResponseEntity.badRequest()
-//                    .body(responseDto);
-//        }
-
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);
     }

@@ -89,9 +89,9 @@ public class MemberServiceImpl implements MemberService{
     @Override
     public ResponseDto loginJwt(LoginDto.Request loginDto, HttpServletResponse response) {
 
-        Optional<Member> selectedMember = memberRepository.findByEmail(loginDto.getEmail());
-
         ResponseDto responseDto = new ResponseDto();
+
+        Optional<Member> selectedMember = memberRepository.findByEmail(loginDto.getEmail());
 
         if (selectedMember.isEmpty()) {
             responseDto.setStatus(HttpStatus.UNAUTHORIZED);

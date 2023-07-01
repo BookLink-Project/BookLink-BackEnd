@@ -10,9 +10,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.security.Key;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Optional;
 
@@ -25,8 +27,8 @@ public class JwtUtil {
     private String secretKey;
     private Key key;
 
-    private static final Long expired_access = 1000 * 60L; // 1 minute
-    private static final Long expired_refresh = 1000 * 60L; // 1 minute
+    private static final Long expired_access = 1000 * 60 * 60L; // 1 hour
+    private static final Long expired_refresh = 1000 * 60 * 60L; // 1 hour
 
     private RefreshTokenRepository refreshTokenRepository; // final ?
 
@@ -40,7 +42,7 @@ public class JwtUtil {
     }
     */
 
-    public String getEmail(String token) {
+    public String getEmailFromToken(String token) {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token)
                 .getBody().get("email", String.class);
     }
@@ -50,17 +52,16 @@ public class JwtUtil {
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
             return true;
         } catch (Exception ex) {
-            log.error(ex.getMessage());
+            log.error("tokenValid error = {}", ex.getMessage());
             return false;
         }
     }
 
     public Boolean refreshTokenValid(String token) { // DB와 비교
 
-        if (!tokenValid(token)) return false;
+        if (!tokenValid(token)) return false; // 1차 검증
 
-        String email = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token)
-                .getBody().get("email", String.class);
+        String email = getEmailFromToken(token);
 
         Optional<RefreshToken> refreshToken = refreshTokenRepository.findByMemberEmail(email);
 
@@ -84,7 +85,7 @@ public class JwtUtil {
                 .compact();
     }
 
-    public String getHeaderToken(HttpServletRequest request, String type) { // Token 가져오기
+    public String getHeaderToken(HttpServletRequest request, String type) { // 헤더에서 Token 가져오기
         return type.equals("Access") ? request.getHeader("Access_Token") : request.getHeader("Refresh_Token");
     }
 
@@ -96,5 +97,13 @@ public class JwtUtil {
         response.setHeader("Refresh_Token", refreshToken);
     }
 
+    public String getCookieToken(HttpServletRequest request, String type) {
 
+        String token = type.equals("Access") ? "Access_Token" : "Refresh_Token";
+
+        return Arrays.stream(request.getCookies())
+                .filter(cookie -> cookie.getName().equals(token))
+                .findFirst().map(Cookie::getValue)
+                .orElse(null);
+    }
 }
