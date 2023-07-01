@@ -28,11 +28,11 @@ public class JwtUtil {
     private static final Long expired_access = 1000 * 60L; // 1 minute
     private static final Long expired_refresh = 1000 * 60L; // 1 minute
 
-    private RefreshTokenRepository refreshTokenRepository;
+    private RefreshTokenRepository refreshTokenRepository; // final ?
 
 
     /*
-    @PostConstruct // bean으로 등록 되면서 딱 한 번 실행
+    @PostConstruct
     public void init() {
         byte[] bytes = Base64.getDecoder().decode(secretKey);
         // this.key = Keys.hmacShaKeyFor(bytes);

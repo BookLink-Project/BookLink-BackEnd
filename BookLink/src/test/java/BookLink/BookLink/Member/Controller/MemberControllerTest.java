@@ -4,7 +4,9 @@ import BookLink.BookLink.BaseControllerTest;
 import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Repository.Member.MemberRepository;
 import net.minidev.json.JSONObject;
+import org.aspectj.lang.annotation.After;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,6 +14,8 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.restdocs.snippet.Snippet;
 
+import javax.persistence.EntityManager;
+import java.time.LocalDate;
 import java.util.Date;
 
 import static com.epages.restdocs.apispec.RestAssuredRestDocumentationWrapper.document;
@@ -22,6 +26,13 @@ public class MemberControllerTest extends BaseControllerTest {
 
     @Autowired
     private MemberRepository memberRepository;
+
+//    private EntityManager entityManager;
+
+//    @AfterEach
+//    public void afterEach() {
+//        entityManager.clear();
+//    }
 
     private static final Snippet REQUEST_FIELDS = requestFields(
             fieldWithPath("email").type(JsonFieldType.STRING).description("test@naver.com")
@@ -36,7 +47,7 @@ public class MemberControllerTest extends BaseControllerTest {
     void email_doubleCheck() {
         String email = "test@naver.com";
 
-        Date birth_date = new Date(2000-2-15);
+        LocalDate birth_date = LocalDate.of(2000, 2, 15);
 
         Member member1 = Member.builder()
                 .email("elwlahstmxjf@naver.com")
@@ -61,7 +72,7 @@ public class MemberControllerTest extends BaseControllerTest {
                 .body(requestBody)
                 .log().all()
                 .when()
-                .post("/api/member/email/double-check")
+                .post("/api/member/double-check/email")
 
 
                 .then()
