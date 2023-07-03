@@ -45,6 +45,7 @@ public class MemberServiceImpl implements MemberService{
         Member member = MemberDto.Request.toEntity(memberDto);
         memberRepository.save(member);
 
+        responseDto.setStatus(HttpStatus.OK);
         responseDto.setMessage("DB 저장 완료");
         return responseDto;
     }

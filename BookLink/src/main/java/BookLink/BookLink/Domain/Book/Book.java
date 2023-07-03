@@ -37,7 +37,7 @@ public class Book extends BaseTimeEntity {
 
     private String publisher;
 
-    private LocalDate pud_date; // 출간일
+    private LocalDate pub_date; // 출간일
 
 //    private String status; // 도서 판매 상태 정보
 
@@ -49,7 +49,7 @@ public class Book extends BaseTimeEntity {
 
     @Builder
     public Book(Long id, String title, String authors, String description, String isbn, Integer price_sales,
-                Integer price_standard, String cover, String category_name, String publisher, LocalDate pud_date) {
+                Integer price_standard, String cover, String category_name, String publisher, LocalDate pub_date) {
         this.id = id;
         this.title = title;
         this.authors = authors;
@@ -60,6 +60,6 @@ public class Book extends BaseTimeEntity {
         this.cover = cover;
         this.category_name = category_name;
         this.publisher = publisher;
-        this.pud_date = pud_date;
+        this.pub_date = pub_date;
     }
 }
