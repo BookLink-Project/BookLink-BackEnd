@@ -38,6 +38,9 @@ public class BookController {
                 .body(responseDto);
     }
 
+//    @PostMapping("/image")
+//    public ResponseEntity<Void> joinBookImage()
+
 
 
 
