@@ -57,12 +57,17 @@ public class BookController {
                 .body(responseDto);
     }
 
-//    @GetMapping("/{bookId}") // 상세 조회
-//    public ResponseEntity<ResponseDto> showBook(@PathVariable int bookId) {
-//        return ResponseEntity.status(responseDto.getStatus())
-//                .body(responseDto);
-//    }
-//    @PostMapping("/{bookId}") // 후기 작성
-//    public ResponseEntity<ResponseDto> writeReview() {
-//    }
+    @GetMapping("/{isbn}") // 상세 조회
+    public ResponseEntity<ResponseDto> showBook(@PathVariable String isbn) {
+
+        ResponseDto responseDto = bookService.showBook(isbn);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+    }
+
+    @PostMapping("/{isbn}") // 후기 작성
+    public ResponseEntity<ResponseDto> writeReview(@PathVariable String isbn) {
+        return null;
+    }
 }

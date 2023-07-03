@@ -14,4 +14,6 @@ public interface BookService {
 
     ResponseDto searchBook(Integer category, String searchWord);
 
+    ResponseDto showBook(String isbn13);
+
 }
