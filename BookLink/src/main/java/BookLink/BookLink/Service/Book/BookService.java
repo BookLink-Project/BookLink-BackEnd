@@ -10,4 +10,8 @@ public interface BookService {
 
     ResponseDto joinMyBook(BookDto.Request bookDto);
 
+    ResponseDto listAllBook(Integer category);
+
+    ResponseDto searchBook(Integer category, String searchWord);
+
 }

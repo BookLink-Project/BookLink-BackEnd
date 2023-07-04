@@ -18,17 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     @PostMapping
-    public ResponseEntity<String> authTest(Authentication authentication) { // with token input
-        return ResponseEntity.ok().body(authentication.getName() + " 님의 접근 성공");
-    }
+    public ResponseEntity<String> authTest() { // with cookie input
 
-    /*
-    @PostMapping
-    public ResponseEntity<String> authTest(@RequestHeader(HttpHeaders.AUTHORIZATION) Authentication authentication) { // with token input
-        System.out.println("authentication = " + authentication);
+        return ResponseEntity.ok().body("접근 성공");
 
-        return ResponseEntity.ok().body(authentication.getName() + " 님의 접근 성공");
     }
-     */
 
 }

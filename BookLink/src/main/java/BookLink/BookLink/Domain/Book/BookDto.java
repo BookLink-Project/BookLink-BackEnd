@@ -16,7 +16,7 @@ public class BookDto {
     public static class Request {
         private String title;
         private String author;
-        private LocalDate pudDate; // 출간일
+        private LocalDate pubDate; // 출간일
         private String description; // 책 소개 요약
         private String isbn13; // 책 고유번호 13자리
         private Integer priceSales; // 정가
@@ -36,7 +36,7 @@ public class BookDto {
                     .cover(dto.getCover())
                     .category_name(dto.getCategoryName())
                     .publisher(dto.getPublisher())
-                    .pud_date(dto.getPudDate())
+                    .pub_date(dto.getPubDate())
                     .build();
         }
     }

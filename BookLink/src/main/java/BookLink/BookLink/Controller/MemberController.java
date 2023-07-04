@@ -7,8 +7,6 @@ import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Service.EmailService.Emailservice;
 import BookLink.BookLink.Service.MemberService.MemberService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,22 +56,11 @@ public class MemberController {
                 .body(responseDto);
     }
 
-    @PostMapping("/login") // TODO refactoring without response
+    @PostMapping("/login")
     public ResponseEntity<ResponseDto> loginMember(@RequestBody LoginDto.Request loginDto,
                                                 HttpServletResponse response) throws Exception {
 
-        System.out.println("MemberController.loginJwt");
-
         ResponseDto responseDto = memberService.loginJwt(loginDto, response);
-
-//        if(responseDto.getStatus() == HttpStatus.OK) {
-//            return ResponseEntity.ok()
-//                    .body(responseDto);
-//        }
-//        else {
-//            return ResponseEntity.badRequest()
-//                    .body(responseDto);
-//        }
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);
