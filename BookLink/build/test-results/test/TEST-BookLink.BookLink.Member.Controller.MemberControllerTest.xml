@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="BookLink.BookLink.Member.Controller.MemberControllerTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2023-06-24T11:24:51" hostname="DESKTOP-RO10INV" time="3.159">
+  <properties/>
+  <testcase name="email_doubleCheck()" classname="BookLink.BookLink.Member.Controller.MemberControllerTest" time="3.159"/>
+  <system-out><![CDATA[2023-06-24 20:24:48.057  INFO 25448 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Neither @ContextConfiguration nor @ContextHierarchy found for test class [BookLink.BookLink.Member.Controller.MemberControllerTest], using SpringBootContextLoader
+2023-06-24 20:24:48.062  INFO 25448 --- [    Test worker] o.s.t.c.support.AbstractContextLoader    : Could not detect default resource locations for test class [BookLink.BookLink.Member.Controller.MemberControllerTest]: no resource found for suffixes {-context.xml, Context.groovy}.
+2023-06-24 20:24:48.063  INFO 25448 --- [    Test worker] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [BookLink.BookLink.Member.Controller.MemberControllerTest]: MemberControllerTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2023-06-24 20:24:48.082  INFO 25448 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration BookLink.BookLink.BookLinkApplication for test class BookLink.BookLink.Member.Controller.MemberControllerTest
+2023-06-24 20:24:48.086  INFO 25448 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Loaded default TestExecutionListener class names from location [META-INF/spring.factories]: [org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener, org.springframework.boot.test.autoconfigure.webservices.client.MockWebServiceServerTestExecutionListener, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener, org.springframework.test.context.web.ServletTestExecutionListener, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener, org.springframework.test.context.event.ApplicationEventsTestExecutionListener, org.springframework.test.context.support.DependencyInjectionTestExecutionListener, org.springframework.test.context.support.DirtiesContextTestExecutionListener, org.springframework.test.context.transaction.TransactionalTestExecutionListener, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener, org.springframework.test.context.event.EventPublishingTestExecutionListener]
+2023-06-24 20:24:48.087  INFO 25448 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Using TestExecutionListeners: [org.springframework.test.context.web.ServletTestExecutionListener@6eaf6ced, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@6f8035d6, org.springframework.test.context.event.ApplicationEventsTestExecutionListener@6a7b4ff5, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener@2a20aa4e, org.springframework.boot.test.autoconfigure.SpringBootDependencyInjectionTestExecutionListener@3f7d73e3, org.springframework.test.context.support.DirtiesContextTestExecutionListener@513ddf5f, org.springframework.test.context.transaction.TransactionalTestExecutionListener@6109366a, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener@4ed492df, org.springframework.test.context.event.EventPublishingTestExecutionListener@1ae2028d, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener@259ae1a9, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener@d082916, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener@67201002, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener@6ddc9001, org.springframework.boot.test.autoconfigure.webservices.client.MockWebServiceServerTestExecutionListener@1f39b3ba, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener@53b579d2]
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::               (v2.7.12)
+
+2023-06-24 20:24:48.226  INFO 25448 --- [    Test worker] B.B.M.Controller.MemberControllerTest    : Starting MemberControllerTest using Java 11.0.12 on DESKTOP-RO10INV with PID 25448 (started by elwla in C:\Users\elwla\local_BookLink\BookLink-BackEnd\BookLink)
+2023-06-24 20:24:48.227  INFO 25448 --- [    Test worker] B.B.M.Controller.MemberControllerTest    : No active profile set, falling back to 1 default profile: "default"
+2023-06-24 20:24:48.791  INFO 25448 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2023-06-24 20:24:48.843  INFO 25448 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 51 ms. Found 1 JPA repository interfaces.
+2023-06-24 20:24:49.407  INFO 25448 --- [    Test worker] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 0 (http)
+2023-06-24 20:24:49.426  INFO 25448 --- [    Test worker] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2023-06-24 20:24:49.427  INFO 25448 --- [    Test worker] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.75]
+2023-06-24 20:24:49.687  INFO 25448 --- [    Test worker] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2023-06-24 20:24:49.688  INFO 25448 --- [    Test worker] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1455 ms
+2023-06-24 20:24:49.952  INFO 25448 --- [    Test worker] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2023-06-24 20:24:49.965  INFO 25448 --- [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Starting...
+2023-06-24 20:24:50.022  INFO 25448 --- [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Start completed.
+2023-06-24 20:24:50.023  INFO 25448 --- [    Test worker] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.MySQL8Dialect
+2023-06-24 20:24:50.109  INFO 25448 --- [    Test worker] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2023-06-24 20:24:50.110  INFO 25448 --- [    Test worker] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2023-06-24 20:24:50.378  WARN 25448 --- [    Test worker] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2023-06-24 20:24:51.451  INFO 25448 --- [    Test worker] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 60304 (http) with context path ''
+2023-06-24 20:24:51.456  INFO 25448 --- [    Test worker] B.B.M.Controller.MemberControllerTest    : Started MemberControllerTest in 3.348 seconds (JVM running for 17.302)
+Hibernate: 
+    insert 
+    into
+        member
+        (address, birth, card_id, email, image, name, nickname, password) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?)
+Request method:	POST
+Request URI:	http://localhost:60304/api/member/email/double-check
+Proxy:			<none>
+Request params:	<none>
+Query params:	<none>
+Form params:	<none>
+Path params:	<none>
+Headers:		Accept=application/json
+				Content-Type=application/json
+Cookies:		<none>
+Multiparts:		<none>
+Body:
+{
+    "email": "test@naver.com"
+}
+2023-06-24 20:24:53.585  INFO 25448 --- [o-auto-1-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2023-06-24 20:24:53.585  INFO 25448 --- [o-auto-1-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2023-06-24 20:24:53.586  INFO 25448 --- [o-auto-1-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+Hibernate: 
+    select
+        member0_.member_id as col_0_0_ 
+    from
+        member member0_ 
+    where
+        member0_.email=? limit ?
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

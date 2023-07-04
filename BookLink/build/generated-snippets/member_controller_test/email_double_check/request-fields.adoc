@@ -1,0 +1,8 @@
+|===
+|Path|Type|Description
+
+|`+email+`
+|`+String+`
+|test@naver.com
+
+|===
