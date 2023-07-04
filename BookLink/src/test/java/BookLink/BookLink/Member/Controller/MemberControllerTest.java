@@ -72,7 +72,7 @@ public class MemberControllerTest extends BaseControllerTest {
                 .body(requestBody)
                 .log().all()
                 .when()
-                .post("/api/member/double-check/email")
+                .post("/api/v1/member/double-check/email")
 
 
                 .then()
