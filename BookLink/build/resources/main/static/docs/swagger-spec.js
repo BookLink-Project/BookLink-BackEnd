@@ -10,7 +10,7 @@ window.swaggerSpec={
   } ],
   "tags" : [ ],
   "paths" : {
-    "/api/member/email/double-check" : {
+    "/api/member/double-check/email" : {
       "post" : {
         "tags" : [ "api" ],
         "operationId" : "member_controller_test/email_double_check/",
@@ -18,7 +18,7 @@ window.swaggerSpec={
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/api-member-email-double-check-1076505861"
+                "$ref" : "#/components/schemas/api-member-double-check-email-1076505861"
               },
               "examples" : {
                 "member_controller_test/email_double_check/" : {
@@ -30,7 +30,19 @@ window.swaggerSpec={
         },
         "responses" : {
           "200" : {
-            "description" : "200"
+            "description" : "200",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/api-member-double-check-email486549215"
+                },
+                "examples" : {
+                  "member_controller_test/email_double_check/" : {
+                    "value" : "{\r\n  \"status\" : \"OK\",\r\n  \"message\" : \"중복되지않는 이메일\",\r\n  \"data\" : null\r\n}"
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -38,7 +50,7 @@ window.swaggerSpec={
   },
   "components" : {
     "schemas" : {
-      "api-member-email-double-check-1076505861" : {
+      "api-member-double-check-email-1076505861" : {
         "type" : "object",
         "properties" : {
           "email" : {
@@ -46,6 +58,9 @@ window.swaggerSpec={
             "description" : "test@naver.com"
           }
         }
+      },
+      "api-member-double-check-email486549215" : {
+        "type" : "object"
       }
     }
   }
