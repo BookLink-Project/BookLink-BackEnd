@@ -9,13 +9,10 @@ import BookLink.BookLink.Domain.Token.TokenDto;
 import BookLink.BookLink.Repository.Member.MemberRepository;
 import BookLink.BookLink.Repository.Token.RefreshTokenRepository;
 import BookLink.BookLink.utils.JwtUtil;
-import io.jsonwebtoken.Jwt;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
@@ -30,42 +27,84 @@ public class MemberServiceImpl implements MemberService{
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public void joinMember(MemberDto.Request memberDto) {
+    public ResponseDto joinMember(MemberDto.Request memberDto) {
+
+        ResponseDto responseDto = new ResponseDto();
+
+        // 예외처리
+        Optional<Member> member_email = memberRepository.findByEmail(memberDto.getEmail());
+        Optional<Member> member_nickname = memberRepository.findByNickname(memberDto.getNickname());
+
+        if(member_email.isPresent() || member_nickname.isPresent()){
+            responseDto.setStatus(HttpStatus.CONFLICT);
+            responseDto.setMessage("이미 이메일 존재");
+            return responseDto;
+        }
 
         memberDto.setEncodePwd(passwordEncoder.encode(memberDto.getPassword())); // PW 암호화
-
         Member member = MemberDto.Request.toEntity(memberDto);
         memberRepository.save(member);
+
+        responseDto.setStatus(HttpStatus.OK);
+        responseDto.setMessage("DB 저장 완료");
+        return responseDto;
     }
 
     @Override
-    public boolean emailDoubleCheck(String email) {
+    public ResponseDto emailDoubleCheck(String email) {
         boolean is_exist  = memberRepository.existsByEmail(email);
-        return is_exist;
+
+        ResponseDto responseDto = new ResponseDto();
+        if (is_exist) {
+            responseDto.setStatus(HttpStatus.CONFLICT);
+            responseDto.setMessage("이미 이메일 존재");
+        }
+        else {
+            responseDto.setStatus(HttpStatus.OK);
+            responseDto.setMessage("중복되지않는 이메일");
+        }
+        return responseDto;
     }
 
     @Override
-    public ResponseDto loginJwt(LoginDto.Request loginDto, HttpServletResponse response) throws Exception {
+    public ResponseDto nicknameDoubleCheck(String nickname) {
+        boolean is_exist = memberRepository.existsByNickname(nickname);
+
+        ResponseDto responseDto = new ResponseDto();
+        if (is_exist) {
+            responseDto.setStatus(HttpStatus.CONFLICT);
+            responseDto.setMessage("이미 닉네임 존재");
+        }
+        else {
+            responseDto.setStatus(HttpStatus.OK);
+            responseDto.setMessage("중복되지않는 닉네임");
+        }
+        return responseDto;
+    }
+
+    @Override
+    public ResponseDto loginJwt(LoginDto.Request loginDto, HttpServletResponse response) {
+
+        ResponseDto responseDto = new ResponseDto();
 
         Optional<Member> selectedMember = memberRepository.findByEmail(loginDto.getEmail());
 
-        // 없는 email exception
         if (selectedMember.isEmpty()) {
-            //  Member selectedMember = memberRepository.findByEmail(loginDto.getEmail())
-            //          .orElseThrow(() -> new Exception(" 해당 계정이 존재하지 않습니다. - " + loginDto.getEmail()));
-            return new ResponseDto("invalid email", HttpStatus.UNAUTHORIZED.value());
+            responseDto.setStatus(HttpStatus.UNAUTHORIZED);
+            responseDto.setMessage("없는 이메일");
+            return responseDto;
         }
 
-        // 잘못된 password exception
         if (!passwordEncoder.matches(loginDto.getPassword(), selectedMember.get().getPassword())) {
-            // throw new Exception("잘못된 비밀번호입니다.");
-            return new ResponseDto("wrong password", HttpStatus.UNAUTHORIZED.value());
+            responseDto.setStatus(HttpStatus.UNAUTHORIZED);
+            responseDto.setMessage("잘못된 비밀번호");
+            return responseDto;
         }
 
-        // Exception 미발생(성공) 시 토큰 생성
-        TokenDto newTokenDto = jwtUtil.createAllToken(loginDto.getEmail()); // access, refresh 둘 다
+        // 성공 시 access, refresh 토큰 생성
+        TokenDto newTokenDto = jwtUtil.createAllToken(loginDto.getEmail());
 
-        // Refresh Token 존재 유무 확인
+        // Refresh Token 존재 확인
         Optional<RefreshToken> refreshToken = refreshTokenRepository.findByMemberEmail(loginDto.getEmail());
 
         if (refreshToken.isPresent()) { // 존재 -> 토큰 업데이트
@@ -76,9 +115,12 @@ public class MemberServiceImpl implements MemberService{
             );
         }
 
-        response.addHeader("Access_Token", newTokenDto.getAccessToken());
-        response.addHeader("Refresh_Token", newTokenDto.getRefreshToken());
+        jwtUtil.setCookieAccessToken(response, newTokenDto.getAccessToken());
+        jwtUtil.setCookieRefreshToken(response, newTokenDto.getRefreshToken());
 
-        return new ResponseDto("login success", HttpStatus.OK.value());
+        responseDto.setStatus(HttpStatus.OK);
+        responseDto.setMessage("로그인 성공");
+
+        return responseDto;
     }
 }

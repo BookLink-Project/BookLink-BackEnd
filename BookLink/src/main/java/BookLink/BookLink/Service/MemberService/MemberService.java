@@ -9,9 +9,11 @@ import javax.servlet.http.HttpServletResponse;
 
 public interface MemberService {
 
-    void joinMember(MemberDto.Request memberDTO);
+    ResponseDto joinMember(MemberDto.Request memberDto);
 
-    boolean emailDoubleCheck(String email);
+    ResponseDto emailDoubleCheck(String email);
+
+    ResponseDto nicknameDoubleCheck(String nickname);
 
     ResponseDto loginJwt(LoginDto.Request loginDto, HttpServletResponse response) throws Exception;
 }

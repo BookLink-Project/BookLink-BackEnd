@@ -1,0 +1,8 @@
+[source,bash]
+----
+$ echo '{
+  "email" : "test@naver.com"
+}' | http POST 'http://localhost:58932/api/member/double-check/email' \
+    'Accept:application/json' \
+    'Content-Type:application/json'
+----

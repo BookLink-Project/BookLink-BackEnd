@@ -1,0 +1,8 @@
+[source,options="nowrap"]
+----
+{
+  "status" : "OK",
+  "message" : "중복되지않는 이메일",
+  "data" : null
+}
+----

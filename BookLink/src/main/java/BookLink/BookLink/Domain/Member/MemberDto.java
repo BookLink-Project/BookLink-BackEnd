@@ -2,6 +2,7 @@ package BookLink.BookLink.Domain.Member;
 
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 
@@ -20,7 +21,7 @@ public class MemberDto {
 
         private String name; // 사용자 실명
 
-        private Date birth; // 생년월일
+        private LocalDate birth; // 생년월일
 
         private String address;
 
