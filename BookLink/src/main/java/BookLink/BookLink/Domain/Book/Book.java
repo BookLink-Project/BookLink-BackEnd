@@ -12,6 +12,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Book extends BaseTimeEntity {
 
@@ -37,19 +38,20 @@ public class Book extends BaseTimeEntity {
 
     private String publisher;
 
-    private LocalDate pub_date; // 출간일
+    private LocalDate pud_date; // 출간일
 
-//    private String status; // 도서 판매 상태 정보
+    private String recommend_contents; // 추천사
 
-//    private RentalEnum rental_status; // 대여 상태
-//
-//    private int book_status; // 책 상태
-//
-//    private String book_status_exp; // 책 상태 설명
+    private Boolean rent_signal; // 대여 신청 가능 여부
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "rent_id")
+    private BookRent bookRent;
+
 
     @Builder
     public Book(Long id, String title, String authors, String description, String isbn, Integer price_sales,
-                Integer price_standard, String cover, String category_name, String publisher, LocalDate pub_date) {
+                Integer price_standard, String cover, String category_name, String publisher, LocalDate pud_date, Boolean rent_signal, BookRent bookRent) {
         this.id = id;
         this.title = title;
         this.authors = authors;
@@ -60,6 +62,8 @@ public class Book extends BaseTimeEntity {
         this.cover = cover;
         this.category_name = category_name;
         this.publisher = publisher;
-        this.pub_date = pub_date;
+        this.pud_date = pud_date;
+        this.rent_signal = rent_signal;
+        this.bookRent = bookRent;
     }
 }
