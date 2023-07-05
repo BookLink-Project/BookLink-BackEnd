@@ -2,12 +2,14 @@ package BookLink.BookLink.Domain.Member;
 
 import BookLink.BookLink.Domain.Card.Card;
 import BookLink.BookLink.Domain.Common.BaseTimeEntity;
+import BookLink.BookLink.Domain.Review.Review;
 import lombok.*;
 
 import javax.persistence.*;
 import java.net.URL;
 import java.time.LocalDate;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -16,6 +18,7 @@ public class Member extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@Column(name = "member_id")
     private Long member_id;
 
     private String email; // 아이디
@@ -35,6 +38,9 @@ public class Member extends BaseTimeEntity {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "card_id")
     private Card card;
+
+    @OneToMany(mappedBy = "writer") // 가짜 매핑
+    private List<Review> reviews = new ArrayList<>();
 
     @Builder
     public Member(String email, String password, String nickname, String name, LocalDate birth, String address) {

@@ -1,4 +1,4 @@
-package BookLink.BookLink.Service.MemberService;
+package BookLink.BookLink.Service.Member;
 
 import BookLink.BookLink.Domain.Member.LoginDto;
 import BookLink.BookLink.Domain.Member.Member;
