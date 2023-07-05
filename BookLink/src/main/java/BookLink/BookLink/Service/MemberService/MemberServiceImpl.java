@@ -45,6 +45,7 @@ public class MemberServiceImpl implements MemberService{
         Member member = MemberDto.Request.toEntity(memberDto);
         memberRepository.save(member);
 
+        responseDto.setStatus(HttpStatus.OK);
         responseDto.setMessage("DB 저장 완료");
         return responseDto;
     }
@@ -82,11 +83,11 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
-    public ResponseDto loginJwt(LoginDto.Request loginDto, HttpServletResponse response) throws Exception {
-
-        Optional<Member> selectedMember = memberRepository.findByEmail(loginDto.getEmail());
+    public ResponseDto loginJwt(LoginDto.Request loginDto, HttpServletResponse response) {
 
         ResponseDto responseDto = new ResponseDto();
+
+        Optional<Member> selectedMember = memberRepository.findByEmail(loginDto.getEmail());
 
         if (selectedMember.isEmpty()) {
             responseDto.setStatus(HttpStatus.UNAUTHORIZED);
@@ -103,7 +104,7 @@ public class MemberServiceImpl implements MemberService{
         // 성공 시 access, refresh 토큰 생성
         TokenDto newTokenDto = jwtUtil.createAllToken(loginDto.getEmail());
 
-        // Refresh Token 존재 유무 확인
+        // Refresh Token 존재 확인
         Optional<RefreshToken> refreshToken = refreshTokenRepository.findByMemberEmail(loginDto.getEmail());
 
         if (refreshToken.isPresent()) { // 존재 -> 토큰 업데이트
@@ -114,12 +115,11 @@ public class MemberServiceImpl implements MemberService{
             );
         }
 
-        response.addHeader("Access_Token", newTokenDto.getAccessToken());
-        response.addHeader("Refresh_Token", newTokenDto.getRefreshToken());
+        jwtUtil.setCookieAccessToken(response, newTokenDto.getAccessToken());
+        jwtUtil.setCookieRefreshToken(response, newTokenDto.getRefreshToken());
 
         responseDto.setStatus(HttpStatus.OK);
         responseDto.setMessage("로그인 성공");
-        responseDto.setData(newTokenDto);
 
         return responseDto;
     }
