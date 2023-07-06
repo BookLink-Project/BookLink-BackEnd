@@ -1,4 +1,4 @@
-package BookLink.BookLink.Service.MemberService;
+package BookLink.BookLink.Service.Member;
 
 import BookLink.BookLink.Domain.Member.LoginDto;
 import BookLink.BookLink.Domain.Member.Member;
@@ -90,13 +90,13 @@ public class MemberServiceImpl implements MemberService{
         Optional<Member> selectedMember = memberRepository.findByEmail(loginDto.getEmail());
 
         if (selectedMember.isEmpty()) {
-            responseDto.setStatus(HttpStatus.UNAUTHORIZED);
+            responseDto.setStatus(HttpStatus.NOT_FOUND);
             responseDto.setMessage("없는 이메일");
             return responseDto;
         }
 
         if (!passwordEncoder.matches(loginDto.getPassword(), selectedMember.get().getPassword())) {
-            responseDto.setStatus(HttpStatus.UNAUTHORIZED);
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
             responseDto.setMessage("잘못된 비밀번호");
             return responseDto;
         }
@@ -120,6 +120,11 @@ public class MemberServiceImpl implements MemberService{
 
         responseDto.setStatus(HttpStatus.OK);
         responseDto.setMessage("로그인 성공");
+
+        Member loginMember = selectedMember.get();
+        LoginDto.Response loginData = new LoginDto.Response(loginMember.getEmail(), loginMember.getName(), loginMember.getNickname());
+
+        responseDto.setData(loginData);
 
         return responseDto;
     }

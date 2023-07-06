@@ -1,4 +1,4 @@
-package BookLink.BookLink.Service.EmailService;
+package BookLink.BookLink.Service.Email;
 
 import BookLink.BookLink.Domain.Email.EmailDto;
 

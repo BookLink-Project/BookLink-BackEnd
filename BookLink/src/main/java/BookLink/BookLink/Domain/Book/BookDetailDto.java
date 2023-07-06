@@ -10,20 +10,23 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class BookListDto {
+public class BookDetailDto {
 
-    List<Item> item =  new ArrayList<>();
+    List<Item> item = new ArrayList<>();
 
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
     static class Item {
+
         private String isbn13;
         private String title;
         private String author;
         private String publisher;
-        private String priceStandard;
+        private String pubDate;
+        private String description;
         private String cover;
+
     }
 
 }
