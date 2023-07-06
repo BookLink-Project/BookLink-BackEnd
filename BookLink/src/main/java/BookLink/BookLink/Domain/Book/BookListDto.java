@@ -18,6 +18,7 @@ public class BookListDto {
     @NoArgsConstructor
     @AllArgsConstructor
     static class Item {
+        private String isbn13;
         private String title;
         private String author;
         private String publisher;

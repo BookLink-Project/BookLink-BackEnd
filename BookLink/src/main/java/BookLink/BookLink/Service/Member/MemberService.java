@@ -1,9 +1,8 @@
-package BookLink.BookLink.Service.MemberService;
+package BookLink.BookLink.Service.Member;
 
 import BookLink.BookLink.Domain.Member.LoginDto;
 import BookLink.BookLink.Domain.Member.MemberDto;
 import BookLink.BookLink.Domain.ResponseDto;
-import BookLink.BookLink.Domain.Token.TokenDto;
 
 import javax.servlet.http.HttpServletResponse;
 

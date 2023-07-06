@@ -1,8 +1,7 @@
-package BookLink.BookLink.Service.EmailService;
+package BookLink.BookLink.Service.Email;
 
 import BookLink.BookLink.Domain.Email.EmailDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;

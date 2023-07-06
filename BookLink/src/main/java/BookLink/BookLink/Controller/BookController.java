@@ -1,22 +1,25 @@
 package BookLink.BookLink.Controller;
 
 import BookLink.BookLink.Domain.Book.BookDto;
-import BookLink.BookLink.Domain.Book.BookSearchDto;
+import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.ResponseDto;
+import BookLink.BookLink.Domain.Review.ReviewDto;
 import BookLink.BookLink.Service.Book.BookService;
-import lombok.Getter;
+import BookLink.BookLink.Service.Review.ReviewService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-
+@Slf4j
 @RestController
 @RequiredArgsConstructor // 생성자 주입
 @RequestMapping("/api/v1/book")
 public class BookController {
 
     private final BookService bookService;
+    private final ReviewService reviewService;
 
     // 책 검색
     @GetMapping("/aladdin/search")
@@ -57,12 +60,24 @@ public class BookController {
                 .body(responseDto);
     }
 
-//    @GetMapping("/{bookId}") // 상세 조회
-//    public ResponseEntity<ResponseDto> showBook(@PathVariable int bookId) {
-//        return ResponseEntity.status(responseDto.getStatus())
-//                .body(responseDto);
-//    }
-//    @PostMapping("/{bookId}") // 후기 작성
-//    public ResponseEntity<ResponseDto> writeReview() {
-//    }
+    @GetMapping("/{isbn}") // 상세 조회
+    public ResponseEntity<ResponseDto> showBook(@PathVariable String isbn) {
+
+        ResponseDto responseDto = bookService.showBook(isbn);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+    }
+
+    @PostMapping("/{isbn}") // 후기 작성
+    public ResponseEntity<ResponseDto> writeReview(@PathVariable String isbn,
+                                                   @RequestBody ReviewDto reviewDto,
+                                                   @AuthenticationPrincipal String memEmail) {
+
+        log.info("member = {}", memEmail);
+        ResponseDto responseDto = reviewService.writeReview(memEmail, isbn, reviewDto);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+    }
 }

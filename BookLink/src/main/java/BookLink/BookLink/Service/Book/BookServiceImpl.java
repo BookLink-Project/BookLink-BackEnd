@@ -28,6 +28,7 @@ public class BookServiceImpl implements BookService{
 
     private String search_url = "http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=ttbelwlahstmxjf2304001&&QueryType=Title&MaxResults=10&start=1&SearchTarget=Book&output=js&InputEncoding=utf-8&Version=20131101";
     private String list_url = "http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=ttbelwlahstmxjf2304001&QueryType=Bestseller&MaxResults=10&start=1&SearchTarget=Book&output=js&Version=20131101";
+    private String detail_url = "http://www.aladin.co.kr/ttb/api/ItemLookUp.aspx?ttbkey=ttbelwlahstmxjf2304001&itemIdType=ISBN13&output=js&Version=20131101";
     private String key = "ttbelwlahstmxjf2057001";
 
     @Override
@@ -95,7 +96,7 @@ public class BookServiceImpl implements BookService{
     }
 
     @Override
-    public ResponseDto listAllBook(Integer category) { // 목록 조회
+    public ResponseDto listAllBook(Integer category) {
 
         ResponseDto responseDto = new ResponseDto();
 
@@ -113,7 +114,7 @@ public class BookServiceImpl implements BookService{
         BookListDto result = result_response.getBody();
 
         responseDto.setStatus(HttpStatus.OK);
-        responseDto.setMessage("도서 목록 조회 완료");
+        responseDto.setMessage("성공");
         responseDto.setData(result);
 
         return responseDto;
@@ -126,20 +127,41 @@ public class BookServiceImpl implements BookService{
 
         RestTemplate restTemplate = new RestTemplate();
 
-        URI targetUrl = UriComponentsBuilder
+        URI targetUri = UriComponentsBuilder
                 .fromUriString(search_url)
                 .queryParam("CategoryId", category != null ? category : 0)
                 .queryParam("query", searchWord)
-                .build()
-                .encode(StandardCharsets.UTF_8)
-                .toUri();
+                .build().encode(StandardCharsets.UTF_8).toUri();
 
-        ResponseEntity<BookListDto> result_response = restTemplate.exchange(targetUrl, HttpMethod.GET, null, BookListDto.class);
+        ResponseEntity<BookListDto> result_response = restTemplate.exchange(targetUri, HttpMethod.GET, null, BookListDto.class);
 
         BookListDto result = result_response.getBody();
 
         responseDto.setStatus(HttpStatus.OK);
-        responseDto.setMessage("검색 결과 조회 완료");
+        responseDto.setMessage("성공");
+        responseDto.setData(result);
+
+        return responseDto;
+    }
+
+    @Override
+    public ResponseDto showBook(String isbn13) {
+
+        ResponseDto responseDto = new ResponseDto();
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        URI targetUri = UriComponentsBuilder
+                .fromUriString(detail_url)
+                .queryParam("ItemId", isbn13)
+                .build().encode(StandardCharsets.UTF_8).toUri();
+
+        ResponseEntity<BookDetailDto> result_response = restTemplate.exchange(targetUri, HttpMethod.GET, null, BookDetailDto.class);
+
+        BookDetailDto result = result_response.getBody();
+
+        responseDto.setStatus(HttpStatus.OK);
+        responseDto.setMessage("성공");
         responseDto.setData(result);
 
         return responseDto;
