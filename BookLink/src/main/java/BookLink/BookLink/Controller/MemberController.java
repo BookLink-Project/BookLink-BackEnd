@@ -40,6 +40,7 @@ public class MemberController {
                 .body(responseDto);
     }
 
+
     @PostMapping(value = "/double-check/{nickname}")
     public ResponseEntity<ResponseDto> emailDoubleCheck(@PathVariable String nickname) {
         ResponseDto responseDto = memberService.nicknameDoubleCheck(nickname);
