@@ -3,13 +3,16 @@ package BookLink.BookLink.Domain.Member;
 import BookLink.BookLink.Domain.Book.BookRent;
 import BookLink.BookLink.Domain.Card.Card;
 import BookLink.BookLink.Domain.Common.BaseTimeEntity;
+import BookLink.BookLink.Domain.Review.Review;
+
 import lombok.*;
 
 import javax.persistence.*;
 import java.net.URL;
 import java.time.LocalDate;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Date;
 
 @Entity
 @Getter
@@ -37,6 +40,9 @@ public class Member extends BaseTimeEntity {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "card_id")
     private Card card;
+
+    @OneToMany(mappedBy = "writer") // 가짜 매핑
+    private List<Review> reviews = new ArrayList<>();
 
 //    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
 //    @JoinColumn(name = "rent_id")

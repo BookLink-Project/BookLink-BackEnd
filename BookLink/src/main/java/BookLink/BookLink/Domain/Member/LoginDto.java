@@ -14,7 +14,15 @@ public class LoginDto {
     @AllArgsConstructor
     public static class Request {
         private String email;
-
         private String password;
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Response {
+        private String email;
+        private String name;
+        private String nickname;
     }
 }
