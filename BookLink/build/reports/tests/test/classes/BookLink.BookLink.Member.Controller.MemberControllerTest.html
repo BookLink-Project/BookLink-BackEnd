@@ -29,7 +29,7 @@
 </td>
 <td>
 <div class="infoBox" id="failures">
-<div class="counter">0</div>
+<div class="counter">1</div>
 <p>failures</p>
 </div>
 </td>
@@ -41,7 +41,7 @@
 </td>
 <td>
 <div class="infoBox" id="duration">
-<div class="counter">13.158s</div>
+<div class="counter">0.741s</div>
 <p>duration</p>
 </div>
 </td>
@@ -50,8 +50,8 @@
 </div>
 </td>
 <td>
-<div class="infoBox success" id="successRate">
-<div class="percent">100%</div>
+<div class="infoBox failures" id="successRate">
+<div class="percent">0%</div>
 <p>successful</p>
 </div>
 </td>
@@ -61,13 +61,113 @@
 <div id="tabs">
 <ul class="tabLinks">
 <li>
-<a href="#tab0">Tests</a>
+<a href="#tab0">Failed tests</a>
 </li>
 <li>
-<a href="#tab1">Standard output</a>
+<a href="#tab1">Tests</a>
+</li>
+<li>
+<a href="#tab2">Standard output</a>
 </li>
 </ul>
 <div id="tab0" class="tab">
+<h2>Failed tests</h2>
+<div class="test">
+<a name="email_doubleCheck()"></a>
+<h3 class="failures">email_doubleCheck()</h3>
+<span class="code">
+<pre>java.lang.NoSuchMethodError: BookLink.BookLink.Domain.Member.Member$MemberBuilder.birth(Ljava/util/Date;)LBookLink/BookLink/Domain/Member/Member$MemberBuilder;
+	at BookLink.BookLink.Member.Controller.MemberControllerTest.email_doubleCheck(MemberControllerTest.java:46)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:725)
+	at org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:149)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestableMethod(TimeoutExtension.java:140)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestMethod(TimeoutExtension.java:84)
+	at org.junit.jupiter.engine.execution.ExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(ExecutableInvoker.java:115)
+	at org.junit.jupiter.engine.execution.ExecutableInvoker.lambda$invoke$0(ExecutableInvoker.java:105)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed(InvocationInterceptorChain.java:106)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(InvocationInterceptorChain.java:64)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(InvocationInterceptorChain.java:45)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(InvocationInterceptorChain.java:37)
+	at org.junit.jupiter.engine.execution.ExecutableInvoker.invoke(ExecutableInvoker.java:104)
+	at org.junit.jupiter.engine.execution.ExecutableInvoker.invoke(ExecutableInvoker.java:98)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeTestMethod$7(TestMethodTestDescriptor.java:214)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeTestMethod(TestMethodTestDescriptor.java:210)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:135)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:66)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:151)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1541)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1541)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:107)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:88)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:54)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:67)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:52)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:114)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:86)
+	at org.junit.platform.launcher.core.DefaultLauncherSession$DelegatingLauncher.execute(DefaultLauncherSession.java:86)
+	at org.junit.platform.launcher.core.SessionPerRequestLauncher.execute(SessionPerRequestLauncher.java:53)
+	at org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestClassProcessor$CollectAllTestClassesExecutor.processAllTestClasses(JUnitPlatformTestClassProcessor.java:99)
+	at org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestClassProcessor$CollectAllTestClassesExecutor.access$000(JUnitPlatformTestClassProcessor.java:79)
+	at org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestClassProcessor.stop(JUnitPlatformTestClassProcessor.java:75)
+	at org.gradle.api.internal.tasks.testing.SuiteTestClassProcessor.stop(SuiteTestClassProcessor.java:62)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:36)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:24)
+	at org.gradle.internal.dispatch.ContextClassLoaderDispatch.dispatch(ContextClassLoaderDispatch.java:33)
+	at org.gradle.internal.dispatch.ProxyDispatchAdapter$DispatchingInvocationHandler.invoke(ProxyDispatchAdapter.java:94)
+	at com.sun.proxy.$Proxy2.stop(Unknown Source)
+	at org.gradle.api.internal.tasks.testing.worker.TestWorker$3.run(TestWorker.java:193)
+	at org.gradle.api.internal.tasks.testing.worker.TestWorker.executeAndMaintainThreadName(TestWorker.java:129)
+	at org.gradle.api.internal.tasks.testing.worker.TestWorker.execute(TestWorker.java:100)
+	at org.gradle.api.internal.tasks.testing.worker.TestWorker.execute(TestWorker.java:60)
+	at org.gradle.process.internal.worker.child.ActionExecutionWorker.execute(ActionExecutionWorker.java:56)
+	at org.gradle.process.internal.worker.child.SystemApplicationClassLoaderWorker.call(SystemApplicationClassLoaderWorker.java:113)
+	at org.gradle.process.internal.worker.child.SystemApplicationClassLoaderWorker.call(SystemApplicationClassLoaderWorker.java:65)
+	at worker.org.gradle.process.internal.worker.GradleWorkerMain.run(GradleWorkerMain.java:69)
+	at worker.org.gradle.process.internal.worker.GradleWorkerMain.main(GradleWorkerMain.java:74)
+</pre>
+</span>
+</div>
+</div>
+<div id="tab1" class="tab">
 <h2>Tests</h2>
 <table>
 <thead>
@@ -78,21 +178,31 @@
 </tr>
 </thead>
 <tr>
-<td class="success">email_doubleCheck()</td>
-<td class="success">13.158s</td>
-<td class="success">passed</td>
+<td class="failures">email_doubleCheck()</td>
+<td class="failures">0.741s</td>
+<td class="failures">failed</td>
 </tr>
 </table>
 </div>
-<div id="tab1" class="tab">
+<div id="tab2" class="tab">
 <h2>Standard output</h2>
 <span class="code">
-<pre>2023-06-27 17:40:34.026  INFO 4876 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Neither @ContextConfiguration nor @ContextHierarchy found for test class [BookLink.BookLink.Member.Controller.MemberControllerTest], using SpringBootContextLoader
-2023-06-27 17:40:34.029  INFO 4876 --- [    Test worker] o.s.t.c.support.AbstractContextLoader    : Could not detect default resource locations for test class [BookLink.BookLink.Member.Controller.MemberControllerTest]: no resource found for suffixes {-context.xml, Context.groovy}.
-2023-06-27 17:40:34.031  INFO 4876 --- [    Test worker] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [BookLink.BookLink.Member.Controller.MemberControllerTest]: MemberControllerTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-2023-06-27 17:40:34.071  INFO 4876 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration BookLink.BookLink.BookLinkApplication for test class BookLink.BookLink.Member.Controller.MemberControllerTest
-2023-06-27 17:40:34.075  INFO 4876 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Loaded default TestExecutionListener class names from location [META-INF/spring.factories]: [org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener, org.springframework.boot.test.autoconfigure.webservices.client.MockWebServiceServerTestExecutionListener, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener, org.springframework.test.context.web.ServletTestExecutionListener, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener, org.springframework.test.context.event.ApplicationEventsTestExecutionListener, org.springframework.test.context.support.DependencyInjectionTestExecutionListener, org.springframework.test.context.support.DirtiesContextTestExecutionListener, org.springframework.test.context.transaction.TransactionalTestExecutionListener, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener, org.springframework.test.context.event.EventPublishingTestExecutionListener]
-2023-06-27 17:40:34.076  INFO 4876 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Using TestExecutionListeners: [org.springframework.test.context.web.ServletTestExecutionListener@1297cf8, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@37e15055, org.springframework.test.context.event.ApplicationEventsTestExecutionListener@57d1edf0, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener@39adf4e6, org.springframework.boot.test.autoconfigure.SpringBootDependencyInjectionTestExecutionListener@73299197, org.springframework.test.context.support.DirtiesContextTestExecutionListener@4ef7145f, org.springframework.test.context.transaction.TransactionalTestExecutionListener@1611ce1c, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener@40cd02fc, org.springframework.test.context.event.EventPublishingTestExecutionListener@7fd7965b, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener@9742012, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener@118d7e0e, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener@39ff4421, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener@7a59780b, org.springframework.boot.test.autoconfigure.webservices.client.MockWebServiceServerTestExecutionListener@5205b3e2, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener@2802caa2]
+<pre>15:46:39.828 [Test worker] DEBUG org.springframework.test.context.BootstrapUtils - Instantiating CacheAwareContextLoaderDelegate from class [org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate]
+15:46:39.841 [Test worker] DEBUG org.springframework.test.context.BootstrapUtils - Instantiating BootstrapContext using constructor [public org.springframework.test.context.support.DefaultBootstrapContext(java.lang.Class,org.springframework.test.context.CacheAwareContextLoaderDelegate)]
+15:46:39.871 [Test worker] DEBUG org.springframework.test.context.BootstrapUtils - Instantiating TestContextBootstrapper for test class [BookLink.BookLink.Member.Controller.MemberControllerTest] from class [org.springframework.boot.test.context.SpringBootTestContextBootstrapper]
+15:46:39.882 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Neither @ContextConfiguration nor @ContextHierarchy found for test class [BookLink.BookLink.Member.Controller.MemberControllerTest], using SpringBootContextLoader
+15:46:39.887 [Test worker] DEBUG org.springframework.test.context.support.AbstractContextLoader - Did not detect default resource location for test class [BookLink.BookLink.Member.Controller.MemberControllerTest]: class path resource [BookLink/BookLink/Member/Controller/MemberControllerTest-context.xml] does not exist
+15:46:39.887 [Test worker] DEBUG org.springframework.test.context.support.AbstractContextLoader - Did not detect default resource location for test class [BookLink.BookLink.Member.Controller.MemberControllerTest]: class path resource [BookLink/BookLink/Member/Controller/MemberControllerTestContext.groovy] does not exist
+15:46:39.888 [Test worker] INFO org.springframework.test.context.support.AbstractContextLoader - Could not detect default resource locations for test class [BookLink.BookLink.Member.Controller.MemberControllerTest]: no resource found for suffixes {-context.xml, Context.groovy}.
+15:46:39.888 [Test worker] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [BookLink.BookLink.Member.Controller.MemberControllerTest]: MemberControllerTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+15:46:39.931 [Test worker] DEBUG org.springframework.test.context.support.ActiveProfilesUtils - Could not find an 'annotation declaring class' for annotation type [org.springframework.test.context.ActiveProfiles] and class [BookLink.BookLink.Member.Controller.MemberControllerTest]
+15:46:39.988 [Test worker] DEBUG org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider - Identified candidate component class: file [C:\Users\elwla\local_BookLink\BookLink-BackEnd\BookLink\build\classes\java\main\BookLink\BookLink\BookLinkApplication.class]
+15:46:39.989 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration BookLink.BookLink.BookLinkApplication for test class BookLink.BookLink.Member.Controller.MemberControllerTest
+15:46:40.092 [Test worker] DEBUG org.springframework.boot.test.context.SpringBootTestContextBootstrapper - @TestExecutionListeners is not present for class [BookLink.BookLink.Member.Controller.MemberControllerTest]: using defaults.
+15:46:40.093 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Loaded default TestExecutionListener class names from location [META-INF/spring.factories]: [org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener, org.springframework.boot.test.autoconfigure.webservices.client.MockWebServiceServerTestExecutionListener, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener, org.springframework.test.context.web.ServletTestExecutionListener, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener, org.springframework.test.context.event.ApplicationEventsTestExecutionListener, org.springframework.test.context.support.DependencyInjectionTestExecutionListener, org.springframework.test.context.support.DirtiesContextTestExecutionListener, org.springframework.test.context.transaction.TransactionalTestExecutionListener, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener, org.springframework.test.context.event.EventPublishingTestExecutionListener]
+15:46:40.110 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Using TestExecutionListeners: [org.springframework.test.context.web.ServletTestExecutionListener@6a175569, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@11963225, org.springframework.test.context.event.ApplicationEventsTestExecutionListener@3f3c966c, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener@11ee02f8, org.springframework.boot.test.autoconfigure.SpringBootDependencyInjectionTestExecutionListener@4102b1b1, org.springframework.test.context.support.DirtiesContextTestExecutionListener@61a5b4ae, org.springframework.test.context.transaction.TransactionalTestExecutionListener@3a71c100, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener@5b69fd74, org.springframework.test.context.event.EventPublishingTestExecutionListener@f325091, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener@437e951d, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener@77b325b3, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener@63a5e46c, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener@7e8e8651, org.springframework.boot.test.autoconfigure.webservices.client.MockWebServiceServerTestExecutionListener@49ef32e0, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener@271f18d3]
+15:46:40.114 [Test worker] DEBUG org.springframework.test.context.support.AbstractDirtiesContextTestExecutionListener - Before test class: context [DefaultTestContext@74a9c4b0 testClass = MemberControllerTest, testInstance = [null], testMethod = [null], testException = [null], mergedContextConfiguration = [WebMergedContextConfiguration@85ec632 testClass = MemberControllerTest, locations = '{}', classes = '{class BookLink.BookLink.BookLinkApplication}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{org.springframework.boot.test.context.SpringBootTestContextBootstrapper=true, server.port=0}', contextCustomizers = set[org.springframework.boot.test.autoconfigure.actuate.metrics.MetricsExportContextCustomizerFactory$DisableMetricExportContextCustomizer@5c87bfe2, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@0, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizerFactory$Customizer@41925502, org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@618c5d94, org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@3b956878, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.web.client.TestRestTemplateContextCustomizer@630cb4a4, org.springframework.boot.test.context.SpringBootTestArgs@1, org.springframework.boot.test.context.SpringBootTestWebEnvironment@1130520d], resourceBasePath = 'src/main/webapp', contextLoader = 'org.springframework.boot.test.context.SpringBootContextLoader', parent = [null]], attributes = map['org.springframework.test.context.web.ServletTestExecutionListener.activateListener' -&gt; false]], class annotated with @DirtiesContext [false] with mode [null].
+15:46:40.128 [Test worker] DEBUG org.springframework.test.context.support.DependencyInjectionTestExecutionListener - Performing dependency injection for test context [[DefaultTestContext@74a9c4b0 testClass = MemberControllerTest, testInstance = BookLink.BookLink.Member.Controller.MemberControllerTest@130a0f66, testMethod = [null], testException = [null], mergedContextConfiguration = [WebMergedContextConfiguration@85ec632 testClass = MemberControllerTest, locations = '{}', classes = '{class BookLink.BookLink.BookLinkApplication}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{org.springframework.boot.test.context.SpringBootTestContextBootstrapper=true, server.port=0}', contextCustomizers = set[org.springframework.boot.test.autoconfigure.actuate.metrics.MetricsExportContextCustomizerFactory$DisableMetricExportContextCustomizer@5c87bfe2, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@0, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizerFactory$Customizer@41925502, org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@618c5d94, org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@3b956878, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.web.client.TestRestTemplateContextCustomizer@630cb4a4, org.springframework.boot.test.context.SpringBootTestArgs@1, org.springframework.boot.test.context.SpringBootTestWebEnvironment@1130520d], resourceBasePath = 'src/main/webapp', contextLoader = 'org.springframework.boot.test.context.SpringBootContextLoader', parent = [null]], attributes = map['org.springframework.test.context.web.ServletTestExecutionListener.activateListener' -&gt; false, 'org.springframework.test.context.event.ApplicationEventsTestExecutionListener.recordApplicationEvents' -&gt; false]]].
 
   .   ____          _            __ _ _
  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
@@ -102,63 +212,193 @@
  =========|_|==============|___/=/_/_/_/
  :: Spring Boot ::               (v2.7.12)
 
-2023-06-27 17:40:34.214  INFO 4876 --- [    Test worker] B.B.M.Controller.MemberControllerTest    : Starting MemberControllerTest using Java 11.0.18 on DESKTOP-NHEQ01O with PID 4876 (started by 82102 in C:\githubfile\BookLink-BackEnd\BookLink)
-2023-06-27 17:40:34.214  INFO 4876 --- [    Test worker] B.B.M.Controller.MemberControllerTest    : No active profile set, falling back to 1 default profile: &quot;default&quot;
-2023-06-27 17:40:34.908  INFO 4876 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2023-06-27 17:40:35.098  INFO 4876 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 189 ms. Found 2 JPA repository interfaces.
-2023-06-27 17:40:36.035  INFO 4876 --- [    Test worker] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 0 (http)
-2023-06-27 17:40:36.076  INFO 4876 --- [    Test worker] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2023-06-27 17:40:36.077  INFO 4876 --- [    Test worker] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.75]
-2023-06-27 17:40:36.772  INFO 4876 --- [    Test worker] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2023-06-27 17:40:36.773  INFO 4876 --- [    Test worker] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2553 ms
-2023-06-27 17:40:37.575  INFO 4876 --- [    Test worker] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2023-06-27 17:40:37.607  INFO 4876 --- [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Starting...
-2023-06-27 17:40:37.689  INFO 4876 --- [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Start completed.
-2023-06-27 17:40:37.689  INFO 4876 --- [    Test worker] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.MySQL8Dialect
-2023-06-27 17:40:37.818  INFO 4876 --- [    Test worker] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
-2023-06-27 17:40:37.819  INFO 4876 --- [    Test worker] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2023-06-27 17:40:38.437  WARN 4876 --- [    Test worker] .s.s.UserDetailsServiceAutoConfiguration : 
+2023-07-07 15:46:40.480  WARN 21112 --- [    Test worker] ory$DuplicateJsonObjectContextCustomizer : 
 
-Using generated security password: 4260a514-1a33-43e8-9806-07767485ce5a
+Found multiple occurrences of org.json.JSONObject on the class path:
+
+	jar:file:/C:/Users/elwla/.gradle/caches/modules-2/files-2.1/org.json/json/20230618/1ae16df7d556d02713e241086f878399e99260d6/json-20230618.jar!/org/json/JSONObject.class
+	jar:file:/C:/Users/elwla/.gradle/caches/modules-2/files-2.1/com.vaadin.external.google/android-json/0.0.20131108.vaadin1/fa26d351fe62a6a17f5cda1287c1c6110dec413f/android-json-0.0.20131108.vaadin1.jar!/org/json/JSONObject.class
+
+You may wish to exclude one of them to ensure predictable runtime behavior
+
+2023-07-07 15:46:40.495  INFO 21112 --- [    Test worker] B.B.M.Controller.MemberControllerTest    : Starting MemberControllerTest using Java 11.0.12 on DESKTOP-RO10INV with PID 21112 (started by elwla in C:\Users\elwla\local_BookLink\BookLink-BackEnd\BookLink)
+2023-07-07 15:46:40.496  INFO 21112 --- [    Test worker] B.B.M.Controller.MemberControllerTest    : No active profile set, falling back to 1 default profile: &quot;default&quot;
+2023-07-07 15:46:41.888  INFO 21112 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2023-07-07 15:46:42.035  INFO 21112 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 134 ms. Found 6 JPA repository interfaces.
+2023-07-07 15:46:43.151  INFO 21112 --- [    Test worker] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 0 (http)
+2023-07-07 15:46:43.170  INFO 21112 --- [    Test worker] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2023-07-07 15:46:43.171  INFO 21112 --- [    Test worker] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.75]
+2023-07-07 15:46:43.456  INFO 21112 --- [    Test worker] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2023-07-07 15:46:43.457  INFO 21112 --- [    Test worker] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2623 ms
+2023-07-07 15:46:44.029  INFO 21112 --- [    Test worker] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2023-07-07 15:46:44.117  INFO 21112 --- [    Test worker] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 5.6.15.Final
+2023-07-07 15:46:44.384  INFO 21112 --- [    Test worker] o.hibernate.annotations.common.Version   : HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+2023-07-07 15:46:44.543  INFO 21112 --- [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2023-07-07 15:46:45.036  INFO 21112 --- [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2023-07-07 15:46:45.091  INFO 21112 --- [    Test worker] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.MySQL8Dialect
+Hibernate: 
+    
+    alter table book 
+       drop 
+       foreign key FKaoxvbsn93yctegl1g2a4bb49y
+Hibernate: 
+    
+    alter table member 
+       drop 
+       foreign key FKt2e7qxw08gny8n2fcalh0ynmy
+Hibernate: 
+    
+    alter table review 
+       drop 
+       foreign key FK5v4o1yeqvnsmucwwvi61y6b8t
+Hibernate: 
+    
+    drop table if exists book
+Hibernate: 
+    
+    drop table if exists book_image
+Hibernate: 
+    
+    drop table if exists book_rent
+Hibernate: 
+    
+    drop table if exists card
+Hibernate: 
+    
+    drop table if exists hibernate_sequence
+Hibernate: 
+    
+    drop table if exists member
+Hibernate: 
+    
+    drop table if exists refresh_token
+Hibernate: 
+    
+    drop table if exists review
+Hibernate: 
+    
+    create table book (
+       id bigint not null auto_increment,
+        created_time datetime(6),
+        last_modified_time datetime(6),
+        authors varchar(255),
+        category_name varchar(255),
+        cover varchar(255),
+        description varchar(255),
+        isbn varchar(255),
+        price_sales integer,
+        price_standard integer,
+        publisher varchar(255),
+        pud_date date,
+        recommend_contents varchar(255),
+        rent_signal bit,
+        title varchar(255),
+        rent_id bigint,
+        primary key (id)
+    ) engine=InnoDB
+Hibernate: 
+    
+    create table book_image (
+       id integer not null,
+        file_size bigint not null,
+        original_file_name varchar(255),
+        stored_file_path varchar(255),
+        primary key (id)
+    ) engine=InnoDB
+Hibernate: 
+    
+    create table book_rent (
+       rent_id bigint not null auto_increment,
+        book_rating integer,
+        book_status varchar(255),
+        book_status_exp varchar(255),
+        max_date integer,
+        min_date integer,
+        rental_fee integer,
+        primary key (rent_id)
+    ) engine=InnoDB
+Hibernate: 
+    
+    create table card (
+       card_id bigint not null auto_increment,
+        bank varchar(255),
+        cvc integer not null,
+        number varchar(255),
+        valid_date datetime(6),
+        primary key (card_id)
+    ) engine=InnoDB
+Hibernate: 
+    
+    create table hibernate_sequence (
+       next_val bigint
+    ) engine=InnoDB
+Hibernate: 
+    
+    insert into hibernate_sequence values ( 1 )
+Hibernate: 
+    
+    create table member (
+       member_id bigint not null auto_increment,
+        created_time datetime(6),
+        last_modified_time datetime(6),
+        address varchar(255),
+        birth date,
+        email varchar(255),
+        image varchar(255),
+        name varchar(255),
+        nickname varchar(255),
+        password varchar(255),
+        card_id bigint,
+        primary key (member_id)
+    ) engine=InnoDB
+Hibernate: 
+    
+    create table refresh_token (
+       id bigint not null auto_increment,
+        member_email varchar(255),
+        token varchar(255),
+        primary key (id)
+    ) engine=InnoDB
+Hibernate: 
+    
+    create table review (
+       id bigint not null auto_increment,
+        content varchar(255),
+        date datetime(6),
+        isbn varchar(255),
+        writer bigint,
+        primary key (id)
+    ) engine=InnoDB
+Hibernate: 
+    
+    alter table book 
+       add constraint FKaoxvbsn93yctegl1g2a4bb49y 
+       foreign key (rent_id) 
+       references book_rent (rent_id)
+Hibernate: 
+    
+    alter table member 
+       add constraint FKt2e7qxw08gny8n2fcalh0ynmy 
+       foreign key (card_id) 
+       references card (card_id)
+Hibernate: 
+    
+    alter table review 
+       add constraint FK5v4o1yeqvnsmucwwvi61y6b8t 
+       foreign key (writer) 
+       references member (member_id)
+2023-07-07 15:46:47.215  INFO 21112 --- [    Test worker] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2023-07-07 15:46:47.224  INFO 21112 --- [    Test worker] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2023-07-07 15:46:47.940  WARN 21112 --- [    Test worker] .s.s.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 7a68b74c-ae48-4e73-93cf-41f055b4966f
 
 This generated password is for development use only. Your security configuration must be updated before running your application in production.
 
-2023-06-27 17:40:38.657  WARN 4876 --- [    Test worker] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2023-06-27 17:40:39.584  INFO 4876 --- [    Test worker] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@5576eef4, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@76629f82, org.springframework.security.web.context.SecurityContextPersistenceFilter@500e995b, org.springframework.security.web.header.HeaderWriterFilter@8497c23, org.springframework.web.filter.CorsFilter@5beda06e, org.springframework.security.web.authentication.logout.LogoutFilter@3459ccd9, BookLink.BookLink.Config.JwtFilter@2474331d, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@ab5f1d5, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@49de2cc4, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@46977829, org.springframework.security.web.session.SessionManagementFilter@35fd987b, org.springframework.security.web.access.ExceptionTranslationFilter@1179731c, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@7011eee0]
-2023-06-27 17:40:40.890  INFO 4876 --- [    Test worker] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 1618 (http) with context path ''
-2023-06-27 17:40:40.900  INFO 4876 --- [    Test worker] B.B.M.Controller.MemberControllerTest    : Started MemberControllerTest in 6.802 seconds (JVM running for 36.609)
-Hibernate: 
-    insert 
-    into
-        member
-        (address, birth, card_id, email, image, name, nickname, password) 
-    values
-        (?, ?, ?, ?, ?, ?, ?, ?)
-Request method:	POST
-Request URI:	http://localhost:1618/api/member/email/double-check
-Proxy:			&lt;none&gt;
-Request params:	&lt;none&gt;
-Query params:	&lt;none&gt;
-Form params:	&lt;none&gt;
-Path params:	&lt;none&gt;
-Headers:		Accept=application/json
-				Content-Type=application/json
-Cookies:		&lt;none&gt;
-Multiparts:		&lt;none&gt;
-Body:
-{
-    &quot;email&quot;: &quot;test@naver.com&quot;
-}
-2023-06-27 17:40:44.878  INFO 4876 --- [o-auto-1-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
-2023-06-27 17:40:44.880  INFO 4876 --- [o-auto-1-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
-2023-06-27 17:40:44.884  INFO 4876 --- [o-auto-1-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 4 ms
-Hibernate: 
-    select
-        member0_.member_id as col_0_0_ 
-    from
-        member member0_ 
-    where
-        member0_.email=? limit ?
+2023-07-07 15:46:48.187  WARN 21112 --- [    Test worker] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2023-07-07 15:46:48.868  INFO 21112 --- [    Test worker] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@5dd79a57, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@40b7e68c, org.springframework.security.web.context.SecurityContextPersistenceFilter@665c79a2, org.springframework.security.web.header.HeaderWriterFilter@3cc5ca01, org.springframework.web.filter.CorsFilter@15d0f2a3, org.springframework.security.web.authentication.logout.LogoutFilter@4f70b659, BookLink.BookLink.Config.JwtFilter@21632bf8, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@5d1d05ff, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@5889e697, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@408708a1, org.springframework.security.web.session.SessionManagementFilter@285b63eb, org.springframework.security.web.access.ExceptionTranslationFilter@a904e64, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@5f7dbdfa]
+2023-07-07 15:46:49.683  INFO 21112 --- [    Test worker] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 56008 (http) with context path ''
+2023-07-07 15:46:49.700  INFO 21112 --- [    Test worker] B.B.M.Controller.MemberControllerTest    : Started MemberControllerTest in 9.55 seconds (JVM running for 11.091)
 </pre>
 </span>
 </div>
@@ -170,7 +410,7 @@ Hibernate:
 <input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
 </label>
 </div>Generated by 
-<a href="http://www.gradle.org">Gradle 7.6.1</a> at 2023. 6. 27. 오후 5:40:57</p>
+<a href="http://www.gradle.org">Gradle 7.6.1</a> at 2023. 7. 7. 오후 3:46:51</p>
 </div>
 </div>
 </body>
