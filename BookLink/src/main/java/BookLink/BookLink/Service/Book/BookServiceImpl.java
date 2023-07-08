@@ -71,7 +71,6 @@ public class BookServiceImpl implements BookService{
                     .description(bookDto.getDescription())
                     .isbn(bookDto.getIsbn13())
                     .price_sales(bookDto.getPrice_sales())
-                    .price_standard(bookDto.getPrice_standard())
                     .cover(bookDto.getCover())
                     .category_name(bookDto.getCategory_name())
                     .publisher(bookDto.getPublisher())
