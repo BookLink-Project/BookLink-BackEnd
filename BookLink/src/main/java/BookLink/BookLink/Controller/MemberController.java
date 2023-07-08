@@ -3,8 +3,9 @@ package BookLink.BookLink.Controller;
 import BookLink.BookLink.Domain.Email.EmailDto;
 import BookLink.BookLink.Domain.Member.LoginDto;
 import BookLink.BookLink.Domain.Member.MemberDto;
+import BookLink.BookLink.Domain.Member.NicknameDto;
 import BookLink.BookLink.Domain.ResponseDto;
-import BookLink.BookLink.Service.Email.Emailservice;
+import BookLink.BookLink.Service.Email.EmailService;
 import BookLink.BookLink.Service.Member.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 public class MemberController {
 
     private final MemberService memberService;
-    private final Emailservice emailservice;
+    private final EmailService emailservice;
 
     @PostMapping()
     public ResponseEntity<ResponseDto> joinMember(@RequestBody MemberDto.Request memberDto) {
@@ -32,7 +33,7 @@ public class MemberController {
          */
     }
 
-    @PostMapping(value = "/double-check/email")
+    @PostMapping(value = "/email/double-check")
     public ResponseEntity<ResponseDto> emailDoubleCheck(@RequestBody EmailDto.Request emailDto) {
         ResponseDto responseDto = memberService.emailDoubleCheck(emailDto.getEmail());
 
@@ -40,21 +41,32 @@ public class MemberController {
                 .body(responseDto);
     }
 
-    @PostMapping(value = "/double-check/{nickname}")
-    public ResponseEntity<ResponseDto> emailDoubleCheck(@PathVariable String nickname) {
-        ResponseDto responseDto = memberService.nicknameDoubleCheck(nickname);
+    @PostMapping(value = "/nickname/double-check")
+    public ResponseEntity<ResponseDto> emailDoubleCheck(@RequestBody NicknameDto nicknameDto) {
+        ResponseDto responseDto = memberService.nicknameDoubleCheck(nicknameDto.getNickname());
 
-        return ResponseEntity.status(responseDto.getStatus()).body(responseDto);
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
     }
 
-    @PostMapping("/email/confirm")
-    public ResponseEntity<EmailDto.Response> emailConfirm(@RequestBody EmailDto.Request emailDto) throws Exception {
+    @PostMapping(value = "/email/send")
+    public ResponseEntity<EmailDto.Response> emailSend(@RequestBody EmailDto.Request emailDto) throws Exception {
 
         EmailDto.Response responseDto = emailservice.sendSimpleMessage(emailDto.getEmail());
 
         return ResponseEntity.ok()
                 .body(responseDto);
     }
+
+    @PostMapping(value = "/email/confirm")
+    public ResponseEntity<ResponseDto> emailConfirm(@RequestBody EmailDto.Request emailDto) {
+        ResponseDto responseDto = emailservice.confirmMessage(emailDto);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+    }
+
+
 
     @PostMapping("/login")
     public ResponseEntity<ResponseDto> loginMember(@RequestBody LoginDto.Request loginDto,

@@ -15,6 +15,14 @@ public class EmailDto {
     public static class Request {
 
         private String email;
+        private String authentication_number;
+
+        public static Email toEntity(String email, String number) {
+            return Email.builder()
+                    .email(email)
+                    .number(number)
+                    .build();
+        }
 
     }
 

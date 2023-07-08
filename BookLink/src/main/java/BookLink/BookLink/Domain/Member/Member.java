@@ -5,9 +5,11 @@ import BookLink.BookLink.Domain.Card.Card;
 import BookLink.BookLink.Domain.Common.BaseTimeEntity;
 import BookLink.BookLink.Domain.Review.Review;
 
+import com.sun.istack.NotNull;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -23,16 +25,23 @@ public class Member extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long member_id;
 
+    @NotNull
     private String email; // 아이디
 
+    @NotNull
+    @Size(min = 8, max = 16)
     private String password;
 
+    @NotNull
     private String nickname;
 
+    @NotNull
     private String name; // 사용자 실명
 
+    @NotNull
     private LocalDate birth; // 생년월일
 
+    @NotNull
     private String address;
 
     private URL image; // 이미지 경로
