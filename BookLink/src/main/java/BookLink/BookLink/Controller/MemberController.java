@@ -21,7 +21,7 @@ public class MemberController {
     private final MemberService memberService;
     private final EmailService emailservice;
 
-    @PostMapping()
+    @PostMapping(value = "/register")
     public ResponseEntity<ResponseDto> joinMember(@RequestBody MemberDto.Request memberDto) {
         ResponseDto responseDto = memberService.joinMember(memberDto);
         return ResponseEntity.status(responseDto.getStatus())
@@ -49,7 +49,7 @@ public class MemberController {
                 .body(responseDto);
     }
 
-    @PostMapping(value = "/email/send")
+    @PostMapping(value = "/email/email-auth")
     public ResponseEntity<EmailDto.Response> emailSend(@RequestBody EmailDto.Request emailDto) throws Exception {
 
         EmailDto.Response responseDto = emailservice.sendSimpleMessage(emailDto.getEmail());

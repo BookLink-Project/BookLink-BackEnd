@@ -14,15 +14,10 @@ public class MemberDto {
     @AllArgsConstructor
     public static class Request {
         private String email; // 아이디
-
         private String password;
-
         private String nickname;
-
         private String name; // 사용자 실명
-
         private LocalDate birth; // 생년월일
-
         private String address;
 
         public static Member toEntity(MemberDto.Request requestDto) {
