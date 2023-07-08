@@ -1,7 +1,10 @@
 package BookLink.BookLink.Service.Email;
 
 import BookLink.BookLink.Domain.Email.EmailDto;
+import BookLink.BookLink.Domain.ResponseDto;
 
-public interface Emailservice {
+public interface EmailService {
     EmailDto.Response sendSimpleMessage(String to)throws Exception;
+
+    ResponseDto confirmMessage(EmailDto.Request emailDto);
 }

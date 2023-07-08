@@ -1,20 +1,27 @@
 package BookLink.BookLink.Service.Email;
 
+import BookLink.BookLink.Domain.Email.Email;
 import BookLink.BookLink.Domain.Email.EmailDto;
+import BookLink.BookLink.Domain.ResponseDto;
+import BookLink.BookLink.Repository.Email.EmailRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
-public class EmailServiceImpl implements Emailservice {
+public class EmailServiceImpl implements EmailService {
 
     private final JavaMailSender emailSender;
+    private final EmailRepository emailRepository;
 
     public static final String ePw = createKey();
 
@@ -72,12 +79,12 @@ public class EmailServiceImpl implements Emailservice {
     }
 
     @Override
-    public EmailDto.Response sendSimpleMessage(String to)throws Exception {
+    public EmailDto.Response sendSimpleMessage(String email)throws Exception {
 
         EmailDto.Response responseDto = new EmailDto.Response();
 
         // TODO Auto-generated method stub
-        MimeMessage message = createMessage(to);
+        MimeMessage message = createMessage(email);
         try{//예외처리
             emailSender.send(message);
         }catch(MailException es){
@@ -85,8 +92,36 @@ public class EmailServiceImpl implements Emailservice {
             throw new IllegalArgumentException();
         }
 
+        Email email_entity = EmailDto.Request.toEntity(email, ePw);
+        emailRepository.save(email_entity);
+
         responseDto.setAuthentication_number(ePw);
 
         return responseDto;
+    }
+
+    @Override
+    public ResponseDto confirmMessage(EmailDto.Request emailDto) {
+
+        ResponseDto responseDto = new ResponseDto();
+
+        Optional<Email> byEmail = emailRepository.findByEmail(emailDto.getEmail());
+        Email email = byEmail.get();
+
+        if(Objects.equals(emailDto.getAuthentication_number(), email.getNumber())) {
+            responseDto.setStatus(HttpStatus.OK);
+            responseDto.setMessage("올바른 인증번호입니다.");
+
+        }
+        else {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("올바르지 않은 인증번호입니다.");
+
+        }
+
+        emailRepository.delete(email); // 확인 후 삭제해야지 재요청시에 다시 검증을 할 수 있다.
+
+        return responseDto;
+
     }
 }
