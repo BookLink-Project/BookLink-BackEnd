@@ -20,7 +20,6 @@ public class BookDto {
         private String description; // 책 소개 요약
         private String isbn13; // 책 고유번호 13자리
         private Integer price_sales; // 정가
-        private Integer price_standard; // 도서 판매가
         private String cover; // 도서 표지 미리보기 URL
         private String category_name; // 카테고리 이름
         private String publisher;
@@ -41,7 +40,6 @@ public class BookDto {
                     .description(dto.getDescription())
                     .isbn(dto.getIsbn13())
                     .price_sales(dto.getPrice_sales())
-                    .price_standard(dto.getPrice_standard())
                     .cover(dto.getCover())
                     .category_name(dto.getCategory_name())
                     .publisher(dto.getPublisher())

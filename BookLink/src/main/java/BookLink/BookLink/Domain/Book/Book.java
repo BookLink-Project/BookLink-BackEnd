@@ -34,7 +34,7 @@ public class Book extends BaseTimeEntity {
     private String isbn; // 책 고유번호 13자리
 
     @NotNull
-    private Integer price; // 정가
+    private Integer price_sales; // 정가
 
     @NotNull
     private String cover; // 도서 표지 미리보기 URL
@@ -60,14 +60,14 @@ public class Book extends BaseTimeEntity {
 
 
     @Builder
-    public Book(Long id, String title, String authors, String description, String isbn, Integer price
+    public Book(Long id, String title, String authors, String description, String isbn, Integer price_sales
             , String cover, String category_name, String publisher, LocalDate pud_date, Boolean rent_signal, BookRent bookRent) {
         this.id = id;
         this.title = title;
         this.authors = authors;
         this.description = description;
         this.isbn = isbn;
-        this.price = price;
+        this.price_sales = price_sales;
         this.cover = cover;
         this.category_name = category_name;
         this.publisher = publisher;
