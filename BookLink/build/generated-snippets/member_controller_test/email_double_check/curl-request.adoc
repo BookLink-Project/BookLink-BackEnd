@@ -1,9 +1,0 @@
-[source,bash]
-----
-$ curl 'http://localhost:58932/api/member/double-check/email' -i -X POST \
-    -H 'Accept: application/json' \
-    -H 'Content-Type: application/json' \
-    -d '{
-  "email" : "test@naver.com"
-}'
-----
