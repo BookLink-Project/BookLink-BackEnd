@@ -14,7 +14,7 @@ public class Card {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long card_id;
+    private Long id;
 
     @NotNull
     private String bank;
