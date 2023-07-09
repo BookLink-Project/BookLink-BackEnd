@@ -3,6 +3,7 @@ package BookLink.BookLink.Domain.Member;
 import BookLink.BookLink.Domain.Book.BookRent;
 import BookLink.BookLink.Domain.Card.Card;
 import BookLink.BookLink.Domain.Common.BaseTimeEntity;
+import BookLink.BookLink.Domain.Community.FreeBoard;
 import BookLink.BookLink.Domain.Review.Review;
 
 import com.sun.istack.NotNull;
@@ -49,14 +50,19 @@ public class Member extends BaseTimeEntity {
     @JoinColumn(name = "card_id")
     private Card card;
 
-    @OneToMany(mappedBy = "writer") // 가짜 매핑
+    @OneToMany(mappedBy = "writer")
     private List<Review> reviews = new ArrayList<>();
+
+//    @OneToMany(mappedBy = "writer")
+//    private List<FreeBoard> freeBoards =new ArrayList<>();
+
 
 //    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
 //    @JoinColumn(name = "rent_id")
 //    private List<BookRent> bookRent;
 
     @Builder
+
     public Member(String email, String password, String nickname, String name, LocalDate birth, String address) {
         this.email = email;
         this.password = password;
