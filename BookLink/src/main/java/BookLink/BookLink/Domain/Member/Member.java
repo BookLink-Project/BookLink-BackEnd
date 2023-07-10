@@ -1,21 +1,17 @@
 package BookLink.BookLink.Domain.Member;
 
-import BookLink.BookLink.Domain.Book.BookRent;
 import BookLink.BookLink.Domain.Card.Card;
 import BookLink.BookLink.Domain.Common.BaseTimeEntity;
-import BookLink.BookLink.Domain.Community.FreeBoard;
 import BookLink.BookLink.Domain.Review.Review;
 
-import com.sun.istack.NotNull;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.NotNull;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Date;
 
 @Entity
 @Getter
@@ -54,7 +50,7 @@ public class Member extends BaseTimeEntity {
     private List<Review> reviews = new ArrayList<>();
 
 //    @OneToMany(mappedBy = "writer")
-//    private List<FreeBoard> freeBoards =new ArrayList<>();
+//    private List<FreeBoard> freeBoards = new ArrayList<>();
 
 
 //    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)

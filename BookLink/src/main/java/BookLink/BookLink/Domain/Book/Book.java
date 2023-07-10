@@ -2,10 +2,10 @@ package BookLink.BookLink.Domain.Book;
 
 import BookLink.BookLink.Domain.Common.BaseTimeEntity;
 import BookLink.BookLink.Domain.Common.RentalEnum;
-import com.sun.istack.NotNull;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import javax.print.DocFlavor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
