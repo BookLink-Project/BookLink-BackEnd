@@ -4,6 +4,7 @@ import BookLink.BookLink.Domain.Book.*;
 import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Repository.Book.BookRentRepository;
 import BookLink.BookLink.Repository.Book.BookRepository;
+import BookLink.BookLink.Repository.Review.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
@@ -28,6 +29,7 @@ public class BookServiceImpl implements BookService{
 
     private final BookRepository bookRepository;
     private final BookRentRepository bookRentRepository;
+    private final ReviewRepository reviewRepository;
 
     private String search_url = "http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=ttbelwlahstmxjf2304001&&QueryType=Title&MaxResults=10&start=1&SearchTarget=Book&output=js&InputEncoding=utf-8&Version=20131101";
     private String list_url = "http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=ttbelwlahstmxjf2304001&QueryType=Bestseller&MaxResults=10&start=1&SearchTarget=Book&output=js&Version=20131101";
@@ -111,9 +113,26 @@ public class BookServiceImpl implements BookService{
                 .encode(StandardCharsets.UTF_8)
                 .toUri();
 
-        ResponseEntity<BookListDto> result_response = restTemplate.exchange(targetUrl, HttpMethod.GET, null, BookListDto.class);
+        ResponseEntity<BookListDto> resultResponse = restTemplate.exchange(targetUrl, HttpMethod.GET, null, BookListDto.class);
 
-        BookListDto result = result_response.getBody();
+        BookListDto result = resultResponse.getBody();
+
+        if (result == null) {
+            return responseDto;
+        }
+
+        List<BookListDto.Item> items = result.getItem();
+
+        for (BookListDto.Item item : items) {
+            String isbn = item.getIsbn13();
+            // bookRepository.findByIsbn13(isbn); // 좋아요 수
+            // reviewRepository.countByIsbn(isbn); // 댓글 수
+
+            // dummy
+            item.setLikes((int)(Math.random()*100)); // 0~100
+            item.setReviews((int)(Math.random()*10)); // 0~10
+            item.setOwners((int)(Math.random()*10));
+        }
 
         responseDto.setStatus(HttpStatus.OK);
         responseDto.setMessage("성공");
@@ -135,9 +154,26 @@ public class BookServiceImpl implements BookService{
                 .queryParam("query", searchWord)
                 .build().encode(StandardCharsets.UTF_8).toUri();
 
-        ResponseEntity<BookListDto> result_response = restTemplate.exchange(targetUri, HttpMethod.GET, null, BookListDto.class);
+        ResponseEntity<BookListDto> resultResponse = restTemplate.exchange(targetUri, HttpMethod.GET, null, BookListDto.class);
 
-        BookListDto result = result_response.getBody();
+        BookListDto result = resultResponse.getBody();
+
+        if (result == null) {
+            return responseDto;
+        }
+
+        List<BookListDto.Item> items = result.getItem();
+
+        for (BookListDto.Item item : items) {
+            // String isbn = item.getIsbn13();
+            // bookRepository.findByIsbn13(isbn); // 좋아요 수
+            // reviewRepository.countByIsbn(isbn); // 댓글 수
+
+            // dummy
+            item.setLikes((int)(Math.random()*100)); // 0~100
+            item.setReviews((int)(Math.random()*10)); // 0~10
+            item.setOwners((int)(Math.random()*10));
+        }
 
         responseDto.setStatus(HttpStatus.OK);
         responseDto.setMessage("성공");
