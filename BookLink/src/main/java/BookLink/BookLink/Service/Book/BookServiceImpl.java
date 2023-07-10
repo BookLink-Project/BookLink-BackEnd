@@ -5,6 +5,7 @@ import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Repository.Book.BookRentRepository;
 import BookLink.BookLink.Repository.Book.BookRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -13,8 +14,10 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BookServiceImpl implements BookService{
@@ -155,13 +158,25 @@ public class BookServiceImpl implements BookService{
                 .queryParam("ItemId", isbn13)
                 .build().encode(StandardCharsets.UTF_8).toUri();
 
-        ResponseEntity<BookDetailDto> result_response = restTemplate.exchange(targetUri, HttpMethod.GET, null, BookDetailDto.class);
+        ResponseEntity<BookDetailDto> resultResponse = restTemplate.exchange(targetUri, HttpMethod.GET, null, BookDetailDto.class);
 
-        BookDetailDto result = result_response.getBody();
+        BookDetailDto result = resultResponse.getBody(); // not return null
+
+        if (result == null) {
+            return responseDto; // all null
+        }
+
+        if (result.getItem().isEmpty()) {
+            responseDto.setStatus(HttpStatus.NOT_FOUND);
+            responseDto.setMessage("없는 책");
+            responseDto.setData(null);
+
+            return responseDto;
+        }
 
         responseDto.setStatus(HttpStatus.OK);
         responseDto.setMessage("성공");
-        responseDto.setData(result);
+        responseDto.setData(result.getItem().get(0));
 
         return responseDto;
     }
