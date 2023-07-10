@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Entity
@@ -22,8 +23,10 @@ public class Review {
     @JoinColumn(name = "book_id")
     private Long bookId;
      */
+    @NotNull
     private String isbn; // TODO foreign key in API?
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "writer")
     private Member writer;
@@ -31,6 +34,7 @@ public class Review {
     @Temporal(TemporalType.TIMESTAMP)
     private Date date;
 
+    @NotNull
     private String content;
 
     // 좋아요, 싫어요, 답글 추가 예정
