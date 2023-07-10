@@ -1,7 +1,9 @@
 package BookLink.BookLink.Controller;
 
+import BookLink.BookLink.Domain.Community.BookClubDto;
 import BookLink.BookLink.Domain.Community.FreeBoardDto;
 import BookLink.BookLink.Domain.ResponseDto;
+import BookLink.BookLink.Service.Community.BookClubService;
 import BookLink.BookLink.Service.Community.FreeBoardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class CommunityController {
 
     private final FreeBoardService freeBoardService;
+    private final BookClubService bookClubService;
 
     @GetMapping() // 커뮤니티 홈
     public ResponseDto communityHome() {
@@ -27,10 +30,18 @@ public class CommunityController {
     }
 
     @PostMapping("/board/free") // 자유글 작성
-    public ResponseDto writePost(@RequestBody FreeBoardDto freeBoardDto,
-                                 @AuthenticationPrincipal String memEmail) {
+    public ResponseDto writeFreeBoard (@RequestBody FreeBoardDto freeBoardDto,
+                                       @AuthenticationPrincipal String memEmail) {
 
         return freeBoardService.writePost(memEmail, freeBoardDto);
+
+    }
+
+    @PostMapping("/book-club") // 독서모임 글 작성
+    public ResponseDto writeBookClub (@RequestBody BookClubDto bookClubDto,
+                                      @AuthenticationPrincipal String memEmail) {
+
+        return bookClubService.writePost(memEmail, bookClubDto);
 
     }
 
