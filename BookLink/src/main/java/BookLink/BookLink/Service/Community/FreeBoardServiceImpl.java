@@ -26,9 +26,9 @@ public class FreeBoardServiceImpl implements FreeBoardService {
 
         ResponseDto responseDto = new ResponseDto();
 
-        Optional<Member> loginMember = memberRepository.findByEmail(memEmail);
+        Member loginMember = memberRepository.findByEmail(memEmail).orElse(null);
 
-        FreeBoard freeBoard = freeBoardDto.toEntity(loginMember.orElse(null), freeBoardDto);
+        FreeBoard freeBoard = freeBoardDto.toEntity(loginMember);
 
         try {
             freeBoardRepository.save(freeBoard);

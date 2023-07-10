@@ -15,12 +15,11 @@ public class FreeBoardDto {
     private String title;
     private String content;
 
-    public FreeBoard toEntity(Member member, FreeBoardDto freeBoardDto) {
-        log.info("toEntity()");
+    public FreeBoard toEntity(Member member) {
         return FreeBoard.builder()
                 .writer(member)
-                .title(freeBoardDto.getTitle())
-                .content(freeBoardDto.getContent())
+                .title(title)
+                .content(content)
                 .build();
     }
 

@@ -28,9 +28,9 @@ public class ReviewServiceImpl implements ReviewService {
         System.out.println("bookId = " + bookId);
          */
 
-        Optional<Member> loginMember = memberRepository.findByEmail(memEmail);
+        Member loginMember = memberRepository.findByEmail(memEmail).orElse(null);
 
-        Review review = reviewDto.toEntity(loginMember.orElse(null), isbn, reviewDto);
+        Review review = reviewDto.toEntity(loginMember, isbn);
 
         reviewRepository.save(review);
 

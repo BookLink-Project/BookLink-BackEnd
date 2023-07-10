@@ -12,13 +12,13 @@ public class ReviewDto { // ???
     // private String bookId; // URI
     private String content;
 
-    public Review toEntity(Member member, String isbn, ReviewDto reviewDto) {
+    public Review toEntity(Member member, String isbn) {
 
         return Review.builder()
                 .isbn(isbn)
                 .writer(member)
                 .date(new Date(System.currentTimeMillis()))
-                .content(reviewDto.getContent())
+                .content(content)
                 .build();
     }
 
