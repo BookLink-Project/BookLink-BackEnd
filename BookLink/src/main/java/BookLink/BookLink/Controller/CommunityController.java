@@ -5,7 +5,7 @@ import BookLink.BookLink.Domain.ResponseDto;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/community")
+@RequestMapping("/api/v1/communities")
 public class CommunityController {
 
     @GetMapping() // 커뮤니티 홈
@@ -18,7 +18,7 @@ public class CommunityController {
         return null;
     }
 
-    @PostMapping("/board/free/post") // 자유글 작성
+    @PostMapping("/board/free") // 자유글 작성
     public ResponseDto writePost(@RequestBody FreeBoardDto freeBoardDto) {
         return null;
     }
