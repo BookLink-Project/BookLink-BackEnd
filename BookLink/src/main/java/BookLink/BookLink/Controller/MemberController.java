@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequiredArgsConstructor // 생성자 주입
-@RequestMapping("/api/v1/member")
+@RequestMapping("/api/v1/members")
 public class MemberController {
 
     private final MemberService memberService;

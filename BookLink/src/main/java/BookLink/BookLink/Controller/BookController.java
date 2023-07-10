@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor // 생성자 주입
-@RequestMapping("/api/v1/book")
+@RequestMapping("/api/v1/books")
 public class BookController {
 
     private final BookService bookService;
