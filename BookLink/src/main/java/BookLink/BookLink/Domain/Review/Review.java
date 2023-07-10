@@ -31,8 +31,8 @@ public class Review {
     @JoinColumn(name = "writer")
     private Member writer;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date date;
+//    @Temporal(TemporalType.TIMESTAMP)
+//    private Date date;
 
     @NotNull
     private String content;
@@ -40,10 +40,9 @@ public class Review {
     // 좋아요, 싫어요, 답글 추가 예정
 
     @Builder
-    public Review(String isbn, Member writer, Date date, String content) {
+    public Review(String isbn, Member writer, String content) {
         this.isbn = isbn;
         this.writer = writer;
-        this.date = date;
         this.content = content;
     }
 }
