@@ -14,8 +14,8 @@ public class ReviewLike {
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "writer_id")
-    private Member writer; // 가짜 매핑 X
+    @JoinColumn(name = "member_id")
+    private Member member; // 가짜 매핑 X
 
     @NotNull
     @ManyToOne
