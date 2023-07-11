@@ -49,7 +49,7 @@ public class ReviewServiceImpl implements ReviewService {
             updateReview.updateParent(savedReview);
 
         }
-
+        // TODO 없는 부모댓글 parentId에 넣어 보내면 null값으로 DB에 저장됨. 예외 처리하기.
         ReviewDto.Response responseData = new ReviewDto.Response(savedReview.getId());
 
         ResponseDto responseDto = new ResponseDto();

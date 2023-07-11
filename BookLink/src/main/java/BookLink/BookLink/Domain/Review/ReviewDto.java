@@ -1,12 +1,9 @@
 package BookLink.BookLink.Domain.Review;
 
 import BookLink.BookLink.Domain.Member.Member;
-import BookLink.BookLink.Repository.Review.ReviewRepository;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 
 @Getter
@@ -37,7 +34,4 @@ public class ReviewDto {
     public static class Response {
         private Long reviewId;
     }
-
-
-
 }

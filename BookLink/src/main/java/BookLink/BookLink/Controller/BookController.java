@@ -1,7 +1,6 @@
 package BookLink.BookLink.Controller;
 
 import BookLink.BookLink.Domain.Book.BookDto;
-import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Domain.Review.ReviewDto;
 import BookLink.BookLink.Service.Book.BookService;
@@ -11,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.net.MalformedURLException;
 
 @Slf4j
 @RestController
@@ -61,7 +62,7 @@ public class BookController {
     }
 
     @GetMapping("/{isbn}") // 상세 조회
-    public ResponseEntity<ResponseDto> showBook(@PathVariable String isbn) {
+    public ResponseEntity<ResponseDto> showDetail(@PathVariable String isbn) throws MalformedURLException {
 
         ResponseDto responseDto = bookService.showBook(isbn);
 

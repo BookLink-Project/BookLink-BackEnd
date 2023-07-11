@@ -3,6 +3,8 @@ package BookLink.BookLink.Service.Book;
 import BookLink.BookLink.Domain.Book.BookDto;
 import BookLink.BookLink.Domain.ResponseDto;
 
+import java.net.MalformedURLException;
+
 
 public interface BookService {
 
@@ -14,6 +16,6 @@ public interface BookService {
 
     ResponseDto searchBook(Integer category, String searchWord);
 
-    ResponseDto showBook(String isbn13);
+    ResponseDto showBook(String isbn13) throws MalformedURLException;
 
 }
