@@ -71,7 +71,7 @@ public class BookController {
 
     @PostMapping("/{isbn}") // 후기 작성
     public ResponseEntity<ResponseDto> writeReview(@PathVariable String isbn,
-                                                   @RequestBody ReviewDto reviewDto,
+                                                   @RequestBody ReviewDto.Request reviewDto,
                                                    @AuthenticationPrincipal String memEmail) {
 
         log.info("member = {}", memEmail);

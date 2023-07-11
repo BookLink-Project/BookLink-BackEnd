@@ -6,6 +6,6 @@ import BookLink.BookLink.Domain.Review.ReviewDto;
 
 public interface ReviewService {
 
-    ResponseDto writeReview(String memEmail, String isbn, ReviewDto reviewDto);
+    ResponseDto writeReview(String memEmail, String isbn, ReviewDto.Request reviewDto);
 
 }
