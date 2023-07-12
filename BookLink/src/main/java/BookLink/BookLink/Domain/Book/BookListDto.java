@@ -27,9 +27,9 @@ public class BookListDto {
         private String priceStandard;
         private String cover;
 
-        private int likes; // 좋아요 수
-        private int reviews; // 댓글 수
-        private int owners; // 소장자 수
+        private Long like_cnt;
+        private Long review_cnt;
+        private Long owner_cnt;
     }
 
 }

@@ -1,36 +1,33 @@
 package BookLink.BookLink.Service.Community;
 
-import BookLink.BookLink.Domain.Community.FreeBoard;
-import BookLink.BookLink.Domain.Community.FreeBoardDto;
+import BookLink.BookLink.Domain.Community.BookClub;
+import BookLink.BookLink.Domain.Community.BookClubDto;
 import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.ResponseDto;
-import BookLink.BookLink.Repository.Community.FreeBoardRepository;
+import BookLink.BookLink.Repository.Community.BookClubRepository;
 import BookLink.BookLink.Repository.Member.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
-public class FreeBoardServiceImpl implements FreeBoardService {
+public class BookClubServiceImpl implements BookClubService {
 
-    private final FreeBoardRepository freeBoardRepository;
+    private final BookClubRepository bookClubRepository;
     private final MemberRepository memberRepository;
 
     @Override
-    public ResponseDto writePost(String memEmail, FreeBoardDto freeBoardDto) {
+    public ResponseDto writePost(String memEmail, BookClubDto bookClubDto) {
 
         ResponseDto responseDto = new ResponseDto();
 
         Member loginMember = memberRepository.findByEmail(memEmail).orElse(null);
 
-        FreeBoard freeBoard = freeBoardDto.toEntity(loginMember);
+        BookClub bookClub = bookClubDto.toEntity(loginMember);
 
         try {
-            freeBoardRepository.save(freeBoard);
-
+            bookClubRepository.save(bookClub);
         } catch (Exception ex) {
 
             responseDto.setStatus(HttpStatus.BAD_REQUEST);
@@ -41,8 +38,8 @@ public class FreeBoardServiceImpl implements FreeBoardService {
 
         responseDto.setStatus(HttpStatus.OK);
         responseDto.setMessage("성공");
+        // responseDto.setData(bookClub);
 
         return responseDto;
     }
-
 }
