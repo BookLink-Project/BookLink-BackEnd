@@ -2,8 +2,12 @@ package BookLink.BookLink.Service.Book;
 
 import BookLink.BookLink.Domain.Book.*;
 import BookLink.BookLink.Domain.ResponseDto;
+import BookLink.BookLink.Domain.Review.Review;
+import BookLink.BookLink.Domain.Review.ReviewsDto;
+import BookLink.BookLink.Repository.Book.BookLikeRepository;
 import BookLink.BookLink.Repository.Book.BookRentRepository;
 import BookLink.BookLink.Repository.Book.BookRepository;
+import BookLink.BookLink.Repository.Review.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
@@ -11,11 +15,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Service
@@ -27,7 +32,9 @@ public class BookServiceImpl implements BookService{
 //    private String url = "https://dapi.kakao.com/v3/search/book";
 
     private final BookRepository bookRepository;
+    private final BookLikeRepository bookLikeRepository;
     private final BookRentRepository bookRentRepository;
+    private final ReviewRepository reviewRepository;
 
     private String search_url = "http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=ttbelwlahstmxjf2304001&&QueryType=Title&MaxResults=10&start=1&SearchTarget=Book&output=js&InputEncoding=utf-8&Version=20131101";
     private String list_url = "http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=ttbelwlahstmxjf2304001&QueryType=Bestseller&MaxResults=10&start=1&SearchTarget=Book&output=js&Version=20131101";
@@ -111,9 +118,25 @@ public class BookServiceImpl implements BookService{
                 .encode(StandardCharsets.UTF_8)
                 .toUri();
 
-        ResponseEntity<BookListDto> result_response = restTemplate.exchange(targetUrl, HttpMethod.GET, null, BookListDto.class);
+        ResponseEntity<BookListDto> resultResponse = restTemplate.exchange(targetUrl, HttpMethod.GET, null, BookListDto.class);
 
-        BookListDto result = result_response.getBody();
+        BookListDto result = resultResponse.getBody();
+
+        if (result == null) {
+            return responseDto;
+        }
+
+        List<BookListDto.Item> items = result.getItem();
+
+        for (BookListDto.Item item : items) {
+            String isbn = item.getIsbn13();
+            Long like_cnt = bookLikeRepository.countByIsbn(isbn); // 좋아요 수
+            Long review_cnt = reviewRepository.countByIsbn(isbn); // 댓글 수
+
+            item.setLike_cnt(like_cnt);
+            item.setReview_cnt(review_cnt);
+            item.setOwner_cnt((long)(Math.random()*10)); // TODO dummy
+        }
 
         responseDto.setStatus(HttpStatus.OK);
         responseDto.setMessage("성공");
@@ -135,9 +158,25 @@ public class BookServiceImpl implements BookService{
                 .queryParam("query", searchWord)
                 .build().encode(StandardCharsets.UTF_8).toUri();
 
-        ResponseEntity<BookListDto> result_response = restTemplate.exchange(targetUri, HttpMethod.GET, null, BookListDto.class);
+        ResponseEntity<BookListDto> resultResponse = restTemplate.exchange(targetUri, HttpMethod.GET, null, BookListDto.class);
 
-        BookListDto result = result_response.getBody();
+        BookListDto result = resultResponse.getBody();
+
+        if (result == null) {
+            return responseDto;
+        }
+
+        List<BookListDto.Item> items = result.getItem();
+
+        for (BookListDto.Item item : items) {
+            String isbn = item.getIsbn13();
+            Long like_cnt = bookLikeRepository.countByIsbn(isbn); // 좋아요 수
+            Long review_cnt = reviewRepository.countByIsbn(isbn); // 댓글 수
+
+            item.setLike_cnt(like_cnt);
+            item.setReview_cnt(review_cnt);
+            item.setOwner_cnt((long)(Math.random() * 10)); // TODO dummy
+        }
 
         responseDto.setStatus(HttpStatus.OK);
         responseDto.setMessage("성공");
@@ -147,7 +186,7 @@ public class BookServiceImpl implements BookService{
     }
 
     @Override
-    public ResponseDto showBook(String isbn13) {
+    public ResponseDto showBook(String isbn13) throws MalformedURLException {
 
         ResponseDto responseDto = new ResponseDto();
 
@@ -174,9 +213,50 @@ public class BookServiceImpl implements BookService{
             return responseDto;
         }
 
+        BookDetailDto.Item item = result.getItem().get(0);
+
+        String isbn = item.getIsbn13();
+        Long like_cnt = bookLikeRepository.countByIsbn(isbn); // 좋아요 수
+        Long review_cnt = reviewRepository.countByIsbn(isbn); // 댓글 수
+
+        item.setLike_cnt(like_cnt);
+        item.setReview_cnt(review_cnt);
+        item.setOwner_cnt((long)(Math.random() * 10)); // TODO dummy
+
+        // 댓글 조회
+        List<Review> reviewList = reviewRepository.findByIsbn(isbn13);
+
+        List<ReviewsDto> reviews = new ArrayList<ReviewsDto>();
+
+        for (Review review : reviewList) {
+
+            Long parentId = review.getParent().getId();
+            Long reviewId = review.getId();
+
+            // 부모 댓글의 경우와 자식 댓글의 경우
+            Long reply_cnt = parentId.equals(reviewId) ? reviewRepository.countByParentId(parentId) : 0; // 답글 수
+
+            URL image = new URL("https://m.blog.naver.com/yunam69/221690011454"); // TODO dummy
+
+            ReviewsDto rv = new ReviewsDto(
+                    review.getId(),
+                    review.getWriter().getNickname(),
+                    review.getContent(),
+                    review.getCreatedTime(),
+                    image,
+                    review.getLike_cnt(),
+                    review.getHates_cnt(),
+                    reply_cnt
+            );
+
+            reviews.add(rv);
+        }
+
+        result.setReviews(reviews);
+
         responseDto.setStatus(HttpStatus.OK);
         responseDto.setMessage("성공");
-        responseDto.setData(result.getItem().get(0));
+        responseDto.setData(result);
 
         return responseDto;
     }

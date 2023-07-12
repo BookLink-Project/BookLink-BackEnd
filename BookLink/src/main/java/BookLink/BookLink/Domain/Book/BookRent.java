@@ -1,6 +1,5 @@
 package BookLink.BookLink.Domain.Book;
 
-import BookLink.BookLink.Domain.Member.Member;
 import lombok.*;
 
 import javax.persistence.*;

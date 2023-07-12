@@ -1,6 +1,6 @@
 package BookLink.BookLink.Domain.Book;
 
-import com.sun.istack.NotNull;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

@@ -1,25 +1,37 @@
 package BookLink.BookLink.Domain.Review;
 
 import BookLink.BookLink.Domain.Member.Member;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import lombok.NoArgsConstructor;
 
-import java.util.Date;
 
 @Getter
-public class ReviewDto { // ???
+@NoArgsConstructor
+public class ReviewDto {
 
-    // private String bookId; // URI
-    private String content;
+    @Getter
+    @NoArgsConstructor
+    public static class Request {
+        private String content;
+        private Long parentId;
 
-    public Review toEntity(Member member, String isbn, ReviewDto reviewDto) {
+        public Review toEntity(Member member, String isbn, Review parent) {
 
-        return Review.builder()
-                .isbn(isbn)
-                .writer(member)
-                .date(new Date(System.currentTimeMillis()))
-                .content(reviewDto.getContent())
-                .build();
+            return Review.builder()
+                    .isbn(isbn)
+                    .writer(member)
+                    .content(content)
+                    .parent(parent)
+                    .build();
+        }
+
     }
 
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Response {
+        private Long reviewId;
+    }
 }
