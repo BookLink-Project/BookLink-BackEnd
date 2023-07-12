@@ -1,12 +1,14 @@
 package BookLink.BookLink.Service.Book;
 
 import BookLink.BookLink.Domain.Book.*;
+import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Domain.Review.Review;
 import BookLink.BookLink.Domain.Review.ReviewsDto;
 import BookLink.BookLink.Repository.Book.BookLikeRepository;
 import BookLink.BookLink.Repository.Book.BookRentRepository;
 import BookLink.BookLink.Repository.Book.BookRepository;
+import BookLink.BookLink.Repository.Member.MemberRepository;
 import BookLink.BookLink.Repository.Review.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +23,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Slf4j
 @Service
@@ -35,6 +38,7 @@ public class BookServiceImpl implements BookService{
     private final BookLikeRepository bookLikeRepository;
     private final BookRentRepository bookRentRepository;
     private final ReviewRepository reviewRepository;
+    private final MemberRepository memberRepository;
 
     private String search_url = "http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=ttbelwlahstmxjf2304001&&QueryType=Title&MaxResults=10&start=1&SearchTarget=Book&output=js&InputEncoding=utf-8&Version=20131101";
     private String list_url = "http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=ttbelwlahstmxjf2304001&QueryType=Bestseller&MaxResults=10&start=1&SearchTarget=Book&output=js&Version=20131101";
@@ -257,6 +261,47 @@ public class BookServiceImpl implements BookService{
         responseDto.setStatus(HttpStatus.OK);
         responseDto.setMessage("성공");
         responseDto.setData(result);
+
+        return responseDto;
+    }
+
+    @Override
+    public ResponseDto likeBook(String memEmail, String isbn, String state) {
+
+        ResponseDto responseDto = new ResponseDto();
+
+        Member loginMember = memberRepository.findByEmail(memEmail).orElse(null);
+
+        if (loginMember == null) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("로그인 필요");
+            return responseDto;
+        }
+
+        if (state.equals("up")) {
+
+            BookLike bookLike = BookLike.builder()
+                    .isbn(isbn)
+                    .member(loginMember)
+                    .build();
+
+            // 혹시나 하는 예외 처리 (프론트에서 잘못 요청될 경우)
+            // 이 과정 없애려고 state 받은 건데 있으면 비효율
+            // bookLikeRepository.existsByIsbnAndMember(isbn, loginMember);
+
+            bookLikeRepository.save(bookLike);
+
+        } else { // "down"
+
+            // 테이블에 없는데 down 경우 -> IllegalArgumentException
+
+            BookLike bookLike = bookLikeRepository.findByIsbnAndMember(isbn, loginMember);
+            bookLikeRepository.delete(bookLike);
+
+        }
+
+        responseDto.setStatus(HttpStatus.OK);
+        responseDto.setMessage("성공");
 
         return responseDto;
     }
