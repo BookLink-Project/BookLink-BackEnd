@@ -34,8 +34,9 @@ public class JwtUtil {
     private String secretKey;
     // private Key key;
 
-    private static final Long expired_access = 1000L; // 1초
-    private static final Long expired_refresh = 1000L * 10; // 10초
+    private static final Long expired_access = 1000 * 60 * 30L; // 30 min
+    private static final Long expired_refresh = 1000 * 60 * 60 * 24 * 15L; // 15 day
+
 
     private final RefreshTokenRepository refreshTokenRepository;
 
@@ -113,7 +114,7 @@ public class JwtUtil {
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
-        cookie.setMaxAge(60 * 60 * 24 * 30); // 30일
+        cookie.setMaxAge(60 * 30); // 30 min
 
         response.addCookie(cookie);
     }
@@ -125,7 +126,7 @@ public class JwtUtil {
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
-        cookie.setMaxAge(60 * 60 * 24 * 30); // 30일
+        cookie.setMaxAge(60 * 60 * 24 * 15); // 15 day
 
         response.addCookie(cookie);
     }
