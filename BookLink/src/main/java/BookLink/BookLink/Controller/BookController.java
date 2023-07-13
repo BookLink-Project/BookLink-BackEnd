@@ -75,10 +75,21 @@ public class BookController {
                                                    @RequestBody ReviewDto.Request reviewDto,
                                                    @AuthenticationPrincipal String memEmail) {
 
-        log.info("member = {}", memEmail);
         ResponseDto responseDto = reviewService.writeReview(memEmail, isbn, reviewDto);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);
     }
+
+    @PostMapping("/{isbn}/like/{state}") // 좋아요 클릭
+    public ResponseEntity<ResponseDto> clickBookLike (@PathVariable String isbn,
+                                                      @PathVariable String state,
+                                                      @AuthenticationPrincipal String memEmail) {
+
+        ResponseDto responseDto = bookService.likeBook(memEmail, isbn, state);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+    }
+
 }
