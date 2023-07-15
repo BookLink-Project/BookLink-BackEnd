@@ -1,4 +1,4 @@
-package BookLink.BookLink.Domain.Review;
+package BookLink.BookLink.Domain.BookReply;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,8 +10,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-// 대댓글은 한 번에 or 답글 더보기 클릭 시 반환?
-public class ReviewsDto {
+public class BookRepliesDto {
 
         private Long id;
         private String writer; // nickname
@@ -19,7 +18,6 @@ public class ReviewsDto {
         private LocalDateTime date;
         private URL image;
         private Long like_cnt;
-        private Long hate_cnt;
-        private Long reply_cnt;
+        private Long sub_reply_cnt;
 
 }

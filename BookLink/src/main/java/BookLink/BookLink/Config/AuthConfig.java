@@ -38,6 +38,7 @@ public class AuthConfig {
                 .authorizeRequests()
                 .antMatchers("/api/v1/members/**").permitAll()
                 .antMatchers("/api/v1/books/**").permitAll()
+                .antMatchers("/api/v1/communities/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/**").authenticated()
                 .and()
                 .sessionManagement() // 세션을 사용하지 않기 때문에 STATELESS

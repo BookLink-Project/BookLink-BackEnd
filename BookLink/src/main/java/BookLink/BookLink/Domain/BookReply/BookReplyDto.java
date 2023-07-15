@@ -1,4 +1,4 @@
-package BookLink.BookLink.Domain.Review;
+package BookLink.BookLink.Domain.BookReply;
 
 import BookLink.BookLink.Domain.Member.Member;
 import lombok.AllArgsConstructor;
@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class ReviewDto {
+public class BookReplyDto {
 
     @Getter
     @NoArgsConstructor
@@ -16,9 +16,9 @@ public class ReviewDto {
         private String content;
         private Long parentId;
 
-        public Review toEntity(Member member, String isbn, Review parent) {
+        public BookReply toEntity(Member member, String isbn, BookReply parent) {
 
-            return Review.builder()
+            return BookReply.builder()
                     .isbn(isbn)
                     .writer(member)
                     .content(content)
@@ -32,6 +32,6 @@ public class ReviewDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Response {
-        private Long reviewId;
+        private Long replyId;
     }
 }
