@@ -1,25 +1,23 @@
-package BookLink.BookLink.Domain.Review;
+package BookLink.BookLink.Domain.BookReply;
 
 import BookLink.BookLink.Domain.Common.BaseTimeEntity;
 import BookLink.BookLink.Domain.Member.Member;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
 
 @Entity
 @Getter
 @NoArgsConstructor
 @DynamicInsert // for default 적용
 @DynamicUpdate // 변경 필드만 update 반영
-public class Review extends BaseTimeEntity {
+public class BookReply extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,14 +43,10 @@ public class Review extends BaseTimeEntity {
     @ColumnDefault("0")
     private Long like_cnt;
 
-//    @NotNull
-    @ColumnDefault("0")
-    private Long hates_cnt;
-
 //    @NotNull // test
     @ManyToOne
     @JoinColumn(name = "parent")
-    private Review parent; // 가짜 매핑 X
+    private BookReply parent; // 가짜 매핑 X
 
 //    @NotNull // test
     private boolean isDeleted;
@@ -60,12 +54,20 @@ public class Review extends BaseTimeEntity {
 //    @NotNull
 //    private boolean isModified;
 
-    public void updateParent(Review parent) {
+    public void updateParent(BookReply parent) {
         this.parent = parent;
     }
 
+    public void increaseLikeCnt() {
+        this.like_cnt += 1;
+    }
+
+    public void decreaseLikeCnt() {
+        this.like_cnt -= 1;
+    }
+
     @Builder
-    public Review(String isbn, Member writer, String content, Review parent) {
+    public BookReply(String isbn, Member writer, String content, BookReply parent) {
         this.isbn = isbn;
         this.writer = writer;
         this.content = content;

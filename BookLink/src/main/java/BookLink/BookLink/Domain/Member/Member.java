@@ -2,7 +2,7 @@ package BookLink.BookLink.Domain.Member;
 
 import BookLink.BookLink.Domain.Card.Card;
 import BookLink.BookLink.Domain.Common.BaseTimeEntity;
-import BookLink.BookLink.Domain.Review.Review;
+import BookLink.BookLink.Domain.BookReply.BookReply;
 
 import lombok.*;
 
@@ -47,7 +47,7 @@ public class Member extends BaseTimeEntity {
     private Card card;
 
     @OneToMany(mappedBy = "writer")
-    private List<Review> reviews = new ArrayList<>();
+    private List<BookReply> bookReplies = new ArrayList<>();
 
 //    @OneToMany(mappedBy = "writer")
 //    private List<FreeBoard> freeBoards = new ArrayList<>();
