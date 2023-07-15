@@ -36,6 +36,8 @@ public class BookDetailDto {
         private Long reply_cnt;
         private Long owner_cnt;
 
+        private boolean isLiked;
+
     }
 
 }

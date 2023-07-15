@@ -8,6 +8,14 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
+@Table(
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "unique_book_mem",
+                        columnNames = {"isbn", "member_id"}
+                )
+        }
+)
 @NoArgsConstructor
 public class BookLike {
 
