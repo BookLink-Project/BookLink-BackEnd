@@ -39,11 +39,12 @@ public class BookReplyServiceImpl implements BookReplyService {
 
         if (replyDto.getParentId() != 0) { // 자식 댓글의 경우 parent 찾기
 
-            // 유효한 parent인지 확인 TODO!!!!
-//            bookReplyRepository.findByIdAndParent(replyDto.getParentId()).orElse(null);
+            // 유효한 parent인지 확인 TODO exception
+            // 프론트에서 걸러지는 부분이지만 한 번 더 처리? or not
+            // bookReplyRepository.findByIdAndParent(replyDto.getParentId()).orElse(null);
 
             BookReply parent = bookReplyRepository.findById(replyDto.getParentId()).orElse(null);
-            //findbyid가 아니라 select * from bookreply where id=:id and parent=:id
+
             if (parent == null) {
                 responseDto.setMessage("존재하지 않는 부모 댓글");
                 responseDto.setStatus(HttpStatus.OK);

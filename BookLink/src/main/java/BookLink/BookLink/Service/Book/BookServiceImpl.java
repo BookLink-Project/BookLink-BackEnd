@@ -8,6 +8,7 @@ import BookLink.BookLink.Domain.BookReply.BookRepliesDto;
 import BookLink.BookLink.Repository.Book.BookLikeRepository;
 import BookLink.BookLink.Repository.Book.BookRentRepository;
 import BookLink.BookLink.Repository.Book.BookRepository;
+import BookLink.BookLink.Repository.BookReply.BookReplyLikeRepository;
 import BookLink.BookLink.Repository.Member.MemberRepository;
 import BookLink.BookLink.Repository.BookReply.BookReplyRepository;
 import lombok.RequiredArgsConstructor;
@@ -37,11 +38,12 @@ public class BookServiceImpl implements BookService{
     private final BookLikeRepository bookLikeRepository;
     private final BookRentRepository bookRentRepository;
     private final BookReplyRepository bookReplyRepository;
+    private final BookReplyLikeRepository bookReplyLikeRepository;
     private final MemberRepository memberRepository;
 
-    private String search_url = "http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=ttbelwlahstmxjf2304001&&QueryType=Title&MaxResults=10&start=1&SearchTarget=Book&output=js&InputEncoding=utf-8&Version=20131101";
-    private String list_url = "http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=ttbelwlahstmxjf2304001&QueryType=Bestseller&MaxResults=10&start=1&SearchTarget=Book&output=js&Version=20131101";
-    private String detail_url = "http://www.aladin.co.kr/ttb/api/ItemLookUp.aspx?ttbkey=ttbelwlahstmxjf2304001&itemIdType=ISBN13&output=js&Version=20131101";
+    private String search_url = "http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=ttbelwlahstmxjf2304001&QueryType=Title&MaxResults=10&start=1&SearchTarget=Book&Cover=Big&output=js&InputEncoding=utf-8&Version=20131101";
+    private String list_url = "http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=ttbelwlahstmxjf2304001&QueryType=Bestseller&MaxResults=10&start=1&SearchTarget=Book&Cover=Big&output=js&Version=20131101";
+    private String detail_url = "http://www.aladin.co.kr/ttb/api/ItemLookUp.aspx?ttbkey=ttbelwlahstmxjf2304001&itemIdType=ISBN13&Cover=Big&output=js&Version=20131101";
     private String key = "ttbelwlahstmxjf2057001";
 
     @Override
@@ -189,7 +191,7 @@ public class BookServiceImpl implements BookService{
     }
 
     @Override
-    public ResponseDto showBook(String isbn13) throws MalformedURLException {
+    public ResponseDto showBook(String memEmail, String isbn13) throws MalformedURLException {
 
         ResponseDto responseDto = new ResponseDto();
 
@@ -222,12 +224,16 @@ public class BookServiceImpl implements BookService{
         Long like_cnt = bookLikeRepository.countByIsbn(isbn); // 좋아요 수
         Long reply_cnt = bookReplyRepository.countByIsbn(isbn); // 댓글 수
 
+        Member loginMember = memberRepository.findByEmail(memEmail).orElse(null);
+        boolean isLikedBook = bookLikeRepository.existsByMemberAndIsbn(loginMember, isbn);// 좋아요 상태
+
         item.setLike_cnt(like_cnt);
         item.setReply_cnt(reply_cnt);
         item.setOwner_cnt((long)(Math.random() * 10)); // TODO dummy
+        item.setLiked(isLikedBook);
 
         // 댓글 조회
-        List<BookReply> replyList = bookReplyRepository.findByIsbn(isbn13);
+        List<BookReply> replyList = bookReplyRepository.findByIsbnOrderByParentAscIdAsc(isbn13); // TODO sorting
 
         List<BookRepliesDto> replies = new ArrayList<BookRepliesDto>();
 
@@ -235,20 +241,25 @@ public class BookServiceImpl implements BookService{
 
             Long parentId = reply.getParent().getId();
             Long replyId = reply.getId();
+            Member writer = reply.getWriter();
 
-            // 부모 댓글의 경우와 자식 댓글의 경우
-            Long sub_reply_cnt = parentId.equals(replyId) ? bookReplyRepository.countByParentId(parentId) : 0; // 답글 수
+            // 부모 댓글의 경우 : 자식 댓글의 경우
+            Long sub_reply_cnt = parentId.equals(replyId) ? bookReplyRepository.countByParentId(parentId) - 1 : 0; // 대댓글 수
 
-            URL image = new URL("https://m.blog.naver.com/yunam69/221690011454"); // TODO dummy
+            URL writerPic = new URL("https://m.blog.naver.com/yunam69/221690011454"); // TODO dummy
+
+            boolean isLikedReply = bookReplyLikeRepository.existsByMemberAndReply(loginMember, reply);// 좋아요 상태
 
             BookRepliesDto rv = new BookRepliesDto(
-                    reply.getId(),
-                    reply.getWriter().getNickname(),
+                    replyId,
+                    parentId,
+                    writer.getNickname(),
                     reply.getContent(),
                     reply.getCreatedTime(),
-                    image,
+                    writerPic,
                     reply.getLike_cnt(),
-                    sub_reply_cnt
+                    sub_reply_cnt,
+                    isLikedReply
             );
 
             replies.add(rv);
@@ -283,11 +294,12 @@ public class BookServiceImpl implements BookService{
                     .member(loginMember)
                     .build();
 
-            // 혹시나 하는 예외 처리 (프론트에서 잘못 요청될 경우)
-            // 이 과정 없애려고 state 받은 건데 있으면 비효율
-            // bookLikeRepository.existsByIsbnAndMember(isbn, loginMember);
+            // TODO 혹시나 하는 예외 처리 (프론트에서 잘못 요청될 경우) with replyLike
 
             bookLikeRepository.save(bookLike);
+
+            responseDto.setStatus(HttpStatus.OK);
+            responseDto.setMessage("좋아요 성공");
 
         } else { // "down"
 
@@ -296,10 +308,10 @@ public class BookServiceImpl implements BookService{
             BookLike bookLike = bookLikeRepository.findByIsbnAndMember(isbn, loginMember);
             bookLikeRepository.delete(bookLike);
 
-        }
+            responseDto.setStatus(HttpStatus.OK);
+            responseDto.setMessage("좋아요 취소 성공");
 
-        responseDto.setStatus(HttpStatus.OK);
-        responseDto.setMessage("성공");
+        }
 
         return responseDto;
     }

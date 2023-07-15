@@ -12,7 +12,7 @@ public interface BookReplyRepository extends JpaRepository<BookReply, Long> {
 
     Long countByParentId(Long parent);
 
-    List<BookReply> findByIsbn(String isbn);
+    List<BookReply> findByIsbnOrderByParentAscIdAsc(String isbn);
 
 //    Optional<BookReply> findByIdAndParent(Long parent);
 
