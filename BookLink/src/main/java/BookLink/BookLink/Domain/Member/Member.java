@@ -2,6 +2,7 @@ package BookLink.BookLink.Domain.Member;
 
 import BookLink.BookLink.Domain.Card.Card;
 import BookLink.BookLink.Domain.Common.BaseTimeEntity;
+import BookLink.BookLink.Domain.Community.BookReport;
 import BookLink.BookLink.Domain.Review.Review;
 
 import lombok.*;
@@ -49,6 +50,9 @@ public class Member extends BaseTimeEntity {
     @OneToMany(mappedBy = "writer")
     private List<Review> reviews = new ArrayList<>();
 
+    @OneToMany(mappedBy = "writer")
+    private List<BookReport> reports = new ArrayList<>();
+
 //    @OneToMany(mappedBy = "writer")
 //    private List<FreeBoard> freeBoards = new ArrayList<>();
 
@@ -58,7 +62,6 @@ public class Member extends BaseTimeEntity {
 //    private List<BookRent> bookRent;
 
     @Builder
-
     public Member(String email, String password, String nickname, String name, LocalDate birth, String address) {
         this.email = email;
         this.password = password;
