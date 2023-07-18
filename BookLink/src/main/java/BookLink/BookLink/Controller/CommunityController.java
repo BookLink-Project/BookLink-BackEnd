@@ -1,12 +1,15 @@
 package BookLink.BookLink.Controller;
 
 import BookLink.BookLink.Domain.Community.BookClubDto;
+import BookLink.BookLink.Domain.Community.BookReportDto;
 import BookLink.BookLink.Domain.Community.FreeBoardDto;
 import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Service.Community.BookClubService;
+import BookLink.BookLink.Service.Community.BookReportService;
 import BookLink.BookLink.Service.Community.FreeBoardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +21,7 @@ public class CommunityController {
 
     private final FreeBoardService freeBoardService;
     private final BookClubService bookClubService;
+    private final BookReportService bookReportService;
 
     @GetMapping() // 커뮤니티 홈
     public ResponseDto communityHome() {
@@ -42,6 +46,17 @@ public class CommunityController {
                                       @AuthenticationPrincipal String memEmail) {
 
         return bookClubService.writePost(memEmail, bookClubDto);
+
+    }
+
+    @PostMapping("/board/report")
+    public ResponseEntity<ResponseDto> writeReport(@RequestBody BookReportDto.Request requestDto,
+                                                   @AuthenticationPrincipal String memEmail) {
+
+        ResponseDto responseDto = bookReportService.writeReport(requestDto, memEmail);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
 
     }
 
