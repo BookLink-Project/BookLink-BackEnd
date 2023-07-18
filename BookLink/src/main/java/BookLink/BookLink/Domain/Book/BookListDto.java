@@ -28,7 +28,7 @@ public class BookListDto {
         private String cover;
 
         private Long like_cnt;
-        private Long review_cnt;
+        private Long reply_cnt;
         private Long owner_cnt;
     }
 

@@ -1,6 +1,7 @@
 package BookLink.BookLink.Config;
 
 
+import BookLink.BookLink.Repository.Token.RefreshTokenRepository;
 import BookLink.BookLink.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -20,6 +21,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class AuthConfig {
 
     private final JwtUtil jwtUtil;
+    private final RefreshTokenRepository refreshTokenRepository;
+    // private final JwtFilter jwtFilter; // 생성자 대신
 
     @Bean
     public PasswordEncoder passwordEncoder() { // 회원가입 시 비밀번호 암호화
@@ -34,13 +37,14 @@ public class AuthConfig {
                 .cors().and()
                 .authorizeRequests()
                 .antMatchers("/api/v1/members/**").permitAll()
-                .antMatchers("/api/v1/books/**").permitAll()
+//                .antMatchers("/api/v1/books/**").permitAll()
+//                .antMatchers("/api/v1/communities/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/**").authenticated()
                 .and()
                 .sessionManagement() // 세션을 사용하지 않기 때문에 STATELESS
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtFilter(jwtUtil, refreshTokenRepository), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 }

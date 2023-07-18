@@ -1,19 +1,25 @@
 package BookLink.BookLink.utils;
 
+import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Domain.Token.RefreshToken;
 import BookLink.BookLink.Domain.Token.TokenDto;
 import BookLink.BookLink.Repository.Token.RefreshTokenRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Date;
@@ -28,8 +34,11 @@ public class JwtUtil {
     private String secretKey;
     // private Key key;
 
-    private static final Long expired_access = 1000 * 60 * 30L; // 30 minute
-    private static final Long expired_refresh = 1000 * 60 * 60 * 24L; // 1 day
+     private static final Long expired_access = 1000 * 60 * 30L; // 30 min
+//    private static final Long expired_access = 1000 * 60 * 5L; // 5 min
+     private static final Long expired_refresh = 1000 * 60 * 60 * 24 * 15L; // 15 day
+//    private static final Long expired_refresh = 1000 * 60 * 30L; // 30 min
+
 
     private final RefreshTokenRepository refreshTokenRepository;
 
@@ -101,37 +110,60 @@ public class JwtUtil {
     }
 
     public void setCookieAccessToken(HttpServletResponse response, String accessToken) {
+
         Cookie cookie = new Cookie("Access_Token", accessToken);
 
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
-        cookie.setMaxAge(60 * 60 * 24 * 30); // 30일
+        cookie.setMaxAge(60 * 30); // 30 min
+//        cookie.setMaxAge(60 * 5); // 5 min
 
         response.addCookie(cookie);
     }
 
     public void setCookieRefreshToken(HttpServletResponse response, String refreshToken) {
+
         Cookie cookie = new Cookie("Refresh_Token", refreshToken);
 
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
-        cookie.setMaxAge(60 * 60 * 24 * 30); // 30일
+        cookie.setMaxAge(60 * 60 * 24 * 15); // 15 day
+//        cookie.setMaxAge(60 * 30); // 30 min
 
         response.addCookie(cookie);
     }
-    /*
-    public String getHeaderToken(HttpServletRequest request, String type) { // 헤더에서 Token 가져오기
-        return type.equals("Access") ? request.getHeader("Access_Token") : request.getHeader("Refresh_Token");
-    }
 
-    public void setHeaderAccessToken(HttpServletResponse response, String accessToken) {
-        response.setHeader("Access_Token", accessToken);
-    }
+    public void removeTokenCookies(HttpServletResponse response) throws IOException {
 
-    public void setHeaderRefreshToken(HttpServletResponse response, String refreshToken) {
-        response.setHeader("Refresh_Token", refreshToken);
+        Cookie access_cookie = new Cookie("Access_Token", null);
+        Cookie refresh_cookie = new Cookie("Refresh_Token", null);
+
+        access_cookie.setPath("/");
+        refresh_cookie.setPath("/");
+
+        access_cookie.setMaxAge(0);
+        refresh_cookie.setMaxAge(0);
+
+        response.addCookie(access_cookie);
+        response.addCookie(refresh_cookie);
+
+        // 메시지 반환
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+
+        response.setContentType("application/json;charset=UTF-8");
+        response.setCharacterEncoding("utf-8");
+
+        ResponseDto responseDto = new ResponseDto();
+        responseDto.setStatus(HttpStatus.UNAUTHORIZED);
+        responseDto.setMessage("토큰 만료");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String result = objectMapper.writeValueAsString(responseDto);
+
+        PrintWriter writer = response.getWriter();
+        writer.print(result);
+
     }
-    */
 }

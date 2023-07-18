@@ -1,7 +1,10 @@
 package BookLink.BookLink.Config;
 
 import BookLink.BookLink.Domain.ResponseDto;
+import BookLink.BookLink.Domain.Token.RefreshToken;
+import BookLink.BookLink.Repository.Token.RefreshTokenRepository;
 import BookLink.BookLink.utils.JwtUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -17,6 +20,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -26,15 +30,10 @@ import java.util.Optional;
 public class JwtFilter extends OncePerRequestFilter { // 토큰 매번 인증
 
     private final JwtUtil jwtUtil;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Override // 얘가 문이라고 생각하면 됨. 여기서 권한 부여 가능.
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
-         /*
-         헤더에서 Token 가져오기
-         String accessToken = jwtUtil.getHeaderToken(request, "Access");
-         String refreshToken = jwtUtil.getHeaderToken(request, "Refresh");
-         */
 
         String accessToken = jwtUtil.getCookieToken(request, "Access");
         String refreshToken = jwtUtil.getCookieToken(request, "Refresh");
@@ -62,13 +61,18 @@ public class JwtFilter extends OncePerRequestFilter { // 토큰 매번 인증
 
                     log.info("Access Token 만료 + Refresh Token 만료");
 
-                    // TODO 로그아웃 처리
+                    refreshTokenRepository.findByToken(refreshToken).ifPresent(refreshTokenRepository::delete);
+                    // TODO token의 유일성 보장 불가 -> redis + blacklist
+
+                    jwtUtil.removeTokenCookies(response);
+
+                    log.info("만료처리 완료");
 
                     return;
                 }
             }
         }
-        filterChain.doFilter(request,response);
+        filterChain.doFilter(request, response);
     }
 
     public void setAuthentication(HttpServletRequest request, String token) {

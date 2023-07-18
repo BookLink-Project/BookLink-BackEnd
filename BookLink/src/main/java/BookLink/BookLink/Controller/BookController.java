@@ -2,9 +2,9 @@ package BookLink.BookLink.Controller;
 
 import BookLink.BookLink.Domain.Book.BookDto;
 import BookLink.BookLink.Domain.ResponseDto;
-import BookLink.BookLink.Domain.Review.ReviewDto;
+import BookLink.BookLink.Domain.BookReply.BookReplyDto;
 import BookLink.BookLink.Service.Book.BookService;
-import BookLink.BookLink.Service.Review.ReviewService;
+import BookLink.BookLink.Service.BookReply.BookReplyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +20,7 @@ import java.net.MalformedURLException;
 public class BookController {
 
     private final BookService bookService;
-    private final ReviewService reviewService;
+    private final BookReplyService bookReplyService;
 
     // 책 검색
     @GetMapping("/aladdin/search")
@@ -62,23 +62,48 @@ public class BookController {
     }
 
     @GetMapping("/{isbn}") // 상세 조회
-    public ResponseEntity<ResponseDto> showDetail(@PathVariable String isbn) throws MalformedURLException {
+    public ResponseEntity<ResponseDto> showDetail(@PathVariable String isbn,
+                                                  @AuthenticationPrincipal String memEmail) throws MalformedURLException {
 
-        ResponseDto responseDto = bookService.showBook(isbn);
+        ResponseDto responseDto = bookService.showBook(memEmail, isbn);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);
     }
 
     @PostMapping("/{isbn}") // 후기 작성
-    public ResponseEntity<ResponseDto> writeReview(@PathVariable String isbn,
-                                                   @RequestBody ReviewDto.Request reviewDto,
-                                                   @AuthenticationPrincipal String memEmail) {
+    public ResponseEntity<ResponseDto> writeReply(@PathVariable String isbn,
+                                                  @RequestBody BookReplyDto.Request replyDto,
+                                                  @AuthenticationPrincipal String memEmail) {
 
-        log.info("member = {}", memEmail);
-        ResponseDto responseDto = reviewService.writeReview(memEmail, isbn, reviewDto);
+        ResponseDto responseDto = bookReplyService.writeReply(memEmail, isbn, replyDto);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);
     }
+
+    @PostMapping("/{isbn}/like/{state}") // 도서 좋아요 클릭
+    public ResponseEntity<ResponseDto> clickBookLike (@PathVariable String isbn,
+                                                      @PathVariable String state,
+                                                      @AuthenticationPrincipal String memEmail) {
+
+        ResponseDto responseDto = bookService.likeBook(memEmail, isbn, state);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+    }
+
+    @PostMapping("/{isbn}/{replyId}/like/{state}") // 후기 좋아요 클릭
+    public ResponseEntity<ResponseDto> clickReplyLike (@PathVariable String isbn,
+                                                      @PathVariable Long replyId,
+                                                      @PathVariable String state,
+                                                      @AuthenticationPrincipal String memEmail) {
+
+        ResponseDto responseDto = bookReplyService.likeReply(memEmail, replyId, state);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+    }
+
+
 }

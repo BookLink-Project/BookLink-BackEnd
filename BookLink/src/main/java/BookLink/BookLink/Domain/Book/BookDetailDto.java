@@ -1,7 +1,6 @@
 package BookLink.BookLink.Domain.Book;
 
-import BookLink.BookLink.Domain.Review.Review;
-import BookLink.BookLink.Domain.Review.ReviewsDto;
+import BookLink.BookLink.Domain.BookReply.BookRepliesDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,7 +16,7 @@ import java.util.List;
 public class BookDetailDto {
 
     List<Item> item = new ArrayList<>();
-    List<ReviewsDto> reviews = new ArrayList<>();
+    List<BookRepliesDto> replies = new ArrayList<>();
 
     @Getter
     @Setter
@@ -34,8 +33,10 @@ public class BookDetailDto {
         private String cover;
 
         private Long like_cnt;
-        private Long review_cnt; // 대댓글 제외 댓글 수
+        private Long reply_cnt;
         private Long owner_cnt;
+
+        private boolean isLiked;
 
     }
 
