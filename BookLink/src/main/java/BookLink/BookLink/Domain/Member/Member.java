@@ -3,7 +3,6 @@ package BookLink.BookLink.Domain.Member;
 import BookLink.BookLink.Domain.Card.Card;
 import BookLink.BookLink.Domain.Common.BaseTimeEntity;
 import BookLink.BookLink.Domain.Community.BookReport;
-import BookLink.BookLink.Domain.Review.Review;
 import BookLink.BookLink.Domain.BookReply.BookReply;
 
 import lombok.*;
