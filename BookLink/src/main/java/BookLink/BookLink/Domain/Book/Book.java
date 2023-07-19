@@ -45,11 +45,8 @@ public class Book extends BaseTimeEntity {
     @NotNull
     private String publisher; // 출판사
 
-    @NotNull
+    // openapi에서 넘어올 때 null인 경우도 존재
     private LocalDate pud_date; // 출간일
-
-    @NotNull
-    private String recommend_contents; // 추천사
 
     @NotNull
     private Boolean rent_signal; // 대여 신청 가능 여부

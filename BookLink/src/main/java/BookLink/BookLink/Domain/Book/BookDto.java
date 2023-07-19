@@ -23,6 +23,7 @@ public class BookDto {
         private String cover; // 도서 표지 미리보기 URL
         private String category_name; // 카테고리 이름
         private String publisher;
+
         private Boolean rent_signal; // 대여 신청 가능 여부
 
         private Integer book_rating; // 책 상태 표현

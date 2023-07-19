@@ -22,7 +22,7 @@ public class BookReportDto {
         private LocalDate pud_date;
         // 표지이미지
         private String title;
-        private String contents;
+        private String content;
 
         public static BookReport toEntity(BookReportDto.Request request, Member writer) {
             return BookReport.builder()
@@ -31,7 +31,7 @@ public class BookReportDto {
                     .publisher(request.getPublisher())
                     .pud_date(request.getPud_date())
                     .title(request.getTitle())
-                    .contents(request.getContents())
+                    .contents(request.getContent())
                     .writer(writer)
                     .build();
         }

@@ -1,13 +1,12 @@
 package BookLink.BookLink.Controller;
 
-import BookLink.BookLink.OAuth.OAuthService;
+import BookLink.BookLink.Domain.ResponseDto;
+import BookLink.BookLink.Service.OAuth.OAuthService;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Authorization 을 위한 접근 테스트 controller 입니다.
@@ -33,10 +32,13 @@ public class AuthController {
      * [GET] /oauth/kakao/callback
      */
     @GetMapping("/kakao")
-    public void kakaoCallback(@RequestParam String code) {
+    public ResponseEntity<ResponseDto> kakaoCallback(HttpServletResponse response, @RequestParam String code) {
         System.out.println(code);
-        String kakaoAccessToken = oAuthService.getKakaoAccessToken(code);
-        oAuthService.createKakaoUser(kakaoAccessToken);
+        String kakaoAccessToken = oAuthService.getKakaoAccessToken(response, code);
+        ResponseDto responseDto = oAuthService.createKakaoUser(kakaoAccessToken);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
     }
 
 }

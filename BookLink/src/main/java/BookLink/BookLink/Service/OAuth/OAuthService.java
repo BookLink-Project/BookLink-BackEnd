@@ -1,17 +1,25 @@
-package BookLink.BookLink.OAuth;
+package BookLink.BookLink.Service.OAuth;
 
+import BookLink.BookLink.Domain.ResponseDto;
+import BookLink.BookLink.utils.JwtUtil;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 @Service
+@RequiredArgsConstructor
 public class OAuthService {
 
-    public String getKakaoAccessToken (String code) {
+    private final JwtUtil jwtUtil;
+
+    public String getKakaoAccessToken (HttpServletResponse response, String code) {
         String access_Token = "";
         String refresh_Token = "";
         String reqURL = "https://kauth.kakao.com/oauth/token";
@@ -55,11 +63,17 @@ public class OAuthService {
             access_Token = element.getAsJsonObject().get("access_token").getAsString();
             refresh_Token = element.getAsJsonObject().get("refresh_token").getAsString();
 
+            jwtUtil.setCookieAccessToken(response, access_Token);
+            jwtUtil.setCookieRefreshToken(response, refresh_Token);
+
             System.out.println("access_token : " + access_Token);
             System.out.println("refresh_token : " + refresh_Token);
 
             br.close();
             bw.close();
+
+
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -68,7 +82,7 @@ public class OAuthService {
     }
 
 
-    public void createKakaoUser(String token) {
+    public ResponseDto createKakaoUser(String token) {
 
         String reqURL = "https://kapi.kakao.com/v2/user/me";
 
@@ -102,7 +116,7 @@ public class OAuthService {
             int id = element.getAsJsonObject().get("id").getAsInt();
             boolean hasEmail = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("has_email").getAsBoolean();
             String email = "";
-            if(hasEmail){
+            if (hasEmail) {
                 email = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("email").getAsString();
             }
 
@@ -111,9 +125,17 @@ public class OAuthService {
 
             br.close();
 
+
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        ResponseDto responseDto = new ResponseDto();
+
+        responseDto.setStatus(HttpStatus.OK);
+        responseDto.setMessage("토큰 받기 완료");
+
+        return responseDto;
     }
 
 }
