@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.net.URL;
+import java.time.LocalDateTime;
+
 
 @Getter
 @NoArgsConstructor
@@ -33,5 +36,9 @@ public class BookReplyDto {
     @AllArgsConstructor
     public static class Response {
         private Long replyId;
+        private LocalDateTime date;
+        private String content;
+        private String writer;
+        private URL image;
     }
 }
