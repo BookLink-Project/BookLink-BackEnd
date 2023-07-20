@@ -2,6 +2,7 @@ package BookLink.BookLink.Domain.Community;
 
 import BookLink.BookLink.Domain.Common.BaseTimeEntity;
 import BookLink.BookLink.Domain.Member.Member;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,8 +21,9 @@ public class FreeBoard extends BaseTimeEntity {
     private Long id;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer")
+    @JsonIgnore
     private Member writer;
 
     @NotNull

@@ -22,7 +22,7 @@ public class FreeBoardServiceImpl implements FreeBoardService {
     private final MemberRepository memberRepository;
 
     @Override
-    public ResponseDto writePost(String memEmail, FreeBoardDto freeBoardDto) {
+    public ResponseDto writePost(String memEmail, FreeBoardDto.Request freeBoardDto) {
 
         ResponseDto responseDto = new ResponseDto();
 
@@ -54,9 +54,11 @@ public class FreeBoardServiceImpl implements FreeBoardService {
 
         List<FreeBoard> all_freeBoard = freeBoardRepository.findAll();
 
-        for (FreeBoard freeBoard : all_freeBoard) {
-            log.info(String.valueOf(freeBoard));
-        }
+
+
+//        for (FreeBoard freeBoard : all_freeBoard) {
+//            log.info(String.valueOf(freeBoard));
+//        }
 
         responseDto.setStatus(HttpStatus.OK);
         responseDto.setMessage("자유글 목록 조회입니다.");

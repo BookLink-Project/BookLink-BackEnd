@@ -5,7 +5,7 @@ import BookLink.BookLink.Domain.ResponseDto;
 
 public interface FreeBoardService {
 
-    ResponseDto writePost(String memEmail, FreeBoardDto freeBoardDto);
+    ResponseDto writePost(String memEmail, FreeBoardDto.Request freeBoardDto);
 
     ResponseDto freeBoardList();
 }
