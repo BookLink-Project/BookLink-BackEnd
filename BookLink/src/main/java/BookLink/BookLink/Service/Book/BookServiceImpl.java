@@ -1,6 +1,7 @@
 package BookLink.BookLink.Service.Book;
 
 import BookLink.BookLink.Domain.Book.*;
+import BookLink.BookLink.Domain.BookReply.BookReplyLikeDto;
 import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Domain.BookReply.BookReply;
@@ -309,6 +310,10 @@ public class BookServiceImpl implements BookService{
             responseDto.setStatus(HttpStatus.OK);
             responseDto.setMessage("좋아요 성공");
 
+            BookLikeDto bookLikeDto = new BookLikeDto(bookLikeRepository.countByIsbn(isbn));
+            responseDto.setData(bookLikeDto);
+
+
         } else { // 좋아요 눌린 상태
 
             BookLike bookLike = bookLikeRepository.findByIsbnAndMember(isbn, loginMember);
@@ -316,6 +321,9 @@ public class BookServiceImpl implements BookService{
 
             responseDto.setStatus(HttpStatus.OK);
             responseDto.setMessage("좋아요 취소 성공");
+
+            BookLikeDto bookLikeDto = new BookLikeDto(bookLikeRepository.countByIsbn(isbn));
+            responseDto.setData(bookLikeDto);
 
         }
 

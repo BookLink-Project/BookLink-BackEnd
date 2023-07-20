@@ -1,20 +1,14 @@
 package BookLink.BookLink.Domain.Book;
 
-import BookLink.BookLink.Domain.Member.Member;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-/**
- * 사용하지 않을 수도 있는 DTO
- */
-
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class BookLikeDto {
 
-    private String state;
-
-    public BookLike toEntity(String isbn, Member member) {
-        return BookLike.builder()
-                .isbn(isbn)
-                .member(member)
-                .build();
-    }
+    private Long like_cnt;
 
 }
