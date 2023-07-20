@@ -233,7 +233,7 @@ public class BookServiceImpl implements BookService{
         item.setLiked(isLikedBook);
 
         // 댓글 조회
-        List<BookReply> replyList = bookReplyRepository.findByIsbnOrderByParentAscIdAsc(isbn13); // TODO sorting
+        List<BookReply> replyList = bookReplyRepository.findByIsbnOrderByParentDescIdDesc(isbn13); // TODO sorting
 
         List<BookRepliesDto> replies = new ArrayList<BookRepliesDto>();
 
