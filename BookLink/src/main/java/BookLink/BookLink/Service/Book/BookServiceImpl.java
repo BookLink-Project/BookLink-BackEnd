@@ -254,7 +254,7 @@ public class BookServiceImpl implements BookService{
             // 부모 댓글의 경우 : 자식 댓글의 경우
             Long sub_reply_cnt = parentId.equals(replyId) ? bookReplyRepository.countByParentId(parentId) - 1 : 0; // 대댓글 수
 
-            URL writerPic = new URL("https://m.blog.naver.com/yunam69/221690011454"); // TODO dummy
+            URL writerPic = new URL("https://soccerquick.s3.ap-northeast-2.amazonaws.com/1689834239634.png"); // TODO dummy
 
             boolean isLikedReply = bookReplyLikeRepository.existsByMemberAndReply(loginMember, reply);// 좋아요 상태
 
