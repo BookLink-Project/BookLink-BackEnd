@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -32,19 +34,23 @@ public class AuthConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
-                .httpBasic().disable()
-                .csrf().disable()
-                .cors().and()
-                .authorizeRequests()
-                .antMatchers("/api/v1/members/**").permitAll()
+                    .httpBasic().disable()
+                    .csrf().disable()
+                    .cors()
+                .and()
+                    .authorizeRequests()
+                    .antMatchers("/api/v1/members/**").permitAll()
 //                .antMatchers("/api/v1/books/**").permitAll()
 //                .antMatchers("/api/v1/communities/**").permitAll()
-                .antMatchers(HttpMethod.POST, "/api/**").authenticated()
+                    .antMatchers(HttpMethod.POST, "/api/**").authenticated()
                 .and()
-                .sessionManagement() // 세션을 사용하지 않기 때문에 STATELESS
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                    .sessionManagement() // 세션을 사용하지 않기 때문에 STATELESS
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .addFilterBefore(new JwtFilter(jwtUtil, refreshTokenRepository), UsernamePasswordAuthenticationFilter.class)
+                    .addFilterBefore(new JwtFilter(jwtUtil, refreshTokenRepository), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
+
+
+
 }

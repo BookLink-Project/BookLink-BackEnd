@@ -60,5 +60,23 @@ public class CommunityController {
 
     }
 
+    @GetMapping("/board/free")
+    public ResponseEntity<ResponseDto> freeBoardList() {
+
+        ResponseDto responseDto = freeBoardService.freeBoardList();
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+    }
+
+    @GetMapping("/board/report")
+    public ResponseEntity<ResponseDto> bookReportList() {
+
+        ResponseDto responseDto = bookReportService.reportList();
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+    }
+
 
 }

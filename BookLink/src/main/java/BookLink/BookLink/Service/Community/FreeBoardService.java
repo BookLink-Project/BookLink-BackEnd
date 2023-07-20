@@ -7,4 +7,5 @@ public interface FreeBoardService {
 
     ResponseDto writePost(String memEmail, FreeBoardDto freeBoardDto);
 
+    ResponseDto freeBoardList();
 }

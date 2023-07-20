@@ -6,6 +6,9 @@ import BookLink.BookLink.Domain.Member.MemberDto;
 import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Domain.Token.RefreshToken;
 import BookLink.BookLink.Domain.Token.TokenDto;
+import BookLink.BookLink.Exception.Enum.CommonErrorCode;
+import BookLink.BookLink.Exception.Enum.MemberErrorCode;
+import BookLink.BookLink.Exception.RestApiException;
 import BookLink.BookLink.Repository.Member.MemberRepository;
 import BookLink.BookLink.Repository.Token.RefreshTokenRepository;
 import BookLink.BookLink.utils.JwtUtil;
@@ -36,9 +39,7 @@ public class MemberServiceImpl implements MemberService{
         Optional<Member> member_nickname = memberRepository.findByNickname(memberDto.getNickname());
 
         if(member_email.isPresent() || member_nickname.isPresent()){
-            responseDto.setStatus(HttpStatus.CONFLICT);
-            responseDto.setMessage("이미 이메일 존재");
-            return responseDto;
+            throw new RestApiException(CommonErrorCode.INVALID_PARAMETER);
         }
 
         memberDto.setEncodePwd(passwordEncoder.encode(memberDto.getPassword())); // PW 암호화
@@ -54,15 +55,14 @@ public class MemberServiceImpl implements MemberService{
     public ResponseDto emailDoubleCheck(String email) {
         boolean is_exist  = memberRepository.existsByEmail(email);
 
+        if(is_exist) {
+            throw new RestApiException(MemberErrorCode.EMAIL_ALREADY_EXISTS);
+        }
+
         ResponseDto responseDto = new ResponseDto();
-        if (is_exist) {
-            responseDto.setStatus(HttpStatus.CONFLICT);
-            responseDto.setMessage("이미 이메일 존재");
-        }
-        else {
-            responseDto.setStatus(HttpStatus.OK);
-            responseDto.setMessage("중복되지않는 이메일");
-        }
+
+        responseDto.setStatus(HttpStatus.OK);
+        responseDto.setMessage("사용가능한 이메일입니다.");
         return responseDto;
     }
 
@@ -70,15 +70,14 @@ public class MemberServiceImpl implements MemberService{
     public ResponseDto nicknameDoubleCheck(String nickname) {
         boolean is_exist = memberRepository.existsByNickname(nickname);
 
+        if(is_exist) {
+            throw new RestApiException(MemberErrorCode.NICKNAME_ALREADY_EXISTS);
+        }
+
         ResponseDto responseDto = new ResponseDto();
-        if (is_exist) {
-            responseDto.setStatus(HttpStatus.CONFLICT);
-            responseDto.setMessage("이미 닉네임 존재");
-        }
-        else {
-            responseDto.setStatus(HttpStatus.OK);
-            responseDto.setMessage("중복되지않는 닉네임");
-        }
+
+        responseDto.setStatus(HttpStatus.OK);
+        responseDto.setMessage("중복되지않는 닉네임");
         return responseDto;
     }
 
