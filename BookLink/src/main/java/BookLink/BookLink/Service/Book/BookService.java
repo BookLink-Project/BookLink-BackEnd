@@ -18,6 +18,6 @@ public interface BookService {
 
     ResponseDto showBook(String memEmail, String isbn13) throws MalformedURLException;
 
-    ResponseDto likeBook(String memEmail, String isbn, String state);
+    ResponseDto likeBook(String memEmail, String isbn);
 
 }

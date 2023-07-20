@@ -1,5 +1,6 @@
 package BookLink.BookLink.Service.BookReply;
 
+import BookLink.BookLink.Domain.BookReply.BookReplyLikeDto;
 import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Domain.BookReply.BookReply;
@@ -84,7 +85,7 @@ public class BookReplyServiceImpl implements BookReplyService {
                 savedReply.getContent(),
                 loginMember.getNickname(),
                 // loginMember.getImage()
-                new URL("https://m.blog.naver.com/yunam69/221690011454") // TODO dummy
+                new URL("https://soccerquick.s3.ap-northeast-2.amazonaws.com/1689834239634.png") // TODO dummy
         );
         responseDto.setData(responseData);
 
@@ -93,7 +94,7 @@ public class BookReplyServiceImpl implements BookReplyService {
 
     @Override
     @Transactional
-    public ResponseDto likeReply(String memEmail, Long replyId, String state) {
+    public ResponseDto likeReply(String memEmail, Long replyId) {
 
         ResponseDto responseDto = new ResponseDto();
 
@@ -113,7 +114,9 @@ public class BookReplyServiceImpl implements BookReplyService {
             return responseDto;
         }
 
-        if (state.equals("up")) {
+        boolean is_liked = replyLikeRepository.existsByMemberAndReply(loginMember, bookReply);
+
+        if (!is_liked) { // 좋아요 안 눌린 상태
 
             BookReplyLike replyLike = BookReplyLike.builder()
                     .member(loginMember)
@@ -126,24 +129,19 @@ public class BookReplyServiceImpl implements BookReplyService {
             responseDto.setStatus(HttpStatus.OK);
             responseDto.setMessage("좋아요 성공");
 
+            BookReplyLikeDto bookReplyLikeDto = new BookReplyLikeDto(bookReply.getLike_cnt());
+            responseDto.setData(bookReplyLikeDto);
+
             // TODO exception
             /*
-            try {
-                replyLikeRepository.save(replyLike);
-                reply.increaseLikeCnt();
-
-                responseDto.setStatus(HttpStatus.OK);
-                responseDto.setMessage("좋아요 성공");
-
-            } catch (Exception ex) { // SQLIntegrityConstraintViolationException
+            catch (Exception ex) { // SQLIntegrityConstraintViolationException
 
                 responseDto.setStatus(HttpStatus.BAD_REQUEST);
                 responseDto.setMessage("좋아요 불가");
             }
+            */
 
-             */
-
-        } else { // "down"
+        } else { // 좋아요 눌린 상태
 
             BookReplyLike replyLike = replyLikeRepository.findByReplyAndMember(bookReply, loginMember);
 
@@ -153,23 +151,17 @@ public class BookReplyServiceImpl implements BookReplyService {
             responseDto.setStatus(HttpStatus.OK);
             responseDto.setMessage("좋아요 취소 성공");
 
+            BookReplyLikeDto bookReplyLikeDto = new BookReplyLikeDto(bookReply.getLike_cnt());
+            responseDto.setData(bookReplyLikeDto);
+
             // TODO exception
             /*
-            try {
-                replyLikeRepository.delete(replyLike);
-                reply.decreaseLikeCnt();
-
-                responseDto.setStatus(HttpStatus.OK);
-                responseDto.setMessage("좋아요 취소 성공");
-
-            } catch (Exception ex) { // IllegalArgumentException
+            catch (Exception ex) { // IllegalArgumentException
 
                 responseDto.setStatus(HttpStatus.BAD_REQUEST);
                 responseDto.setMessage("좋아요 취소 불가");
             }
-
-             */
-
+            */
         }
         return responseDto;
     }
