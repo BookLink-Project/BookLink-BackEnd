@@ -41,8 +41,15 @@ public class CommunityController {
 
     }
 
+    @GetMapping("/book-club")
+    public ResponseDto listBookClub() {
+
+        return bookClubService.listPost();
+
+    }
+
     @PostMapping("/book-club") // 독서모임 글 작성
-    public ResponseDto writeBookClub (@RequestBody BookClubDto bookClubDto,
+    public ResponseDto writeBookClub (@RequestBody BookClubDto.Request bookClubDto,
                                       @AuthenticationPrincipal String memEmail) {
 
         return bookClubService.writePost(memEmail, bookClubDto);

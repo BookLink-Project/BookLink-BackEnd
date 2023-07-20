@@ -69,10 +69,10 @@ public class BookController {
                 .body(responseDto);
     }
 
-    @PostMapping("/{isbn}") // 후기 작성
+    @PostMapping("/{isbn}") // 후기(댓글) 작성
     public ResponseEntity<ResponseDto> writeReply(@PathVariable String isbn,
                                                   @RequestBody BookReplyDto.Request replyDto,
-                                                  @AuthenticationPrincipal String memEmail) {
+                                                  @AuthenticationPrincipal String memEmail) throws MalformedURLException {
 
         ResponseDto responseDto = bookReplyService.writeReply(memEmail, isbn, replyDto);
 
