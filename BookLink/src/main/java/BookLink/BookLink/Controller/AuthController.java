@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 @RestController
 @AllArgsConstructor
 //@RequestMapping("/api/auth-test")
-@RequestMapping("login/oauth2/code")
+@RequestMapping("/login/oauth2/code")
 public class AuthController {
 
     private final OAuthService oAuthService;

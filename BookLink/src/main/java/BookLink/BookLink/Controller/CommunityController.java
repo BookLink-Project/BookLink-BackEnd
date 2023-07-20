@@ -34,7 +34,7 @@ public class CommunityController {
     }
 
     @PostMapping("/board/free") // 자유글 작성
-    public ResponseDto writeFreeBoard (@RequestBody FreeBoardDto freeBoardDto,
+    public ResponseDto writeFreeBoard (@RequestBody FreeBoardDto.Request freeBoardDto,
                                        @AuthenticationPrincipal String memEmail) {
 
         return freeBoardService.writePost(memEmail, freeBoardDto);
