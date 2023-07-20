@@ -1,5 +1,6 @@
 package BookLink.BookLink.Domain.Community;
 
+import BookLink.BookLink.Domain.Common.BaseTimeEntity;
 import BookLink.BookLink.Domain.Member.Member;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -12,7 +13,7 @@ import java.time.LocalDate;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class BookReport {
+public class BookReport extends BaseTimeEntity {
 
     @Id
     @GeneratedValue
@@ -30,7 +31,7 @@ public class BookReport {
 
     private String title;
 
-    private String contents;
+    private String content;
 
     @ManyToOne
     @JoinColumn(name = "writer")
@@ -43,7 +44,7 @@ public class BookReport {
         this.publisher = publisher;
         this.pud_date = pud_date;
         this.title = title;
-        this.contents = contents;
+        this.content = contents;
         this.writer = writer;
     }
 }

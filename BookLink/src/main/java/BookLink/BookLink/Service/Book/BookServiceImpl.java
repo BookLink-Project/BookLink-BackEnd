@@ -5,6 +5,8 @@ import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Domain.BookReply.BookReply;
 import BookLink.BookLink.Domain.BookReply.BookRepliesDto;
+import BookLink.BookLink.Exception.Enum.BookErrorCode;
+import BookLink.BookLink.Exception.RestApiException;
 import BookLink.BookLink.Repository.Book.BookLikeRepository;
 import BookLink.BookLink.Repository.Book.BookRentRepository;
 import BookLink.BookLink.Repository.Book.BookRepository;
@@ -41,8 +43,8 @@ public class BookServiceImpl implements BookService{
     private final BookReplyLikeRepository bookReplyLikeRepository;
     private final MemberRepository memberRepository;
 
-    private String search_url = "http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=ttbelwlahstmxjf2304001&QueryType=Title&MaxResults=10&start=1&SearchTarget=Book&Cover=Big&output=js&InputEncoding=utf-8&Version=20131101";
-    private String list_url = "http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=ttbelwlahstmxjf2304001&QueryType=Bestseller&MaxResults=10&start=1&SearchTarget=Book&Cover=Big&output=js&Version=20131101";
+    private String search_url = "http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=ttbelwlahstmxjf2304001&QueryType=Title&MaxResults=30&start=1&SearchTarget=Book&Cover=Big&output=js&InputEncoding=utf-8&Version=20131101";
+    private String list_url = "http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=ttbelwlahstmxjf2304001&QueryType=Bestseller&MaxResults=30&start=1&SearchTarget=Book&Cover=Big&output=js&Version=20131101";
     private String detail_url = "http://www.aladin.co.kr/ttb/api/ItemLookUp.aspx?ttbkey=ttbelwlahstmxjf2304001&itemIdType=ISBN13&Cover=Big&output=js&Version=20131101";
     private String key = "ttbelwlahstmxjf2057001";
 
@@ -73,6 +75,12 @@ public class BookServiceImpl implements BookService{
 
     @Override
     public ResponseDto joinMyBook(BookDto.Request bookDto) {
+
+        boolean is_exist = bookRepository.existsByIsbn(bookDto.getIsbn13());
+
+        if(is_exist) {
+            throw new RestApiException(BookErrorCode.ALREADY_SAVED_BOOK);
+        }
 
         ResponseDto responseDto = new ResponseDto();
 

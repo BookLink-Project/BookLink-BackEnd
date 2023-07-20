@@ -32,9 +32,7 @@ public class BookController {
                 .body(responseDto);
     }
 
-    // 소장 도서 등록(일부정보만 일단 구현)
-    // 임의로 BookSearchDto로 구현했습니다. 추후에 리펙토링할 예정.
-    @PostMapping()
+    @PostMapping("/register")
     public ResponseEntity<ResponseDto> registerMyBook(@RequestBody BookDto.Request bookDto) {
 
         ResponseDto responseDto = bookService.joinMyBook(bookDto);
