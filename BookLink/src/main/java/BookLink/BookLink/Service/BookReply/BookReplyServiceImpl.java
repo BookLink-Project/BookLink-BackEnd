@@ -14,6 +14,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -25,7 +28,7 @@ public class BookReplyServiceImpl implements BookReplyService {
 
     @Override
     @Transactional
-    public ResponseDto writeReply(String memEmail, String isbn, BookReplyDto.Request replyDto) {
+    public ResponseDto writeReply(String memEmail, String isbn, BookReplyDto.Request replyDto) throws MalformedURLException {
 
         /*
         Long bookId = bookRepository.findByIsbn(isbn);
@@ -34,6 +37,13 @@ public class BookReplyServiceImpl implements BookReplyService {
         ResponseDto responseDto = new ResponseDto();
 
         Member loginMember = memberRepository.findByEmail(memEmail).orElse(null);
+
+        if (loginMember == null) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("로그인 필요");
+
+            return responseDto;
+        }
 
         BookReply savedReply;
 
@@ -68,7 +78,14 @@ public class BookReplyServiceImpl implements BookReplyService {
         responseDto.setMessage("성공");
         responseDto.setStatus(HttpStatus.OK);
 
-        BookReplyDto.Response responseData = new BookReplyDto.Response(savedReply.getId());
+        BookReplyDto.Response responseData = new BookReplyDto.Response(
+                savedReply.getId(),
+                savedReply.getCreatedTime(),
+                savedReply.getContent(),
+                loginMember.getNickname(),
+                // loginMember.getImage()
+                new URL("https://m.blog.naver.com/yunam69/221690011454") // TODO dummy
+        );
         responseDto.setData(responseData);
 
         return responseDto;

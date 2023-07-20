@@ -5,6 +5,8 @@ import BookLink.BookLink.Domain.ResponseDto;
 
 public interface BookClubService {
 
-    ResponseDto writePost(String memEmail, BookClubDto bookClubDto);
+    ResponseDto writePost(String memEmail, BookClubDto.Request bookClubDto);
+
+    ResponseDto listPost();
 
 }
