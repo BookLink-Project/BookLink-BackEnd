@@ -1,5 +1,6 @@
 package BookLink.BookLink.Domain.Community;
 
+import BookLink.BookLink.Domain.Common.BaseTimeEntity;
 import BookLink.BookLink.Domain.Member.Member;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -12,7 +13,7 @@ import java.time.LocalDate;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class BookReport {
+public class BookReport extends BaseTimeEntity {
 
     @Id
     @GeneratedValue

@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -44,5 +46,25 @@ public class FreeBoardServiceImpl implements FreeBoardService {
 
         return responseDto;
     }
+
+    @Override
+    public ResponseDto freeBoardList() {
+
+        ResponseDto responseDto = new ResponseDto();
+
+        List<FreeBoard> all_freeBoard = freeBoardRepository.findAll();
+
+        for (FreeBoard freeBoard : all_freeBoard) {
+            log.info(String.valueOf(freeBoard));
+        }
+
+        responseDto.setStatus(HttpStatus.OK);
+        responseDto.setMessage("자유글 목록 조회입니다.");
+        responseDto.setData(all_freeBoard);
+
+        return responseDto;
+
+    }
+
 
 }
