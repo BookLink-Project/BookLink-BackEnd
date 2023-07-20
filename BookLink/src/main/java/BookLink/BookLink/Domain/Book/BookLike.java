@@ -2,6 +2,7 @@ package BookLink.BookLink.Domain.Book;
 
 import BookLink.BookLink.Domain.Member.Member;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -16,6 +17,7 @@ import javax.validation.constraints.NotNull;
                 )
         }
 )
+@Getter
 @NoArgsConstructor
 public class BookLike {
 
