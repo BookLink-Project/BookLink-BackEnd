@@ -90,13 +90,12 @@ public class BookController {
                 .body(responseDto);
     }
 
-    @PostMapping("/{isbn}/{replyId}/like/{state}") // 후기 좋아요 클릭
+    @PostMapping("/{isbn}/{replyId}/like") // 후기 좋아요 클릭
     public ResponseEntity<ResponseDto> clickReplyLike (@PathVariable String isbn,
                                                       @PathVariable Long replyId,
-                                                      @PathVariable String state,
                                                       @AuthenticationPrincipal String memEmail) {
 
-        ResponseDto responseDto = bookReplyService.likeReply(memEmail, replyId, state);
+        ResponseDto responseDto = bookReplyService.likeReply(memEmail, replyId);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);
