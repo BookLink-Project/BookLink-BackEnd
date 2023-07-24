@@ -34,25 +34,34 @@ public class CommunityController {
     }
 
     @PostMapping("/board/free") // 자유글 작성
-    public ResponseDto writeFreeBoard (@RequestBody FreeBoardDto.Request freeBoardDto,
+    public ResponseEntity<ResponseDto> writeFreeBoard (@RequestBody FreeBoardDto.Request freeBoardDto,
                                        @AuthenticationPrincipal String memEmail) {
 
-        return freeBoardService.writePost(memEmail, freeBoardDto);
+        ResponseDto responseDto = freeBoardService.writePost(memEmail, freeBoardDto);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
 
     }
 
-    @GetMapping("/book-club")
-    public ResponseDto listBookClub() {
+    @GetMapping("/book-club") // 독서모임 글 조회
+    public ResponseEntity<ResponseDto> listBookClub() {
 
-        return bookClubService.listPost();
+        ResponseDto responseDto = bookClubService.listPost();
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
 
     }
 
     @PostMapping("/book-club") // 독서모임 글 작성
-    public ResponseDto writeBookClub (@RequestBody BookClubDto.Request bookClubDto,
+    public ResponseEntity<ResponseDto> writeBookClub (@RequestBody BookClubDto.Request bookClubDto,
                                       @AuthenticationPrincipal String memEmail) {
 
-        return bookClubService.writePost(memEmail, bookClubDto);
+        ResponseDto responseDto = bookClubService.writePost(memEmail, bookClubDto);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
 
     }
 

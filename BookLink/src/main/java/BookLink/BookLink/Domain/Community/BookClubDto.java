@@ -33,6 +33,7 @@ public class BookClubDto {
     @NoArgsConstructor
     public static class Response {
 
+        private Long id;
         private String title;
         private String content;
         private String location;
@@ -42,7 +43,8 @@ public class BookClubDto {
         private Long reply_cnt;
 
         @Builder
-        public Response(String title, String content, String location, String writer, LocalDateTime date, Long reply_cnt) {
+        public Response(Long id, String title, String content, String location, String writer, LocalDateTime date, Long reply_cnt) {
+            this.id = id;
             this.title = title;
             this.content = content;
             this.location = location;

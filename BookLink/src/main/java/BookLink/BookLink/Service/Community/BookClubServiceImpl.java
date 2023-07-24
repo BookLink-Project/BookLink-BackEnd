@@ -59,6 +59,7 @@ public class BookClubServiceImpl implements BookClubService {
         for (BookClub bookClub : bookClubList) {
 
             BookClubDto.Response response = BookClubDto.Response.builder()
+                    .id(bookClub.getId())
                     .title(bookClub.getTitle())
                     .writer(bookClub.getWriter().getNickname())
                     .content(bookClub.getContent())
