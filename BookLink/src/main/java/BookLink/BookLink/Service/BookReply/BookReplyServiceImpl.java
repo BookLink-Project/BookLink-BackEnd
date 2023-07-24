@@ -138,8 +138,28 @@ public class BookReplyServiceImpl implements BookReplyService {
     }
 
     @Override
-    public ResponseDto deleteReply(String isbn) {
-        return null;
+    @Transactional
+    public ResponseDto deleteReply(String isbn, Long replyId) {
+
+        ResponseDto responseDto = new ResponseDto();
+
+        BookReply deleteReply = bookReplyRepository.findByIdAndIsbn(replyId, isbn).orElse(null);
+
+        if (deleteReply == null) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("없는 댓글");
+            return responseDto;
+        }
+
+        deleteReply.updateDeleted();
+
+        BookReplyDeleteDto.Response responseData = new BookReplyDeleteDto.Response(deleteReply.isDeleted());
+
+        responseDto.setStatus(HttpStatus.OK);
+        responseDto.setMessage("댓글 삭제 성공");
+        responseDto.setData(responseData);
+
+        return responseDto;
     }
 
     @Override

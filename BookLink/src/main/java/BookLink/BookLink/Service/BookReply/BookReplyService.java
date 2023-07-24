@@ -14,5 +14,5 @@ public interface BookReplyService {
 
     ResponseDto updateReply(String isbn, BookReplyUpdateDto.Request replyDto);
 
-    ResponseDto deleteReply(String isbn);
+    ResponseDto deleteReply(String isbn, Long replyId);
 }

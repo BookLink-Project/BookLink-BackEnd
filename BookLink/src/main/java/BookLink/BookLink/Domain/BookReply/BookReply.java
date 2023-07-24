@@ -66,6 +66,10 @@ public class BookReply extends BaseTimeEntity {
         this.isUpdated = true;
     }
 
+    public void updateDeleted() {
+        this.isDeleted = true;
+    }
+
     public void increaseLikeCnt() {
         this.like_cnt += 1;
     }
