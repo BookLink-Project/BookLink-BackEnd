@@ -14,8 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.time.LocalDateTime;
-import java.util.Date;
 
 @Slf4j
 @Service
@@ -57,7 +55,7 @@ public class BookReplyServiceImpl implements BookReplyService {
 
             if (parent == null) {
                 responseDto.setMessage("존재하지 않는 부모 댓글");
-                responseDto.setStatus(HttpStatus.OK);
+                responseDto.setStatus(HttpStatus.BAD_REQUEST);
                 return responseDto;
             }
 

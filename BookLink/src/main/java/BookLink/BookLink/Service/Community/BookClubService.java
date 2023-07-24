@@ -1,6 +1,7 @@
 package BookLink.BookLink.Service.Community;
 
 import BookLink.BookLink.Domain.Community.BookClubDto;
+import BookLink.BookLink.Domain.CommunityReply.BookClubReplyDto;
 import BookLink.BookLink.Domain.ResponseDto;
 
 import java.net.MalformedURLException;
@@ -12,4 +13,5 @@ public interface BookClubService {
     ResponseDto listPost();
 
     ResponseDto showPost(String memEmail, Long id) throws MalformedURLException;
+
 }

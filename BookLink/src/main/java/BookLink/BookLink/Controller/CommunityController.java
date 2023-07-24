@@ -3,10 +3,12 @@ package BookLink.BookLink.Controller;
 import BookLink.BookLink.Domain.Community.BookClubDto;
 import BookLink.BookLink.Domain.Community.BookReportDto;
 import BookLink.BookLink.Domain.Community.FreeBoardDto;
+import BookLink.BookLink.Domain.CommunityReply.BookClubReplyDto;
 import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Service.Community.BookClubService;
 import BookLink.BookLink.Service.Community.BookReportService;
 import BookLink.BookLink.Service.Community.FreeBoardService;
+import BookLink.BookLink.Service.CommunityReply.BookClubReplyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +26,7 @@ public class CommunityController {
     private final FreeBoardService freeBoardService;
     private final BookClubService bookClubService;
     private final BookReportService bookReportService;
+    private final BookClubReplyService bookClubReplyService;
 
     @GetMapping() // 커뮤니티 홈
     public ResponseDto communityHome() {
@@ -78,6 +81,17 @@ public class CommunityController {
 
     }
 
+    @PostMapping("/book-club/{id}") // 독서모임 댓글 작성
+    public ResponseEntity<ResponseDto> writeCookClubReply(@PathVariable Long id,
+                                                    @RequestBody BookClubReplyDto.Request replyDto,
+                                                    @AuthenticationPrincipal String memEmail) throws MalformedURLException {
+
+        ResponseDto responseDto = bookClubReplyService.writeReply(memEmail, id, replyDto);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+
+    }
 
     @PostMapping("/board/report")
     public ResponseEntity<ResponseDto> writeReport(@RequestBody BookReportDto.Request requestDto,
