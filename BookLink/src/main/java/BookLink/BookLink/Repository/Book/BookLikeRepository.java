@@ -10,7 +10,7 @@ public interface BookLikeRepository extends JpaRepository<BookLike, Long> {
 
     BookLike findByIsbnAndMember(String isbn, Member member);
 
-    boolean existsByIsbnAndMember(String isbn, Member member);
+//    boolean existsByIsbnAndMember(String isbn, Member member);z
 
     boolean existsByMemberAndIsbn(Member member, String isbn);
 }

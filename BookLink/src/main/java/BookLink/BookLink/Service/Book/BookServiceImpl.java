@@ -1,6 +1,7 @@
 package BookLink.BookLink.Service.Book;
 
 import BookLink.BookLink.Domain.Book.*;
+import BookLink.BookLink.Domain.BookReply.BookReplyLikeDto;
 import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Domain.BookReply.BookReply;
@@ -283,7 +284,7 @@ public class BookServiceImpl implements BookService{
     }
 
     @Override
-    public ResponseDto likeBook(String memEmail, String isbn, String state) {
+    public ResponseDto likeBook(String memEmail, String isbn) {
 
         ResponseDto responseDto = new ResponseDto();
 
@@ -295,23 +296,25 @@ public class BookServiceImpl implements BookService{
             return responseDto;
         }
 
-        if (state.equals("up")) {
+        boolean is_liked = bookLikeRepository.existsByMemberAndIsbn(loginMember, isbn);
+
+        if (!is_liked) { // 좋아요 안 눌린 상태
 
             BookLike bookLike = BookLike.builder()
                     .isbn(isbn)
                     .member(loginMember)
                     .build();
 
-            // TODO 혹시나 하는 예외 처리 (프론트에서 잘못 요청될 경우) with replyLike
-
             bookLikeRepository.save(bookLike);
 
             responseDto.setStatus(HttpStatus.OK);
             responseDto.setMessage("좋아요 성공");
 
-        } else { // "down"
+            BookLikeDto bookLikeDto = new BookLikeDto(bookLikeRepository.countByIsbn(isbn));
+            responseDto.setData(bookLikeDto);
 
-            // 테이블에 없는데 down 경우 -> IllegalArgumentException
+
+        } else { // 좋아요 눌린 상태
 
             BookLike bookLike = bookLikeRepository.findByIsbnAndMember(isbn, loginMember);
             bookLikeRepository.delete(bookLike);
@@ -319,8 +322,12 @@ public class BookServiceImpl implements BookService{
             responseDto.setStatus(HttpStatus.OK);
             responseDto.setMessage("좋아요 취소 성공");
 
+            BookLikeDto bookLikeDto = new BookLikeDto(bookLikeRepository.countByIsbn(isbn));
+            responseDto.setData(bookLikeDto);
+
         }
 
         return responseDto;
+
     }
 }
