@@ -1,7 +1,6 @@
 package BookLink.BookLink.Controller;
 
 import BookLink.BookLink.Domain.Book.BookDto;
-import BookLink.BookLink.Domain.BookReply.BookReplyDeleteDto;
 import BookLink.BookLink.Domain.BookReply.BookReplyUpdateDto;
 import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Domain.BookReply.BookReplyDto;
@@ -82,21 +81,22 @@ public class BookController {
                 .body(responseDto);
     }
 
-    @PatchMapping("/{isbn}") // 후기(댓글) 수정
+    @PatchMapping("/{isbn}/{replyId}") // 후기(댓글) 수정
     public ResponseEntity<ResponseDto> updateReply(@PathVariable String isbn,
-                                                   @RequestBody BookReplyUpdateDto.Request replyDto) {
+                                                   @PathVariable Long replyId,
+                                                   @RequestBody BookReplyUpdateDto replyDto) {
 
-        ResponseDto responseDto = bookReplyService.updateReply(isbn, replyDto);
+        ResponseDto responseDto = bookReplyService.updateReply(isbn, replyId, replyDto);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);
     }
 
-    @DeleteMapping("/{isbn}") // 후기(댓글) 삭제
+    @DeleteMapping("/{isbn}/{replyId}") // 후기(댓글) 삭제
     public ResponseEntity<ResponseDto> deleteReply(@PathVariable String isbn,
-                                                   @RequestBody BookReplyDeleteDto.Request replyDto) {
+                                                   @PathVariable Long replyId) {
 
-        ResponseDto responseDto = bookReplyService.deleteReply(isbn, replyDto.getReplyId());
+        ResponseDto responseDto = bookReplyService.deleteReply(isbn, replyId);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);

@@ -91,32 +91,21 @@ public class BookReplyServiceImpl implements BookReplyService {
 
     @Override
     @Transactional
-    public ResponseDto updateReply(String isbn, BookReplyUpdateDto.Request replyDto) {
+    public ResponseDto updateReply(String isbn, Long replyId, BookReplyUpdateDto replyDto) {
 
         ResponseDto responseDto = new ResponseDto();
 
-//        Member loginMember = memberRepository.findByEmail(memEmail).orElse(null);
-//
-//        if (loginMember == null) {
-//            responseDto.setStatus(HttpStatus.BAD_REQUEST);
-//            responseDto.setMessage("로그인 필요");
-//
-//            return responseDto;
-//        }
-
-        BookReply updateReply = bookReplyRepository.findByIdAndIsbn(replyDto.getReplyId(), isbn).orElse(null);
+        BookReply updateReply = bookReplyRepository.findByIdAndIsbn(replyId, isbn).orElse(null);
 
         if (updateReply == null) {
             responseDto.setStatus(HttpStatus.BAD_REQUEST);
             responseDto.setMessage("없는 댓글");
-
             return responseDto;
         }
 
         if (updateReply.getContent().equals(replyDto.getContent())) {
             responseDto.setStatus(HttpStatus.BAD_REQUEST);
             responseDto.setMessage("수정된 내용 없음");
-
             return responseDto;
         }
 
@@ -125,11 +114,8 @@ public class BookReplyServiceImpl implements BookReplyService {
         responseDto.setMessage("댓글 수정 성공");
         responseDto.setStatus(HttpStatus.OK);
 
-        BookReplyUpdateDto.Response responseData = new BookReplyUpdateDto.Response(
-                updateReply.getContent(),
-                updateReply.isUpdated()
-        );
-        responseDto.setData(responseData);
+        replyDto.setContent(updateReply.getContent());
+        responseDto.setData(replyDto);
 
         return responseDto;
 
@@ -151,11 +137,8 @@ public class BookReplyServiceImpl implements BookReplyService {
 
         deleteReply.updateDeleted();
 
-        BookReplyDeleteDto.Response responseData = new BookReplyDeleteDto.Response(deleteReply.isDeleted());
-
         responseDto.setStatus(HttpStatus.OK);
         responseDto.setMessage("댓글 삭제 성공");
-        responseDto.setData(responseData);
 
         return responseDto;
     }

@@ -12,7 +12,7 @@ public interface BookReplyService {
 
     ResponseDto likeReply(String memEmail, Long replyId);
 
-    ResponseDto updateReply(String isbn, BookReplyUpdateDto.Request replyDto);
+    ResponseDto updateReply(String isbn, Long replyId, BookReplyUpdateDto replyDto);
 
     ResponseDto deleteReply(String isbn, Long replyId);
 }
