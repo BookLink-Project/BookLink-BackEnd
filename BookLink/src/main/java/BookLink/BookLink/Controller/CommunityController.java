@@ -4,6 +4,7 @@ import BookLink.BookLink.Domain.Community.BookClubDto;
 import BookLink.BookLink.Domain.Community.BookReportDto;
 import BookLink.BookLink.Domain.Community.FreeBoardDto;
 import BookLink.BookLink.Domain.CommunityReply.BookClubReplyDto;
+import BookLink.BookLink.Domain.CommunityReply.BookClubReplyUpdateDto;
 import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Service.Community.BookClubService;
 import BookLink.BookLink.Service.Community.BookReportService;
@@ -87,6 +88,29 @@ public class CommunityController {
                                                     @AuthenticationPrincipal String memEmail) throws MalformedURLException {
 
         ResponseDto responseDto = bookClubReplyService.writeReply(memEmail, id, replyDto);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+
+    }
+
+    @PatchMapping("/book-club/{id}/{replyId}") // 독서모임 댓글 수정
+    public ResponseEntity<ResponseDto> updateCookClubReply(@PathVariable Long id,
+                                                           @PathVariable Long replyId,
+                                                           @RequestBody BookClubReplyUpdateDto replyDto) {
+
+        ResponseDto responseDto = bookClubReplyService.updateReply(id, replyId, replyDto);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+
+    }
+
+    @DeleteMapping("/book-club/{id}/{replyId}") // 독서모임 댓글 삭제
+    public ResponseEntity<ResponseDto> deleteCookClubReply(@PathVariable Long id,
+                                                           @PathVariable Long replyId) {
+
+        ResponseDto responseDto = bookClubReplyService.deleteReply(id, replyId);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);

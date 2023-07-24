@@ -3,6 +3,7 @@ package BookLink.BookLink.Service.CommunityReply;
 import BookLink.BookLink.Domain.Community.BookClub;
 import BookLink.BookLink.Domain.CommunityReply.BookClubReply;
 import BookLink.BookLink.Domain.CommunityReply.BookClubReplyDto;
+import BookLink.BookLink.Domain.CommunityReply.BookClubReplyUpdateDto;
 import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Repository.CommunityReply.BookClubReplyRepository;
@@ -27,7 +28,7 @@ public class BookClubReplyServiceImpl implements BookClubReplyService{
 
     @Override
     @Transactional
-    public ResponseDto writeReply(String memEmail, Long id, BookClubReplyDto.Request replyDto) throws MalformedURLException {
+    public ResponseDto writeReply(String memEmail, Long postId, BookClubReplyDto.Request replyDto) throws MalformedURLException {
 
         ResponseDto responseDto = new ResponseDto();
 
@@ -40,7 +41,7 @@ public class BookClubReplyServiceImpl implements BookClubReplyService{
             return responseDto;
         }
 
-        BookClub post = bookClubRepository.findById(id).orElse(null);
+        BookClub post = bookClubRepository.findById(postId).orElse(null);
 
         BookClubReply savedReply;
 
@@ -85,4 +86,59 @@ public class BookClubReplyServiceImpl implements BookClubReplyService{
 
     }
 
+    @Override
+    @Transactional
+    public ResponseDto updateReply(Long postId, Long replyId, BookClubReplyUpdateDto replyDto) {
+
+        ResponseDto responseDto = new ResponseDto();
+
+        BookClubReply updateReply = bookClubReplyRepository.findByIdAndPostId(replyId, postId).orElse(null);
+
+        if (updateReply == null) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("없는 댓글");
+
+            return responseDto;
+        }
+
+        if (updateReply.getContent().equals(replyDto.getContent())) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("수정된 내용 없음");
+
+            return responseDto;
+        }
+
+        updateReply.updateReply(replyDto.getContent());
+
+        responseDto.setMessage("댓글 수정 성공");
+        responseDto.setStatus(HttpStatus.OK);
+
+        replyDto.setContent(updateReply.getContent());
+        responseDto.setData(replyDto);
+
+        return responseDto;
+
+    }
+
+    @Override
+    @Transactional
+    public ResponseDto deleteReply(Long postId, Long replyId) {
+
+        ResponseDto responseDto = new ResponseDto();
+
+        BookClubReply deleteReply = bookClubReplyRepository.findByIdAndPostId(replyId, postId).orElse(null);
+
+        if (deleteReply == null) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("없는 댓글");
+            return responseDto;
+        }
+
+        deleteReply.updateDeleted();
+
+        responseDto.setStatus(HttpStatus.OK);
+        responseDto.setMessage("댓글 삭제 성공");
+
+        return responseDto;
+    }
 }

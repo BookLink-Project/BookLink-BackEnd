@@ -1,7 +1,6 @@
 package BookLink.BookLink.Service.Book;
 
 import BookLink.BookLink.Domain.Book.*;
-import BookLink.BookLink.Domain.BookReply.BookReplyLikeDto;
 import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Domain.BookReply.BookReply;
@@ -50,7 +49,7 @@ public class BookServiceImpl implements BookService{
     private String key = "ttbelwlahstmxjf2057001";
 
     @Override
-    public ResponseDto callApi(String query) { // findBook으로 바꾸고 callApi()로 공통 함수 만들기
+    public ResponseDto callApi(String query) { // TODO findBook으로 바꾸고 callApi()로 공통 함수 만들기
 
         ResponseDto responseDto = new ResponseDto();
 
@@ -72,50 +71,6 @@ public class BookServiceImpl implements BookService{
         responseDto.setData(body);
 
         return responseDto;
-    }
-
-    @Override
-    public ResponseDto joinMyBook(BookDto.Request bookDto) {
-
-        boolean is_exist = bookRepository.existsByIsbn(bookDto.getIsbn13());
-
-        if(is_exist) {
-            throw new RestApiException(BookErrorCode.ALREADY_SAVED_BOOK);
-        }
-
-        ResponseDto responseDto = new ResponseDto();
-
-        if(bookDto.getRent_signal()) {
-            BookRent bookRent = BookDto.Request.toRentEntity(bookDto);
-            bookRentRepository.save(bookRent);
-
-            Book book = Book.builder()
-                    .title(bookDto.getTitle())
-                    .authors(bookDto.getAuthor())
-                    .description(bookDto.getDescription())
-                    .isbn(bookDto.getIsbn13())
-                    .price_sales(bookDto.getPrice_sales())
-                    .cover(bookDto.getCover())
-                    .category_name(bookDto.getCategory_name())
-                    .publisher(bookDto.getPublisher())
-                    .pud_date(bookDto.getPud_date())
-                    .rent_signal(bookDto.getRent_signal())
-                    .bookRent(bookRent)
-                    .build();
-
-            bookRepository.save(book);
-        }
-        else{
-            Book book = BookDto.Request.toBookEntity(bookDto);
-            bookRepository.save(book);
-        }
-
-
-        responseDto.setStatus(HttpStatus.OK);
-        responseDto.setMessage("DB 저장 완료");
-        return responseDto;
-
-
     }
 
     @Override
@@ -345,6 +300,51 @@ public class BookServiceImpl implements BookService{
         }
 
         return responseDto;
+
+    }
+
+
+    @Override
+    public ResponseDto joinMyBook(BookDto.Request bookDto) {
+
+        boolean is_exist = bookRepository.existsByIsbn(bookDto.getIsbn13());
+
+        if(is_exist) {
+            throw new RestApiException(BookErrorCode.ALREADY_SAVED_BOOK);
+        }
+
+        ResponseDto responseDto = new ResponseDto();
+
+        if(bookDto.getRent_signal()) {
+            BookRent bookRent = BookDto.Request.toRentEntity(bookDto);
+            bookRentRepository.save(bookRent);
+
+            Book book = Book.builder()
+                    .title(bookDto.getTitle())
+                    .authors(bookDto.getAuthor())
+                    .description(bookDto.getDescription())
+                    .isbn(bookDto.getIsbn13())
+                    .price_sales(bookDto.getPrice_sales())
+                    .cover(bookDto.getCover())
+                    .category_name(bookDto.getCategory_name())
+                    .publisher(bookDto.getPublisher())
+                    .pud_date(bookDto.getPud_date())
+                    .rent_signal(bookDto.getRent_signal())
+                    .bookRent(bookRent)
+                    .build();
+
+            bookRepository.save(book);
+        }
+        else{
+            Book book = BookDto.Request.toBookEntity(bookDto);
+            bookRepository.save(book);
+        }
+
+
+        responseDto.setStatus(HttpStatus.OK);
+        responseDto.setMessage("DB 저장 완료");
+        return responseDto;
+
 
     }
 }
