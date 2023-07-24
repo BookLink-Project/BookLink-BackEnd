@@ -17,10 +17,12 @@ public class BookClubRepliesDto {
     private String writer;
     private String content;
     private LocalDateTime date;
-    private URL writer_image;
+    private URL image;
     private Long like_cnt;
     private Long sub_reply_cnt;
 
-    private boolean isLiked;
+    private Boolean isLiked;
+
+    private Boolean isUpdated;
 
 }

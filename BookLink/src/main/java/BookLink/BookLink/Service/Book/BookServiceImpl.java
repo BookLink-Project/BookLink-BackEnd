@@ -253,24 +253,41 @@ public class BookServiceImpl implements BookService{
             Member writer = reply.getWriter();
 
             // 대댓글 수 (부모 : 자식)
-            Long sub_reply_cnt = parentId.equals(replyId) ? bookReplyRepository.countByParentId(parentId) - 1 : 0; // 대댓글 수
-
-            URL writerPic = new URL("https://soccerquick.s3.ap-northeast-2.amazonaws.com/1689834239634.png"); // TODO dummy
+            Long sub_reply_cnt = parentId.equals(replyId) ? bookReplyRepository.countByParentId(parentId) - 1 : 0;
 
             boolean isLikedReply = bookReplyLikeRepository.existsByMemberAndReply(loginMember, reply);// 좋아요 상태
 
-            BookRepliesDto rv = new BookRepliesDto(
-                    replyId,
-                    parentId,
-                    writer.getNickname(),
-                    reply.getContent(),
-                    reply.getCreatedTime(),
-                    writerPic, // writer.getImage()
-                    reply.getLike_cnt(),
-                    sub_reply_cnt,
-                    isLikedReply
-            );
+            BookRepliesDto rv;
+            if (reply.isDeleted()) {
 
+                rv = new BookRepliesDto(
+                        replyId,
+                        parentId,
+                        "(삭제)",
+                        "삭제된 댓글입니다.",
+                        null,
+                        null,
+                        null,
+                        sub_reply_cnt,
+                        null,
+                        null
+                );
+
+            } else {
+                rv = new BookRepliesDto(
+                        replyId,
+                        parentId,
+                        writer.getNickname(),
+                        reply.getContent(),
+                        reply.getCreatedTime(),
+                        new URL("https://soccerquick.s3.ap-northeast-2.amazonaws.com/1689834239634.png"), // TODO dummy
+                        // writer.getImage()
+                        reply.getLike_cnt(),
+                        sub_reply_cnt,
+                        isLikedReply,
+                        reply.isUpdated()
+                );
+            }
             replies.add(rv);
         }
 

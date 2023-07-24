@@ -124,19 +124,39 @@ public class BookClubServiceImpl implements BookClubService {
             // 좋아요 상태
             boolean isLikedReply = bookClubReplyLikeRepository.existsByMemberAndReply(loginMember, reply);
 
-            BookClubRepliesDto rv = new BookClubRepliesDto(
-                    replyId,
-                    parentId,
-                    writer.getNickname(),
-                    reply.getContent(),
-                    reply.getCreatedTime(),
-                    //writer.getImage(),
-                    new URL("https://soccerquick.s3.ap-northeast-2.amazonaws.com/1689834239634.png"), // TODO dummy
-                    reply.getLike_cnt(),
-                    sub_reply_cnt,
-                    isLikedReply
+            BookClubRepliesDto rv;
+            if (reply.isDeleted()) {
 
-            );
+                rv = new BookClubRepliesDto(
+                        replyId,
+                        parentId,
+                        "(삭제)",
+                        "삭제된 댓글입니다.",
+                        null,
+                        null,
+                        null,
+                        sub_reply_cnt,
+                        null,
+                        null
+
+                );
+            } else {
+
+                rv = new BookClubRepliesDto(
+                        replyId,
+                        parentId,
+                        writer.getNickname(),
+                        reply.getContent(),
+                        reply.getCreatedTime(),
+                        //writer.getImage(),
+                        new URL("https://soccerquick.s3.ap-northeast-2.amazonaws.com/1689834239634.png"), // TODO dummy
+                        reply.getLike_cnt(),
+                        sub_reply_cnt,
+                        isLikedReply,
+                        reply.isUpdated()
+
+                );
+            }
             replies.add(rv);
 
         }
@@ -154,12 +174,10 @@ public class BookClubServiceImpl implements BookClubService {
                 post.getWriter().getNickname(),
                 //post.getWriter().getImage(),
                 new URL("https://soccerquick.s3.ap-northeast-2.amazonaws.com/1689834239634.png"), // TODO dummy
-
                 post.getView_cnt(),
                 post.getLike_cnt(),
                 post.getReply_cnt(),
                 isLiked,
-
                 replies
         );
         responseDto.setData(result);
