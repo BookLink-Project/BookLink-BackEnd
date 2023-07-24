@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -48,14 +49,21 @@ public class BookReply extends BaseTimeEntity {
     @JoinColumn(name = "parent")
     private BookReply parent; // 가짜 매핑 X
 
-//    @NotNull // test
+    @NotNull // test
+    @ColumnDefault("false")
     private boolean isDeleted;
 
-//    @NotNull
-//    private boolean isModified;
+    @NotNull // test
+    @ColumnDefault("false")
+    private boolean isUpdated;
 
     public void updateParent(BookReply parent) {
         this.parent = parent;
+    }
+
+    public void updateReply(String content) {
+        this.content = content;
+        this.isUpdated = true;
     }
 
     public void increaseLikeCnt() {
@@ -72,5 +80,11 @@ public class BookReply extends BaseTimeEntity {
         this.writer = writer;
         this.content = content;
         this.parent = parent;
+
+        this.like_cnt = 0L;
+        this.isDeleted = false;
+        this.isUpdated = false;
+
     }
+
 }

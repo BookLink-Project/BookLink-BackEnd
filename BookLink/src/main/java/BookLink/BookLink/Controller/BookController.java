@@ -1,6 +1,7 @@
 package BookLink.BookLink.Controller;
 
 import BookLink.BookLink.Domain.Book.BookDto;
+import BookLink.BookLink.Domain.BookReply.BookReplyUpdateDto;
 import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Domain.BookReply.BookReplyDto;
 import BookLink.BookLink.Service.Book.BookService;
@@ -79,6 +80,27 @@ public class BookController {
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);
     }
+
+    @PatchMapping("/{isbn}") // 후기(댓글) 수정
+    public ResponseEntity<ResponseDto> updateReply(@PathVariable String isbn,
+                                                   @RequestBody BookReplyUpdateDto.Request replyDto) {
+
+        ResponseDto responseDto = bookReplyService.updateReply(isbn, replyDto);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+    }
+
+//    @DeleteMapping("/{isbn}") // 후기(댓글) 삭제
+//    public ResponseEntity<ResponseDto> deleteReply(@PathVariable String isbn,
+//                                                  @RequestBody BookReplyDto.Request replyDto,
+//                                                  @AuthenticationPrincipal String memEmail) throws MalformedURLException {
+//
+//        ResponseDto responseDto = bookReplyService.deleteReply(memEmail, isbn, replyDto);
+//
+//        return ResponseEntity.status(responseDto.getStatus())
+//                .body(responseDto);
+//    }
 
     @PostMapping("/{isbn}/like") // 도서 좋아요 클릭
     public ResponseEntity<ResponseDto> clickBookLike (@PathVariable String isbn,

@@ -1,11 +1,8 @@
 package BookLink.BookLink.Service.BookReply;
 
-import BookLink.BookLink.Domain.BookReply.BookReplyLikeDto;
+import BookLink.BookLink.Domain.BookReply.*;
 import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.ResponseDto;
-import BookLink.BookLink.Domain.BookReply.BookReply;
-import BookLink.BookLink.Domain.BookReply.BookReplyDto;
-import BookLink.BookLink.Domain.BookReply.BookReplyLike;
 import BookLink.BookLink.Repository.Member.MemberRepository;
 import BookLink.BookLink.Repository.BookReply.BookReplyLikeRepository;
 import BookLink.BookLink.Repository.BookReply.BookReplyRepository;
@@ -17,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 @Slf4j
 @Service
@@ -90,6 +89,57 @@ public class BookReplyServiceImpl implements BookReplyService {
         responseDto.setData(responseData);
 
         return responseDto;
+    }
+
+    @Override
+    @Transactional
+    public ResponseDto updateReply(String isbn, BookReplyUpdateDto.Request replyDto) {
+
+        ResponseDto responseDto = new ResponseDto();
+
+//        Member loginMember = memberRepository.findByEmail(memEmail).orElse(null);
+//
+//        if (loginMember == null) {
+//            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+//            responseDto.setMessage("로그인 필요");
+//
+//            return responseDto;
+//        }
+
+        BookReply updateReply = bookReplyRepository.findByIdAndIsbn(replyDto.getReplyId(), isbn).orElse(null);
+
+        if (updateReply == null) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("없는 댓글");
+
+            return responseDto;
+        }
+
+        if (updateReply.getContent().equals(replyDto.getContent())) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("수정된 내용 없음");
+
+            return responseDto;
+        }
+
+        updateReply.updateReply(replyDto.getContent());
+
+        responseDto.setMessage("댓글 수정 성공");
+        responseDto.setStatus(HttpStatus.OK);
+
+        BookReplyUpdateDto.Response responseData = new BookReplyUpdateDto.Response(
+                updateReply.getContent(),
+                updateReply.isUpdated()
+        );
+        responseDto.setData(responseData);
+
+        return responseDto;
+
+    }
+
+    @Override
+    public ResponseDto deleteReply(String isbn) {
+        return null;
     }
 
     @Override
