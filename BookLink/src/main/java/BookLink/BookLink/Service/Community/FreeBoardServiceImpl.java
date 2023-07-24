@@ -1,5 +1,6 @@
 package BookLink.BookLink.Service.Community;
 
+import BookLink.BookLink.Domain.Community.BookReport;
 import BookLink.BookLink.Domain.Community.BookReportDto;
 import BookLink.BookLink.Domain.Community.FreeBoard;
 import BookLink.BookLink.Domain.Community.FreeBoardDto;
@@ -11,9 +12,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -70,5 +73,44 @@ public class FreeBoardServiceImpl implements FreeBoardService {
 
     }
 
+    @Override
+    public ResponseDto freeBoardDetail(Long id) {
+        Optional<FreeBoard> byId = freeBoardRepository.findById(id);
+
+        ResponseDto responseDto = new ResponseDto();
+
+        if (byId.isEmpty()) {
+            // 에러처리
+        }
+
+        FreeBoard freeBoard = byId.get();
+        FreeBoardDto.Response response = FreeBoardDto.Response.toDto(freeBoard);
+
+//        responseDto.setStatus(HttpStatus.OK);
+        responseDto.setMessage("테스트");
+        responseDto.setData(response);
+
+        return responseDto;
+    }
+
+    @Override
+    @Transactional
+    public ResponseDto freeBoardUpdate(Long id, FreeBoardDto.Request requestDto) {
+        Optional<FreeBoard> byId = freeBoardRepository.findById(id);
+
+        if (byId.isEmpty()) {
+            //예외처리
+        }
+
+
+        FreeBoard freeBoard = byId.get();
+        freeBoard.update(requestDto.getTitle(), requestDto.getContent());
+//        bookReportRepository.save(bookReport);
+
+        ResponseDto responseDto = new ResponseDto();
+
+        return responseDto;
+
+    }
 
 }

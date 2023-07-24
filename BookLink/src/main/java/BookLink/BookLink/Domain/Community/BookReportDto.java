@@ -29,7 +29,7 @@ public class BookReportDto {
                     .publisher(request.getPublisher())
                     .pud_date(request.getPud_date())
                     .title(request.getTitle())
-                    .contents(request.getContent())
+                    .content(request.getContent())
                     .writer(writer)
                     .build();
         }
@@ -48,9 +48,10 @@ public class BookReportDto {
         // 표지이미지
         private String title;
         private String content;
+        private String writer;
 
         @Builder
-        public Response(Long id, String book_title, String authors, String publisher, LocalDate pud_date, String title, String content) {
+        public Response(Long id, String book_title, String authors, String publisher, LocalDate pud_date, String title, String content, String writer) {
             this.id = id;
             this.book_title = book_title;
             this.authors = authors;
@@ -58,10 +59,11 @@ public class BookReportDto {
             this.pud_date = pud_date;
             this.title = title;
             this.content = content;
+            this.writer = writer;
         }
 
         public static BookReportDto.Response toDto(BookReport bookReport) {
-            return BookReportDto.Response.builder()
+            return Response.builder()
                     .id(bookReport.getId())
                     .book_title(bookReport.getBook_title())
                     .authors(bookReport.getAuthors())
@@ -69,6 +71,7 @@ public class BookReportDto {
                     .pud_date(bookReport.getPud_date())
                     .title(bookReport.getTitle())
                     .content(bookReport.getContent())
+                    .writer(bookReport.getWriter().getNickname())
                     .build();
         }
     }

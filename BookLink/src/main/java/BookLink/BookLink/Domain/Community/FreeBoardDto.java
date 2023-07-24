@@ -33,12 +33,15 @@ public class FreeBoardDto {
         private Long id;
         private String title;
         private String content;
+        private String writer;
+
 
         @Builder
-        public Response(Long id, String title, String content) {
+        public Response(Long id, String title, String content, String writer) {
             this.id = id;
             this.title = title;
             this.content = content;
+            this.writer = writer;
         }
 
         public static FreeBoardDto.Response toDto(FreeBoard freeBoard) {
@@ -46,6 +49,7 @@ public class FreeBoardDto {
                     .id(freeBoard.getId())
                     .title(freeBoard.getTitle())
                     .content(freeBoard.getContent())
+                    .writer(freeBoard.getWriter().getNickname())
                     .build();
         }
 

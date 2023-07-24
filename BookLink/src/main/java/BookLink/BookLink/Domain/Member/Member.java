@@ -6,6 +6,8 @@ import BookLink.BookLink.Domain.Community.BookReport;
 import BookLink.BookLink.Domain.BookReply.BookReply;
 
 import lombok.*;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -17,6 +19,8 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@DynamicInsert
+@DynamicUpdate
 public class Member extends BaseTimeEntity {
 
     @Id
