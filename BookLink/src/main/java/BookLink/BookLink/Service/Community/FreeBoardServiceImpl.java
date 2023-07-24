@@ -1,5 +1,6 @@
 package BookLink.BookLink.Service.Community;
 
+import BookLink.BookLink.Domain.Community.BookReportDto;
 import BookLink.BookLink.Domain.Community.FreeBoard;
 import BookLink.BookLink.Domain.Community.FreeBoardDto;
 import BookLink.BookLink.Domain.Member.Member;
@@ -11,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -53,16 +55,16 @@ public class FreeBoardServiceImpl implements FreeBoardService {
         ResponseDto responseDto = new ResponseDto();
 
         List<FreeBoard> all_freeBoard = freeBoardRepository.findAll();
+        List<FreeBoardDto.Response> free_response = new ArrayList<>();
 
-
-
-//        for (FreeBoard freeBoard : all_freeBoard) {
-//            log.info(String.valueOf(freeBoard));
-//        }
+        for (int i = 0; i < all_freeBoard.size(); i++) {
+            FreeBoardDto.Response response = FreeBoardDto.Response.toDto(all_freeBoard.get(i));
+            free_response.add(i,response);
+        }
 
         responseDto.setStatus(HttpStatus.OK);
         responseDto.setMessage("자유글 목록 조회입니다.");
-        responseDto.setData(all_freeBoard);
+        responseDto.setData(free_response);
 
         return responseDto;
 

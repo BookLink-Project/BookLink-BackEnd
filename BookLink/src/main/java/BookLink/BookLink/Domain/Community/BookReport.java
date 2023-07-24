@@ -36,7 +36,6 @@ public class BookReport extends BaseTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer")
-    @JsonIgnore
     private Member writer;
 
     @Builder

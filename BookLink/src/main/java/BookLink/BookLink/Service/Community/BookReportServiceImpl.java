@@ -48,10 +48,16 @@ public class BookReportServiceImpl implements BookReportService{
         ResponseDto responseDto = new ResponseDto();
 
         List<BookReport> all_report = bookReportRepository.findAll();
+        List<BookReportDto.Response> report_response = new ArrayList<>();
+
+        for (int i = 0; i < all_report.size(); i++) {
+            BookReportDto.Response response = BookReportDto.Response.toDto(all_report.get(i));
+            report_response.add(i,response);
+        }
 
         responseDto.setStatus(HttpStatus.OK);
         responseDto.setMessage("독후감 목록 조회입니다.");
-        responseDto.setData(all_report);
+        responseDto.setData(report_response);
 
         return responseDto;
 

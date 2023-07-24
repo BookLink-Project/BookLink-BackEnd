@@ -85,5 +85,8 @@ public class CommunityController {
                 .body(responseDto);
     }
 
+//    @GetMapping("/board/report")
+//    public ResponseEntity<ResponseDto> report
+
 
 }

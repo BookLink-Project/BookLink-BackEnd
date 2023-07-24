@@ -1,10 +1,7 @@
 package BookLink.BookLink.Domain.Community;
 
 import BookLink.BookLink.Domain.Member.Member;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -28,13 +25,31 @@ public class FreeBoardDto {
         }
     }
 
-    @Slf4j
     @Getter
+    @Setter
     @NoArgsConstructor
-    @AllArgsConstructor
     public static class Response {
+
+        private Long id;
         private String title;
         private String content;
+
+        @Builder
+        public Response(Long id, String title, String content) {
+            this.id = id;
+            this.title = title;
+            this.content = content;
+        }
+
+        public static FreeBoardDto.Response toDto(FreeBoard freeBoard) {
+            return Response.builder()
+                    .id(freeBoard.getId())
+                    .title(freeBoard.getTitle())
+                    .content(freeBoard.getContent())
+                    .build();
+        }
+
     }
+
 
 }
