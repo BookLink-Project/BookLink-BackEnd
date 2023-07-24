@@ -15,7 +15,8 @@ import javax.validation.constraints.NotNull;
 public class BookClub extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
@@ -32,11 +33,24 @@ public class BookClub extends BaseTimeEntity {
     @NotNull
     private String location;
 
+    @NotNull
+    private Long like_cnt;
+
+    @NotNull
+    private Long view_cnt;
+
+    @NotNull
+    private Long reply_cnt;
+
     @Builder
     public BookClub(String title, String content, Member writer, String location) {
         this.title = title;
         this.content = content;
         this.writer = writer;
         this.location = location;
+
+        this.like_cnt = 0L;
+        this.view_cnt = 0L;
+        this.reply_cnt = 0L;
     }
 }

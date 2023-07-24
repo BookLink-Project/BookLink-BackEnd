@@ -1,8 +1,7 @@
-package BookLink.BookLink.Domain.Book;
+package BookLink.BookLink.Domain.CommunityReply;
 
 import BookLink.BookLink.Domain.Member.Member;
 import lombok.Builder;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -12,31 +11,32 @@ import javax.validation.constraints.NotNull;
 @Table(
         uniqueConstraints = {
                 @UniqueConstraint(
-                        name = "unique_book_mem",
-                        columnNames = {"isbn", "member_id"}
+                        name = "unique_mem_rep",
+                        columnNames = {"member_id", "reply_id"}
                 )
         }
 )
-@Getter
 @NoArgsConstructor
-public class BookLike {
+public class BookClubReplyLike {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
-    private String isbn; // 도서 API 의 외래키라고 생각
-
-    @NotNull
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member; // 가짜 매핑 X
 
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "reply_id")
+    private BookClubReply reply; // 가짜 매핑 X
+
     @Builder
-    public BookLike(String isbn, Member member) {
-        this.isbn = isbn;
+    public BookClubReplyLike(Member member, BookClubReply reply) {
         this.member = member;
+        this.reply = reply;
     }
 
 }

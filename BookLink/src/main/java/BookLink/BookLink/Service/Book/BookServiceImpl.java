@@ -252,7 +252,7 @@ public class BookServiceImpl implements BookService{
             Long replyId = reply.getId();
             Member writer = reply.getWriter();
 
-            // 부모 댓글의 경우 : 자식 댓글의 경우
+            // 대댓글 수 (부모 : 자식)
             Long sub_reply_cnt = parentId.equals(replyId) ? bookReplyRepository.countByParentId(parentId) - 1 : 0; // 대댓글 수
 
             URL writerPic = new URL("https://soccerquick.s3.ap-northeast-2.amazonaws.com/1689834239634.png"); // TODO dummy
@@ -265,7 +265,7 @@ public class BookServiceImpl implements BookService{
                     writer.getNickname(),
                     reply.getContent(),
                     reply.getCreatedTime(),
-                    writerPic,
+                    writerPic, // writer.getImage()
                     reply.getLike_cnt(),
                     sub_reply_cnt,
                     isLikedReply

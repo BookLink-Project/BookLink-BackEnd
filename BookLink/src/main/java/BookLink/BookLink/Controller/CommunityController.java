@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.MalformedURLException;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -44,16 +46,6 @@ public class CommunityController {
 
     }
 
-    @GetMapping("/book-club") // 독서모임 글 조회
-    public ResponseEntity<ResponseDto> listBookClub() {
-
-        ResponseDto responseDto = bookClubService.listPost();
-
-        return ResponseEntity.status(responseDto.getStatus())
-                .body(responseDto);
-
-    }
-
     @PostMapping("/book-club") // 독서모임 글 작성
     public ResponseEntity<ResponseDto> writeBookClub (@RequestBody BookClubDto.Request bookClubDto,
                                       @AuthenticationPrincipal String memEmail) {
@@ -64,6 +56,28 @@ public class CommunityController {
                 .body(responseDto);
 
     }
+
+    @GetMapping("/book-club") // 독서모임 글 목록 조회
+    public ResponseEntity<ResponseDto> listBookClub() {
+
+        ResponseDto responseDto = bookClubService.listPost();
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+
+    }
+
+    @GetMapping("/book-club/{id}") // 독서모임 글 상세 조회
+    public ResponseEntity<ResponseDto> showBookClub(@PathVariable Long id,
+                                                    @AuthenticationPrincipal String memEmail) throws MalformedURLException {
+
+        ResponseDto responseDto = bookClubService.showPost(memEmail, id);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+
+    }
+
 
     @PostMapping("/board/report")
     public ResponseEntity<ResponseDto> writeReport(@RequestBody BookReportDto.Request requestDto,
