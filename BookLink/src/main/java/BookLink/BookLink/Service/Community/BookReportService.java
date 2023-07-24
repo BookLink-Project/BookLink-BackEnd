@@ -9,4 +9,8 @@ public interface BookReportService {
     ResponseDto writeReport(BookReportDto.Request requestDto, String memEmail);
 
     ResponseDto reportList();
+
+    ResponseDto reportDetail(Long id);
+
+    ResponseDto reportUpdate(Long id, BookReportDto.Request requestDto);
 }

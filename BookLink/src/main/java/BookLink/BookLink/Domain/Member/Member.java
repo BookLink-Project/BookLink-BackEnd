@@ -6,8 +6,9 @@ import BookLink.BookLink.Domain.Community.BookReport;
 import BookLink.BookLink.Domain.BookReply.BookReply;
 
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -19,7 +20,8 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-//@DynamicInsert // for default 적용
+@DynamicInsert
+@DynamicUpdate
 public class Member extends BaseTimeEntity {
 
     @Id
@@ -44,8 +46,8 @@ public class Member extends BaseTimeEntity {
     @NotNull
     private String address;
 
-    // @NotNull
-    // @ColumnDefault("https://soccerquick.s3.ap-northeast-2.amazonaws.com/1689834239634.png")
+    @NotNull
+    @ColumnDefault("https://soccerquick.s3.ap-northeast-2.amazonaws.com/1689834239634.png")
     private URL image; // 이미지 경로
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)

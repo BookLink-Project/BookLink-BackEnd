@@ -1,5 +1,7 @@
 package BookLink.BookLink.Service.Community;
 
+import BookLink.BookLink.Domain.Community.BookReport;
+import BookLink.BookLink.Domain.Community.BookReportDto;
 import BookLink.BookLink.Domain.Community.FreeBoard;
 import BookLink.BookLink.Domain.Community.FreeBoardDto;
 import BookLink.BookLink.Domain.Member.Member;
@@ -10,8 +12,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -53,20 +58,59 @@ public class FreeBoardServiceImpl implements FreeBoardService {
         ResponseDto responseDto = new ResponseDto();
 
         List<FreeBoard> all_freeBoard = freeBoardRepository.findAll();
+        List<FreeBoardDto.Response> free_response = new ArrayList<>();
 
-
-
-//        for (FreeBoard freeBoard : all_freeBoard) {
-//            log.info(String.valueOf(freeBoard));
-//        }
+        for (int i = 0; i < all_freeBoard.size(); i++) {
+            FreeBoardDto.Response response = FreeBoardDto.Response.toDto(all_freeBoard.get(i));
+            free_response.add(i,response);
+        }
 
         responseDto.setStatus(HttpStatus.OK);
         responseDto.setMessage("자유글 목록 조회입니다.");
-        responseDto.setData(all_freeBoard);
+        responseDto.setData(free_response);
 
         return responseDto;
 
     }
 
+    @Override
+    public ResponseDto freeBoardDetail(Long id) {
+        Optional<FreeBoard> byId = freeBoardRepository.findById(id);
+
+        ResponseDto responseDto = new ResponseDto();
+
+        if (byId.isEmpty()) {
+            // 에러처리
+        }
+
+        FreeBoard freeBoard = byId.get();
+        FreeBoardDto.Response response = FreeBoardDto.Response.toDto(freeBoard);
+
+//        responseDto.setStatus(HttpStatus.OK);
+        responseDto.setMessage("테스트");
+        responseDto.setData(response);
+
+        return responseDto;
+    }
+
+    @Override
+    @Transactional
+    public ResponseDto freeBoardUpdate(Long id, FreeBoardDto.Request requestDto) {
+        Optional<FreeBoard> byId = freeBoardRepository.findById(id);
+
+        if (byId.isEmpty()) {
+            //예외처리
+        }
+
+
+        FreeBoard freeBoard = byId.get();
+        freeBoard.update(requestDto.getTitle(), requestDto.getContent());
+//        bookReportRepository.save(bookReport);
+
+        ResponseDto responseDto = new ResponseDto();
+
+        return responseDto;
+
+    }
 
 }

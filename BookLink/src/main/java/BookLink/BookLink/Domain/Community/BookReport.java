@@ -36,17 +36,22 @@ public class BookReport extends BaseTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer")
-    @JsonIgnore
     private Member writer;
 
     @Builder
-    public BookReport(String book_title, String authors, String publisher, LocalDate pud_date, String title, String contents, Member writer) {
+    public BookReport(String book_title, String authors, String publisher, LocalDate pud_date, String title, String content, Member writer) {
         this.book_title = book_title;
         this.authors = authors;
         this.publisher = publisher;
         this.pud_date = pud_date;
         this.title = title;
-        this.content = contents;
+        this.content = content;
         this.writer = writer;
     }
+
+    public void update(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
+
 }

@@ -85,5 +85,38 @@ public class CommunityController {
                 .body(responseDto);
     }
 
+    @GetMapping("/board/report/{id}")
+    public ResponseEntity<ResponseDto> reportDetail(@PathVariable Long id) {
+        ResponseDto responseDto = bookReportService.reportDetail(id);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+    }
+
+    @GetMapping("/board/free/{id}")
+    public ResponseEntity<ResponseDto> freeBoardDetail(@PathVariable Long id) {
+        ResponseDto responseDto = freeBoardService.freeBoardDetail(id);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+    }
+
+    @PatchMapping("/board/report/{id}")
+    public ResponseEntity<ResponseDto> reportUpdate(@PathVariable Long id, @RequestBody BookReportDto.Request requestDto) {
+        ResponseDto responseDto = bookReportService.reportUpdate(id, requestDto);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+    }
+
+    @PatchMapping("/board/free/{id}")
+    public ResponseEntity<ResponseDto> freeBoardUpdate(@PathVariable Long id, @RequestBody FreeBoardDto.Request requestDto) {
+        ResponseDto responseDto = freeBoardService.freeBoardUpdate(id, requestDto);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+    }
+
+
 
 }

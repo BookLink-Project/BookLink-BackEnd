@@ -8,16 +8,14 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @Setter
-@NoArgsConstructor
 public class ResponseDto {
 
     private HttpStatus status;
     private String message;
     private Object data;
 
-    public ResponseDto(HttpStatus status, String message, Object data) {
-        this.status = status;
-        this.message = message;
-        this.data = data;
+    public ResponseDto() {
+        this.status = HttpStatus.OK;
+        this.message = "올바른 접근입니다";
     }
 }

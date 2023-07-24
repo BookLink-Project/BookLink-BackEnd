@@ -11,6 +11,7 @@ import BookLink.BookLink.Repository.Member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -48,39 +49,58 @@ public class BookReportServiceImpl implements BookReportService{
         ResponseDto responseDto = new ResponseDto();
 
         List<BookReport> all_report = bookReportRepository.findAll();
+        List<BookReportDto.Response> report_response = new ArrayList<>();
+
+        for (int i = 0; i < all_report.size(); i++) {
+            BookReportDto.Response response = BookReportDto.Response.toDto(all_report.get(i));
+            report_response.add(i,response);
+        }
 
         responseDto.setStatus(HttpStatus.OK);
         responseDto.setMessage("독후감 목록 조회입니다.");
-        responseDto.setData(all_report);
+        responseDto.setData(report_response);
+
+        return responseDto;
+    }
+
+    @Override
+    public ResponseDto reportDetail(Long id) {
+        Optional<BookReport> byId = bookReportRepository.findById(id);
+
+        ResponseDto responseDto = new ResponseDto();
+
+        if (byId.isEmpty()) {
+            // 에러처리
+        }
+
+        BookReport bookReport = byId.get();
+        BookReportDto.Response response = BookReportDto.Response.toDto(bookReport);
+
+//        responseDto.setStatus(HttpStatus.OK);
+//        responseDto.setMessage("올바른 접근입니다.");
+        responseDto.setData(response);
+
+        return responseDto;
+    }
+
+    @Override
+    @Transactional
+    public ResponseDto reportUpdate(Long id, BookReportDto.Request requestDto) {
+        Optional<BookReport> byId = bookReportRepository.findById(id);
+
+        if (byId.isEmpty()) {
+            //예외처리
+        }
+
+        BookReport bookReport = byId.get();
+        bookReport.update(requestDto.getTitle(), requestDto.getContent());
+//        bookReportRepository.save(bookReport);
+
+        ResponseDto responseDto = new ResponseDto();
 
         return responseDto;
 
-//        List<FreeBoard> all_board = freeBoardRepository.findAll();
-
-//        List<Object> mergeList = new ArrayList<>();
-//        mergeList.addAll(all_board);
-//        mergeList.addAll(all_report);
-
-//        // 만든 시간 순으로 정렬
-//        Collections.sort(mergeList, new Comparator<Object>() {
-//            @Override
-//            public int compare(Object o1, Object o2) {
-//                LocalDateTime time1 = getCreationTime(o1);
-//                LocalDateTime time2 = getCreationTime(o2);
-//                return LocalDateTime.MAX.compareTo();
-//            }
-//
-//            private LocalDateTime getCreationTime(Object entity) {
-//                if (entity instanceof BookReport) {
-//                    return ((BookReport) entity).getCreatedTime();
-//                } else if (entity instanceof FreeBoard) {
-//                    return ((FreeBoard) entity).getCreatedTime();
-//                } else {
-//                    throw new IllegalArgumentException("Unknown entity type");
-//                }
-//            }
-//        });
     }
 
-
 }
+
