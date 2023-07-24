@@ -1,7 +1,9 @@
-package BookLink.BookLink.Domain.BookReply;
+package BookLink.BookLink.Domain.Community;
+
 
 import BookLink.BookLink.Domain.Member.Member;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -11,13 +13,14 @@ import javax.validation.constraints.NotNull;
 @Table(
         uniqueConstraints = {
                 @UniqueConstraint(
-                        name = "unique_mem_rep",
-                        columnNames = {"member_id", "reply_id"}
+                        name = "unique_post_mem",
+                        columnNames = {"post_id", "member_id"}
                 )
         }
 )
+@Getter
 @NoArgsConstructor
-public class BookReplyLike {
+public class BookClubLike {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,18 +28,18 @@ public class BookReplyLike {
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "member_id")
-    private Member member; // 가짜 매핑 X
+    @JoinColumn(name = "post_id")
+    private BookClub post; // 가짜 매핑 X
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "reply_id")
-    private BookReply reply; // 가짜 매핑 X
+    @JoinColumn(name = "member_id")
+    private Member member; // 가짜 매핑 X
 
     @Builder
-    public BookReplyLike(Member member, BookReply reply) {
+    public BookClubLike(BookClub post, Member member) {
+        this.post = post;
         this.member = member;
-        this.reply = reply;
     }
 
 }

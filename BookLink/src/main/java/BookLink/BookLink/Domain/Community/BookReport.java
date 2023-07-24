@@ -17,7 +17,7 @@ import java.time.LocalDate;
 public class BookReport extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String book_title;

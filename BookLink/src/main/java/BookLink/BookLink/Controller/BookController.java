@@ -1,6 +1,7 @@
 package BookLink.BookLink.Controller;
 
 import BookLink.BookLink.Domain.Book.BookDto;
+import BookLink.BookLink.Domain.BookReply.BookReplyUpdateDto;
 import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Domain.BookReply.BookReplyDto;
 import BookLink.BookLink.Service.Book.BookService;
@@ -75,6 +76,27 @@ public class BookController {
                                                   @AuthenticationPrincipal String memEmail) throws MalformedURLException {
 
         ResponseDto responseDto = bookReplyService.writeReply(memEmail, isbn, replyDto);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+    }
+
+    @PatchMapping("/{isbn}/{replyId}") // 후기(댓글) 수정
+    public ResponseEntity<ResponseDto> updateReply(@PathVariable String isbn,
+                                                   @PathVariable Long replyId,
+                                                   @RequestBody BookReplyUpdateDto replyDto) {
+
+        ResponseDto responseDto = bookReplyService.updateReply(isbn, replyId, replyDto);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+    }
+
+    @DeleteMapping("/{isbn}/{replyId}") // 후기(댓글) 삭제
+    public ResponseEntity<ResponseDto> deleteReply(@PathVariable String isbn,
+                                                   @PathVariable Long replyId) {
+
+        ResponseDto responseDto = bookReplyService.deleteReply(isbn, replyId);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);

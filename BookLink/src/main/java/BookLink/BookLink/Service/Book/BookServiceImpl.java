@@ -1,7 +1,6 @@
 package BookLink.BookLink.Service.Book;
 
 import BookLink.BookLink.Domain.Book.*;
-import BookLink.BookLink.Domain.BookReply.BookReplyLikeDto;
 import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Domain.BookReply.BookReply;
@@ -50,7 +49,7 @@ public class BookServiceImpl implements BookService{
     private String key = "ttbelwlahstmxjf2057001";
 
     @Override
-    public ResponseDto callApi(String query) { // findBook으로 바꾸고 callApi()로 공통 함수 만들기
+    public ResponseDto callApi(String query) { // TODO findBook으로 바꾸고 callApi()로 공통 함수 만들기
 
         ResponseDto responseDto = new ResponseDto();
 
@@ -72,50 +71,6 @@ public class BookServiceImpl implements BookService{
         responseDto.setData(body);
 
         return responseDto;
-    }
-
-    @Override
-    public ResponseDto joinMyBook(BookDto.Request bookDto) {
-
-        boolean is_exist = bookRepository.existsByIsbn(bookDto.getIsbn13());
-
-        if(is_exist) {
-            throw new RestApiException(BookErrorCode.ALREADY_SAVED_BOOK);
-        }
-
-        ResponseDto responseDto = new ResponseDto();
-
-        if(bookDto.getRent_signal()) {
-            BookRent bookRent = BookDto.Request.toRentEntity(bookDto);
-            bookRentRepository.save(bookRent);
-
-            Book book = Book.builder()
-                    .title(bookDto.getTitle())
-                    .authors(bookDto.getAuthor())
-                    .description(bookDto.getDescription())
-                    .isbn(bookDto.getIsbn13())
-                    .price_sales(bookDto.getPrice_sales())
-                    .cover(bookDto.getCover())
-                    .category_name(bookDto.getCategory_name())
-                    .publisher(bookDto.getPublisher())
-                    .pud_date(bookDto.getPud_date())
-                    .rent_signal(bookDto.getRent_signal())
-                    .bookRent(bookRent)
-                    .build();
-
-            bookRepository.save(book);
-        }
-        else{
-            Book book = BookDto.Request.toBookEntity(bookDto);
-            bookRepository.save(book);
-        }
-
-
-        responseDto.setStatus(HttpStatus.OK);
-        responseDto.setMessage("DB 저장 완료");
-        return responseDto;
-
-
     }
 
     @Override
@@ -252,25 +207,42 @@ public class BookServiceImpl implements BookService{
             Long replyId = reply.getId();
             Member writer = reply.getWriter();
 
-            // 부모 댓글의 경우 : 자식 댓글의 경우
-            Long sub_reply_cnt = parentId.equals(replyId) ? bookReplyRepository.countByParentId(parentId) - 1 : 0; // 대댓글 수
-
-            URL writerPic = new URL("https://soccerquick.s3.ap-northeast-2.amazonaws.com/1689834239634.png"); // TODO dummy
+            // 대댓글 수 (부모 : 자식)
+            Long sub_reply_cnt = parentId.equals(replyId) ? bookReplyRepository.countByParentId(parentId) - 1 : 0;
 
             boolean isLikedReply = bookReplyLikeRepository.existsByMemberAndReply(loginMember, reply);// 좋아요 상태
 
-            BookRepliesDto rv = new BookRepliesDto(
-                    replyId,
-                    parentId,
-                    writer.getNickname(),
-                    reply.getContent(),
-                    reply.getCreatedTime(),
-                    writerPic,
-                    reply.getLike_cnt(),
-                    sub_reply_cnt,
-                    isLikedReply
-            );
+            BookRepliesDto rv;
+            if (reply.isDeleted()) {
 
+                rv = new BookRepliesDto(
+                        replyId,
+                        parentId,
+                        "(삭제)",
+                        "삭제된 댓글입니다.",
+                        null,
+                        null,
+                        null,
+                        sub_reply_cnt,
+                        null,
+                        null
+                );
+
+            } else {
+                rv = new BookRepliesDto(
+                        replyId,
+                        parentId,
+                        writer.getNickname(),
+                        reply.getContent(),
+                        reply.getCreatedTime(),
+                        new URL("https://soccerquick.s3.ap-northeast-2.amazonaws.com/1689834239634.png"), // TODO dummy
+                        // writer.getImage()
+                        reply.getLike_cnt(),
+                        sub_reply_cnt,
+                        isLikedReply,
+                        reply.isUpdated()
+                );
+            }
             replies.add(rv);
         }
 
@@ -328,6 +300,51 @@ public class BookServiceImpl implements BookService{
         }
 
         return responseDto;
+
+    }
+
+
+    @Override
+    public ResponseDto joinMyBook(BookDto.Request bookDto) {
+
+        boolean is_exist = bookRepository.existsByIsbn(bookDto.getIsbn13());
+
+        if(is_exist) {
+            throw new RestApiException(BookErrorCode.ALREADY_SAVED_BOOK);
+        }
+
+        ResponseDto responseDto = new ResponseDto();
+
+        if(bookDto.getRent_signal()) {
+            BookRent bookRent = BookDto.Request.toRentEntity(bookDto);
+            bookRentRepository.save(bookRent);
+
+            Book book = Book.builder()
+                    .title(bookDto.getTitle())
+                    .authors(bookDto.getAuthor())
+                    .description(bookDto.getDescription())
+                    .isbn(bookDto.getIsbn13())
+                    .price_sales(bookDto.getPrice_sales())
+                    .cover(bookDto.getCover())
+                    .category_name(bookDto.getCategory_name())
+                    .publisher(bookDto.getPublisher())
+                    .pud_date(bookDto.getPud_date())
+                    .rent_signal(bookDto.getRent_signal())
+                    .bookRent(bookRent)
+                    .build();
+
+            bookRepository.save(book);
+        }
+        else{
+            Book book = BookDto.Request.toBookEntity(bookDto);
+            bookRepository.save(book);
+        }
+
+
+        responseDto.setStatus(HttpStatus.OK);
+        responseDto.setMessage("DB 저장 완료");
+        return responseDto;
+
 
     }
 }

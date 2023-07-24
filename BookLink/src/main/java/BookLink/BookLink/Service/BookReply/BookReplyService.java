@@ -1,5 +1,6 @@
 package BookLink.BookLink.Service.BookReply;
 
+import BookLink.BookLink.Domain.BookReply.BookReplyUpdateDto;
 import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Domain.BookReply.BookReplyDto;
 
@@ -11,4 +12,7 @@ public interface BookReplyService {
 
     ResponseDto likeReply(String memEmail, Long replyId);
 
+    ResponseDto updateReply(String isbn, Long replyId, BookReplyUpdateDto replyDto);
+
+    ResponseDto deleteReply(String isbn, Long replyId);
 }

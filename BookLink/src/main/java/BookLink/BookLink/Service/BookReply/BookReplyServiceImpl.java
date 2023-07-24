@@ -1,11 +1,8 @@
 package BookLink.BookLink.Service.BookReply;
 
-import BookLink.BookLink.Domain.BookReply.BookReplyLikeDto;
+import BookLink.BookLink.Domain.BookReply.*;
 import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.ResponseDto;
-import BookLink.BookLink.Domain.BookReply.BookReply;
-import BookLink.BookLink.Domain.BookReply.BookReplyDto;
-import BookLink.BookLink.Domain.BookReply.BookReplyLike;
 import BookLink.BookLink.Repository.Member.MemberRepository;
 import BookLink.BookLink.Repository.BookReply.BookReplyLikeRepository;
 import BookLink.BookLink.Repository.BookReply.BookReplyRepository;
@@ -58,7 +55,7 @@ public class BookReplyServiceImpl implements BookReplyService {
 
             if (parent == null) {
                 responseDto.setMessage("존재하지 않는 부모 댓글");
-                responseDto.setStatus(HttpStatus.OK);
+                responseDto.setStatus(HttpStatus.BAD_REQUEST);
                 return responseDto;
             }
 
@@ -88,6 +85,60 @@ public class BookReplyServiceImpl implements BookReplyService {
                 new URL("https://soccerquick.s3.ap-northeast-2.amazonaws.com/1689834239634.png") // TODO dummy
         );
         responseDto.setData(responseData);
+
+        return responseDto;
+    }
+
+    @Override
+    @Transactional
+    public ResponseDto updateReply(String isbn, Long replyId, BookReplyUpdateDto replyDto) {
+
+        ResponseDto responseDto = new ResponseDto();
+
+        BookReply updateReply = bookReplyRepository.findByIdAndIsbn(replyId, isbn).orElse(null);
+
+        if (updateReply == null) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("없는 댓글");
+            return responseDto;
+        }
+
+        if (updateReply.getContent().equals(replyDto.getContent())) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("수정된 내용 없음");
+            return responseDto;
+        }
+
+        updateReply.updateReply(replyDto.getContent());
+
+        responseDto.setMessage("댓글 수정 성공");
+        responseDto.setStatus(HttpStatus.OK);
+
+        replyDto.setContent(updateReply.getContent());
+        responseDto.setData(replyDto);
+
+        return responseDto;
+
+    }
+
+    @Override
+    @Transactional
+    public ResponseDto deleteReply(String isbn, Long replyId) {
+
+        ResponseDto responseDto = new ResponseDto();
+
+        BookReply deleteReply = bookReplyRepository.findByIdAndIsbn(replyId, isbn).orElse(null);
+
+        if (deleteReply == null) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("없는 댓글");
+            return responseDto;
+        }
+
+        deleteReply.updateDeleted();
+
+        responseDto.setStatus(HttpStatus.OK);
+        responseDto.setMessage("댓글 삭제 성공");
 
         return responseDto;
     }

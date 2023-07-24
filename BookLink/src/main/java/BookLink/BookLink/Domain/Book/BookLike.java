@@ -22,7 +22,7 @@ import javax.validation.constraints.NotNull;
 public class BookLike {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
@@ -32,8 +32,6 @@ public class BookLike {
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member; // 가짜 매핑 X
-
-//    private Long like_cnt;
 
     @Builder
     public BookLike(String isbn, Member member) {

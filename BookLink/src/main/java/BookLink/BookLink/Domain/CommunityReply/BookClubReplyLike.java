@@ -1,4 +1,4 @@
-package BookLink.BookLink.Domain.BookReply;
+package BookLink.BookLink.Domain.CommunityReply;
 
 import BookLink.BookLink.Domain.Member.Member;
 import lombok.Builder;
@@ -17,7 +17,7 @@ import javax.validation.constraints.NotNull;
         }
 )
 @NoArgsConstructor
-public class BookReplyLike {
+public class BookClubReplyLike {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,10 +31,10 @@ public class BookReplyLike {
     @NotNull
     @ManyToOne
     @JoinColumn(name = "reply_id")
-    private BookReply reply; // 가짜 매핑 X
+    private BookClubReply reply; // 가짜 매핑 X
 
     @Builder
-    public BookReplyLike(Member member, BookReply reply) {
+    public BookClubReplyLike(Member member, BookClubReply reply) {
         this.member = member;
         this.reply = reply;
     }

@@ -1,6 +1,7 @@
-package BookLink.BookLink.Domain.BookReply;
+package BookLink.BookLink.Domain.CommunityReply;
 
 import BookLink.BookLink.Domain.Common.BaseTimeEntity;
+import BookLink.BookLink.Domain.Community.BookClub;
 import BookLink.BookLink.Domain.Member.Member;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,7 +9,6 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -18,19 +18,16 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @DynamicInsert // for default 적용
 @DynamicUpdate // 변경 필드만 update 반영
-public class BookReply extends BaseTimeEntity {
+public class BookClubReply extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /*
-    @ManyToOne
-    @JoinColumn(name = "book_id")
-    private Long bookId;
-     */
     @NotNull
-    private String isbn; // TODO foreign key in API?
+    @ManyToOne
+    @JoinColumn(name = "post_id")
+    private BookClub post;
 
     @NotNull
     @ManyToOne
@@ -40,14 +37,14 @@ public class BookReply extends BaseTimeEntity {
     @NotNull
     private String content;
 
-//    @NotNull
+    //    @NotNull
     @ColumnDefault("0")
     private Long like_cnt;
 
-//    @NotNull // test
+    //    @NotNull // test
     @ManyToOne
     @JoinColumn(name = "parent")
-    private BookReply parent; // 가짜 매핑 X
+    private BookClubReply parent; // 가짜 매핑 X
 
     @NotNull // test
     @ColumnDefault("false")
@@ -57,7 +54,7 @@ public class BookReply extends BaseTimeEntity {
     @ColumnDefault("false")
     private boolean isUpdated;
 
-    public void updateParent(BookReply parent) {
+    public void updateParent(BookClubReply parent) {
         this.parent = parent;
     }
 
@@ -79,8 +76,8 @@ public class BookReply extends BaseTimeEntity {
     }
 
     @Builder
-    public BookReply(String isbn, Member writer, String content, BookReply parent) {
-        this.isbn = isbn;
+    public BookClubReply(BookClub post, Member writer, String content, BookClubReply parent) {
+        this.post = post;
         this.writer = writer;
         this.content = content;
         this.parent = parent;
