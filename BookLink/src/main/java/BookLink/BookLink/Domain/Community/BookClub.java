@@ -15,7 +15,7 @@ import javax.validation.constraints.NotNull;
 public class BookClub extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
