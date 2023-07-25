@@ -21,7 +21,6 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicInsert
-@DynamicUpdate
 public class Member extends BaseTimeEntity {
 
     @Id
@@ -47,7 +46,7 @@ public class Member extends BaseTimeEntity {
     private String address;
 
     @NotNull
-    @ColumnDefault("https://soccerquick.s3.ap-northeast-2.amazonaws.com/1689834239634.png")
+    @ColumnDefault("'https://soccerquick.s3.ap-northeast-2.amazonaws.com/1689834239634.png'")
     private URL image; // 이미지 경로
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
