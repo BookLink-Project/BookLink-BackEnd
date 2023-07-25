@@ -40,15 +40,12 @@ public class BookReport extends BaseTimeEntity {
     @JoinColumn(name = "writer")
     private Member writer;
 
-    @NotNull
     @ColumnDefault("0")
     private Long like_cnt;
 
-    @NotNull
     @ColumnDefault("0")
     private Long view_cnt;
 
-    @NotNull
     @ColumnDefault("0")
     private Long reply_cnt;
 
