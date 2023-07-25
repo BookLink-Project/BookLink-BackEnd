@@ -50,8 +50,13 @@ public class BookReportDto {
         private String content;
         private String writer;
 
+        private Long like_cnt;
+        private Long view_cnt;
+        private Long reply_cnt;
+
         @Builder
-        public Response(Long id, String book_title, String authors, String publisher, LocalDate pud_date, String title, String content, String writer) {
+        public Response(Long id, String book_title, String authors, String publisher, LocalDate pud_date, String title, String content,
+                        String writer, Long like_cnt, Long view_cnt, Long reply_cnt) {
             this.id = id;
             this.book_title = book_title;
             this.authors = authors;
@@ -60,6 +65,9 @@ public class BookReportDto {
             this.title = title;
             this.content = content;
             this.writer = writer;
+            this.like_cnt = like_cnt;
+            this.view_cnt = view_cnt;
+            this.reply_cnt = reply_cnt;
         }
 
         public static BookReportDto.Response toDto(BookReport bookReport) {
@@ -72,6 +80,9 @@ public class BookReportDto {
                     .title(bookReport.getTitle())
                     .content(bookReport.getContent())
                     .writer(bookReport.getWriter().getNickname())
+                    .like_cnt(bookReport.getLike_cnt())
+                    .view_cnt(bookReport.getView_cnt())
+                    .reply_cnt(bookReport.getReply_cnt())
                     .build();
         }
     }

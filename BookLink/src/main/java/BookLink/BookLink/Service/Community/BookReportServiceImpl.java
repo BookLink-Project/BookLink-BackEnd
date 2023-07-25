@@ -2,9 +2,11 @@ package BookLink.BookLink.Service.Community;
 
 import BookLink.BookLink.Domain.Community.BookReport;
 import BookLink.BookLink.Domain.Community.BookReportDto;
+import BookLink.BookLink.Domain.Community.BookReportLike;
 import BookLink.BookLink.Domain.Community.FreeBoard;
 import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.ResponseDto;
+import BookLink.BookLink.Repository.Community.BookReportLikeRepository;
 import BookLink.BookLink.Repository.Community.BookReportRepository;
 import BookLink.BookLink.Repository.Community.FreeBoardRepository;
 import BookLink.BookLink.Repository.Member.MemberRepository;
@@ -24,7 +26,7 @@ public class BookReportServiceImpl implements BookReportService{
 
     private final BookReportRepository bookReportRepository;
     private final MemberRepository memberRepository;
-    private final FreeBoardRepository freeBoardRepository;
+    private final BookReportLikeRepository bookReportLikeRepository;
 
     @Override
     public ResponseDto writeReport(BookReportDto.Request requestDto, String memEmail) {
@@ -74,6 +76,7 @@ public class BookReportServiceImpl implements BookReportService{
         }
 
         BookReport bookReport = byId.get();
+        bookReport.view_plus();
         BookReportDto.Response response = BookReportDto.Response.toDto(bookReport);
 
 //        responseDto.setStatus(HttpStatus.OK);
@@ -99,8 +102,44 @@ public class BookReportServiceImpl implements BookReportService{
         ResponseDto responseDto = new ResponseDto();
 
         return responseDto;
+    }
+
+    @Override
+    public ResponseDto likePost(Long id, String memEmail) {
+        ResponseDto responseDto = new ResponseDto();
+
+        Optional<Member> byEmail = memberRepository.findByEmail(memEmail);
+        Member member = byEmail.get();
+
+        Optional<BookReport> byId = bookReportRepository.findById(id);
+        BookReport bookReport = byId.get();
+        Long reportId = bookReport.getId();
+
+        boolean exists = bookReportLikeRepository.existsByMemberAndPost(member, bookReport);
+
+        if (exists) {
+            bookReportLikeRepository.deleteById(reportId);
+            bookReport.like_minus();
+
+            responseDto.setMessage("좋아요 취소");
+        } else {
+            BookReportLike bookReportLike = BookReportLike.builder()
+                    .post(bookReport)
+                    .member(member)
+                    .build();
+
+            bookReportLikeRepository.save(bookReportLike);
+            bookReport.like_plus();
+
+            responseDto.setMessage("좋아요 성공");
+        }
+
+        return responseDto;
+
 
     }
+
+
 
 }
 
