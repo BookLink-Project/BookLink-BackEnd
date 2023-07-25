@@ -13,7 +13,7 @@ public class BookRent {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long rent_id;
+    private Long id;
 
     private Integer book_rating; // 책 상태 표현
 
@@ -30,8 +30,8 @@ public class BookRent {
     private String book_status_exp; // 책 상태 설명
 
     @Builder
-    public BookRent(Long rent_id, Integer book_rating, String book_status, Integer rental_fee, Integer min_date, Integer max_date, String book_status_exp) {
-        this.rent_id = rent_id;
+    public BookRent(Long id, Integer book_rating, String book_status, Integer rental_fee, Integer min_date, Integer max_date, String book_status_exp) {
+        this.id = id;
         this.book_rating = book_rating;
         this.book_status = book_status;
         this.rental_fee = rental_fee;

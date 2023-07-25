@@ -13,4 +13,6 @@ public interface BookReportService {
     ResponseDto reportDetail(Long id);
 
     ResponseDto reportUpdate(Long id, BookReportDto.Request requestDto);
+
+    ResponseDto likePost(Long id, String memEmail);
 }

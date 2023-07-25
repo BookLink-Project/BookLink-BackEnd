@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.MalformedURLException;
@@ -173,6 +174,16 @@ public class CommunityController {
     @PatchMapping("/board/free/{id}")
     public ResponseEntity<ResponseDto> freeBoardUpdate(@PathVariable Long id, @RequestBody FreeBoardDto.Request requestDto) {
         ResponseDto responseDto = freeBoardService.freeBoardUpdate(id, requestDto);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+    }
+
+    // DeleteMapping
+
+    @PostMapping("/board/report/like/{id}")
+    public ResponseEntity<ResponseDto> likePost(@PathVariable Long id, @AuthenticationPrincipal String memEmail) {
+        ResponseDto responseDto = bookReportService.likePost(id, memEmail);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);

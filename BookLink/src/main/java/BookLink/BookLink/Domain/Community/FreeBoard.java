@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -14,6 +16,7 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Getter
 @NoArgsConstructor
+@DynamicInsert
 public class FreeBoard extends BaseTimeEntity {
 
     @Id
@@ -31,6 +34,18 @@ public class FreeBoard extends BaseTimeEntity {
 
     @NotNull
     private String content;
+
+    @NotNull
+    @ColumnDefault("0")
+    private Long like_cnt;
+
+    @NotNull
+    @ColumnDefault("0")
+    private Long view_cnt;
+
+    @NotNull
+    @ColumnDefault("0")
+    private Long reply_cnt;
 
     @Builder
     public FreeBoard(Member writer, String title, String content) {

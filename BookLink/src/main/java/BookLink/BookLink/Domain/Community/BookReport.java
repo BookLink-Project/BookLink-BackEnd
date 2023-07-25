@@ -7,8 +7,10 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Entity
@@ -38,6 +40,18 @@ public class BookReport extends BaseTimeEntity {
     @JoinColumn(name = "writer")
     private Member writer;
 
+    @NotNull
+    @ColumnDefault("0")
+    private Long like_cnt;
+
+    @NotNull
+    @ColumnDefault("0")
+    private Long view_cnt;
+
+    @NotNull
+    @ColumnDefault("0")
+    private Long reply_cnt;
+
     @Builder
     public BookReport(String book_title, String authors, String publisher, LocalDate pud_date, String title, String content, Member writer) {
         this.book_title = book_title;
@@ -53,5 +67,12 @@ public class BookReport extends BaseTimeEntity {
         this.title = title;
         this.content = content;
     }
+
+    public void view_plus() {
+        this.view_cnt += 1;
+    }
+
+    public void like_plus() { this.like_cnt += 1; }
+    public void like_minus() { this.like_cnt -= 1; }
 
 }
