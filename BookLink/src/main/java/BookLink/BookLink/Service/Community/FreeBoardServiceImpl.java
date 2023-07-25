@@ -40,6 +40,8 @@ public class FreeBoardServiceImpl implements FreeBoardService {
 
         } catch (Exception ex) {
 
+            log.info("error={}", ex);
+
             responseDto.setStatus(HttpStatus.BAD_REQUEST);
             responseDto.setMessage("입력 미완료");
 

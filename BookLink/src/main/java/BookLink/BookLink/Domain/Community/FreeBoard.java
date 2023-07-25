@@ -26,7 +26,6 @@ public class FreeBoard extends BaseTimeEntity {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer")
-    @JsonIgnore
     private Member writer;
 
     @NotNull
@@ -35,15 +34,12 @@ public class FreeBoard extends BaseTimeEntity {
     @NotNull
     private String content;
 
-    @NotNull
     @ColumnDefault("0")
     private Long like_cnt;
 
-    @NotNull
     @ColumnDefault("0")
     private Long view_cnt;
 
-    @NotNull
     @ColumnDefault("0")
     private Long reply_cnt;
 
