@@ -14,9 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
 @Service
 @RequiredArgsConstructor
 public class BookClubReplyServiceImpl implements BookClubReplyService{
@@ -28,7 +25,7 @@ public class BookClubReplyServiceImpl implements BookClubReplyService{
 
     @Override
     @Transactional
-    public ResponseDto writeReply(String memEmail, Long postId, BookClubReplyDto.Request replyDto) throws MalformedURLException {
+    public ResponseDto writeReply(String memEmail, Long postId, BookClubReplyDto.Request replyDto) {
 
         ResponseDto responseDto = new ResponseDto();
 
@@ -42,6 +39,13 @@ public class BookClubReplyServiceImpl implements BookClubReplyService{
         }
 
         BookClub post = bookClubRepository.findById(postId).orElse(null);
+
+        if (post == null) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("없는 글");
+
+            return responseDto;
+        }
 
         BookClubReply savedReply;
 
@@ -69,6 +73,8 @@ public class BookClubReplyServiceImpl implements BookClubReplyService{
 
         }
 
+        post.increaseReplyCnt();
+
         BookClubReplyDto.Response responseData = new BookClubReplyDto.Response(
                 savedReply.getId(),
                 savedReply.getCreatedTime(),
@@ -93,14 +99,6 @@ public class BookClubReplyServiceImpl implements BookClubReplyService{
         if (updateReply == null) {
             responseDto.setStatus(HttpStatus.BAD_REQUEST);
             responseDto.setMessage("없는 댓글");
-
-            return responseDto;
-        }
-
-        if (updateReply.getContent().equals(replyDto.getContent())) {
-            responseDto.setStatus(HttpStatus.BAD_REQUEST);
-            responseDto.setMessage("수정된 내용 없음");
-
             return responseDto;
         }
 
@@ -121,6 +119,14 @@ public class BookClubReplyServiceImpl implements BookClubReplyService{
 
         ResponseDto responseDto = new ResponseDto();
 
+        BookClub post = bookClubRepository.findById(postId).orElse(null);
+
+        if (post == null) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("없는 글");
+            return responseDto;
+        }
+
         BookClubReply deleteReply = bookClubReplyRepository.findByIdAndPostId(replyId, postId).orElse(null);
 
         if (deleteReply == null) {
@@ -129,7 +135,15 @@ public class BookClubReplyServiceImpl implements BookClubReplyService{
             return responseDto;
         }
 
+        if (deleteReply.isDeleted()) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("이미 삭제된 댓글");
+            return responseDto;
+        }
+
         deleteReply.updateDeleted();
+
+        post.decreaseReplyCnt();
 
         responseDto.setStatus(HttpStatus.NO_CONTENT);
 

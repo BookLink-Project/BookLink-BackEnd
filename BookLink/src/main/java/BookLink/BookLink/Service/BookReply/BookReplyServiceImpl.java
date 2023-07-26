@@ -12,9 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -26,7 +23,7 @@ public class BookReplyServiceImpl implements BookReplyService {
 
     @Override
     @Transactional
-    public ResponseDto writeReply(String memEmail, String isbn, BookReplyDto.Request replyDto) throws MalformedURLException {
+    public ResponseDto writeReply(String memEmail, String isbn, BookReplyDto.Request replyDto) {
 
         /*
         Long bookId = bookRepository.findByIsbn(isbn);
@@ -123,6 +120,12 @@ public class BookReplyServiceImpl implements BookReplyService {
         if (deleteReply == null) {
             responseDto.setStatus(HttpStatus.BAD_REQUEST);
             responseDto.setMessage("없는 댓글");
+            return responseDto;
+        }
+
+        if (deleteReply.isDeleted()) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("이미 삭제된 댓글");
             return responseDto;
         }
 

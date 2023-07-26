@@ -54,4 +54,16 @@ public class BookClub extends BaseTimeEntity {
         this.reply_cnt = 0L;
     }
 
+    public void increaseReplyCnt() {
+        this.reply_cnt += 1;
+    }
+
+    public void decreaseReplyCnt() {
+        this.reply_cnt -= 1;
+    }
+
+    public void updatePost(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
 }
