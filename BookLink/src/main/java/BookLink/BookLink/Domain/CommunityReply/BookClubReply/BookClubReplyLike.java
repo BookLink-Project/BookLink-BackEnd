@@ -3,6 +3,8 @@ package BookLink.BookLink.Domain.CommunityReply.BookClubReply;
 import BookLink.BookLink.Domain.Member.Member;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -31,6 +33,7 @@ public class BookClubReplyLike {
     @NotNull
     @ManyToOne
     @JoinColumn(name = "reply_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private BookClubReply reply; // 가짜 매핑 X
 
     @Builder

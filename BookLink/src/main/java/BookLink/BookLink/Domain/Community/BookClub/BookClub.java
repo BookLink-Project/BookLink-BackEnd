@@ -45,9 +45,6 @@ public class BookClub extends BaseTimeEntity {
     @ColumnDefault("false")
     private boolean isUpdated;
 
-//    @ColumnDefault("false")
-//    private boolean isDeleted;
-
     @Builder
     public BookClub(String title, String content, Member writer, String location) {
         this.title = title;
@@ -60,7 +57,6 @@ public class BookClub extends BaseTimeEntity {
         this.reply_cnt = 0L;
 
         this.isUpdated = false;
-//        this.isDeleted = false;
     }
 
     public void increaseReplyCnt() {

@@ -206,13 +206,14 @@ public class BookClubServiceImpl implements BookClubService {
     }
 
     @Override
-    @Transactional
     public ResponseDto deletePost(Long id) {
 
         ResponseDto responseDto = new ResponseDto();
 
-        // 냅다 삭제할지 isDeleted 컬럼 생성할지
+        bookClubRepository.deleteById(id);
 
-        return null;
+        responseDto.setStatus(HttpStatus.NO_CONTENT);
+
+        return responseDto;
     }
 }
