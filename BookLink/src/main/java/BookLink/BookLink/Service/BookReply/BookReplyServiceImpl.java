@@ -73,9 +73,6 @@ public class BookReplyServiceImpl implements BookReplyService {
 
         }
 
-        responseDto.setMessage("성공");
-        responseDto.setStatus(HttpStatus.OK);
-
         BookReplyDto.Response responseData = new BookReplyDto.Response(
                 savedReply.getId(),
                 savedReply.getCreatedTime(),
@@ -111,9 +108,6 @@ public class BookReplyServiceImpl implements BookReplyService {
 
         updateReply.updateReply(replyDto.getContent());
 
-        responseDto.setMessage("댓글 수정 성공");
-        responseDto.setStatus(HttpStatus.OK);
-
         replyDto.setContent(updateReply.getContent());
         responseDto.setData(replyDto);
 
@@ -136,9 +130,6 @@ public class BookReplyServiceImpl implements BookReplyService {
         }
 
         deleteReply.updateDeleted();
-
-        responseDto.setStatus(HttpStatus.OK);
-        responseDto.setMessage("댓글 삭제 성공");
 
         return responseDto;
     }
@@ -177,20 +168,10 @@ public class BookReplyServiceImpl implements BookReplyService {
             replyLikeRepository.save(replyLike);
             bookReply.increaseLikeCnt();
 
-            responseDto.setStatus(HttpStatus.OK);
             responseDto.setMessage("좋아요 성공");
 
             BookReplyLikeDto bookReplyLikeDto = new BookReplyLikeDto(bookReply.getLike_cnt());
             responseDto.setData(bookReplyLikeDto);
-
-            // TODO exception
-            /*
-            catch (Exception ex) { // SQLIntegrityConstraintViolationException
-
-                responseDto.setStatus(HttpStatus.BAD_REQUEST);
-                responseDto.setMessage("좋아요 불가");
-            }
-            */
 
         } else { // 좋아요 눌린 상태
 
@@ -199,20 +180,11 @@ public class BookReplyServiceImpl implements BookReplyService {
             replyLikeRepository.delete(replyLike);
             bookReply.decreaseLikeCnt();
 
-            responseDto.setStatus(HttpStatus.OK);
             responseDto.setMessage("좋아요 취소 성공");
 
             BookReplyLikeDto bookReplyLikeDto = new BookReplyLikeDto(bookReply.getLike_cnt());
             responseDto.setData(bookReplyLikeDto);
 
-            // TODO exception
-            /*
-            catch (Exception ex) { // IllegalArgumentException
-
-                responseDto.setStatus(HttpStatus.BAD_REQUEST);
-                responseDto.setMessage("좋아요 취소 불가");
-            }
-            */
         }
         return responseDto;
     }

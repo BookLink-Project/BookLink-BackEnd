@@ -69,9 +69,6 @@ public class BookClubReplyServiceImpl implements BookClubReplyService{
 
         }
 
-        responseDto.setMessage("성공");
-        responseDto.setStatus(HttpStatus.OK);
-
         BookClubReplyDto.Response responseData = new BookClubReplyDto.Response(
                 savedReply.getId(),
                 savedReply.getCreatedTime(),
@@ -110,9 +107,6 @@ public class BookClubReplyServiceImpl implements BookClubReplyService{
 
         updateReply.updateReply(replyDto.getContent());
 
-        responseDto.setMessage("댓글 수정 성공");
-        responseDto.setStatus(HttpStatus.OK);
-
         replyDto.setContent(updateReply.getContent());
         responseDto.setData(replyDto);
 
@@ -135,9 +129,6 @@ public class BookClubReplyServiceImpl implements BookClubReplyService{
         }
 
         deleteReply.updateDeleted();
-
-        responseDto.setStatus(HttpStatus.OK);
-        responseDto.setMessage("댓글 삭제 성공");
 
         return responseDto;
     }

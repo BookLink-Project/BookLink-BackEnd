@@ -52,9 +52,6 @@ public class BookClubServiceImpl implements BookClubService {
             return responseDto;
         }
 
-        responseDto.setStatus(HttpStatus.OK);
-        responseDto.setMessage("성공");
-
         return responseDto;
     }
 
@@ -82,8 +79,6 @@ public class BookClubServiceImpl implements BookClubService {
 
         }
 
-        responseDto.setStatus(HttpStatus.OK);
-        responseDto.setMessage("목록 조회 성공");
         responseDto.setData(responseData);
 
         return responseDto;
@@ -161,9 +156,6 @@ public class BookClubServiceImpl implements BookClubService {
 
         }
         // END 댓글 조회
-
-        responseDto.setStatus(HttpStatus.OK);
-        responseDto.setMessage("글 조회 성공");
 
         BookClubDetailDto result = new BookClubDetailDto(
 
