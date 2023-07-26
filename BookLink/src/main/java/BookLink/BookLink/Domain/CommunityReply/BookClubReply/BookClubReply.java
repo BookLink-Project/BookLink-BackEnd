@@ -37,20 +37,16 @@ public class BookClubReply extends BaseTimeEntity {
     @NotNull
     private String content;
 
-    //    @NotNull
     @ColumnDefault("0")
     private Long like_cnt;
 
-    //    @NotNull // test
     @ManyToOne
     @JoinColumn(name = "parent")
     private BookClubReply parent; // 가짜 매핑 X
 
-    @NotNull // test
     @ColumnDefault("false")
     private boolean isDeleted;
 
-    @NotNull // test
     @ColumnDefault("false")
     private boolean isUpdated;
 

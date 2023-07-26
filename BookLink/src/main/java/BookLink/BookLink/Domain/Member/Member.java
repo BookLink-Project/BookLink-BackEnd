@@ -19,6 +19,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+//@DynamicUpdate
 @DynamicInsert
 public class Member extends BaseTimeEntity {
 
@@ -44,7 +45,6 @@ public class Member extends BaseTimeEntity {
     @NotNull
     private String address;
 
-    @NotNull
     @ColumnDefault("'https://soccerquick.s3.ap-northeast-2.amazonaws.com/1689834239634.png'")
     private URL image; // 이미지 경로
 
