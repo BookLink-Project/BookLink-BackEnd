@@ -2,12 +2,11 @@ package BookLink.BookLink.Domain.Member;
 
 import BookLink.BookLink.Domain.Card.Card;
 import BookLink.BookLink.Domain.Common.BaseTimeEntity;
-import BookLink.BookLink.Domain.Community.BookReport;
+import BookLink.BookLink.Domain.Community.BookReport.BookReport;
 import BookLink.BookLink.Domain.BookReply.BookReply;
 
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;

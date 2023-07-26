@@ -1,9 +1,7 @@
 package BookLink.BookLink.Service.Community;
 
-import BookLink.BookLink.Domain.Community.BookReport;
-import BookLink.BookLink.Domain.Community.BookReportDto;
-import BookLink.BookLink.Domain.Community.FreeBoard;
-import BookLink.BookLink.Domain.Community.FreeBoardDto;
+import BookLink.BookLink.Domain.Community.FreeBoard.FreeBoard;
+import BookLink.BookLink.Domain.Community.FreeBoard.FreeBoardDto;
 import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Repository.Community.FreeBoardRepository;
@@ -88,8 +86,7 @@ public class FreeBoardServiceImpl implements FreeBoardService {
         FreeBoard freeBoard = byId.get();
         FreeBoardDto.Response response = FreeBoardDto.Response.toDto(freeBoard);
 
-//        responseDto.setStatus(HttpStatus.OK);
-        responseDto.setMessage("테스트");
+
         responseDto.setData(response);
 
         return responseDto;

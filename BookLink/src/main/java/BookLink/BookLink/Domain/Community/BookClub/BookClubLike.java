@@ -1,19 +1,26 @@
-package BookLink.BookLink.Domain.Community;
+package BookLink.BookLink.Domain.Community.BookClub;
+
 
 import BookLink.BookLink.Domain.Member.Member;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@Setter
+@Table(
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "unique_post_mem",
+                        columnNames = {"post_id", "member_id"}
+                )
+        }
+)
+@Getter
 @NoArgsConstructor
-@AllArgsConstructor
-public class BookReportLike {
+public class BookClubLike {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,7 +29,7 @@ public class BookReportLike {
     @NotNull
     @ManyToOne
     @JoinColumn(name = "post_id")
-    private BookReport post; // 가짜 매핑 X
+    private BookClub post; // 가짜 매핑 X
 
     @NotNull
     @ManyToOne
@@ -30,10 +37,9 @@ public class BookReportLike {
     private Member member; // 가짜 매핑 X
 
     @Builder
-    public BookReportLike(BookReport post, Member member) {
+    public BookClubLike(BookClub post, Member member) {
         this.post = post;
         this.member = member;
     }
-
 
 }

@@ -1,6 +1,6 @@
-package BookLink.BookLink.Domain.Community;
+package BookLink.BookLink.Domain.Community.BookClub;
 
-import BookLink.BookLink.Domain.CommunityReply.BookClubRepliesDto;
+import BookLink.BookLink.Domain.CommunityReply.BookClubReply.BookClubRepliesDto;
 import lombok.*;
 
 import java.net.URL;

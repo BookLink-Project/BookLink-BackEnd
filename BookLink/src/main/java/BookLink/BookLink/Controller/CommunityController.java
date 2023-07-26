@@ -1,10 +1,10 @@
 package BookLink.BookLink.Controller;
 
-import BookLink.BookLink.Domain.Community.BookClubDto;
-import BookLink.BookLink.Domain.Community.BookReportDto;
-import BookLink.BookLink.Domain.Community.FreeBoardDto;
-import BookLink.BookLink.Domain.CommunityReply.BookClubReplyDto;
-import BookLink.BookLink.Domain.CommunityReply.BookClubReplyUpdateDto;
+import BookLink.BookLink.Domain.Community.BookClub.BookClubDto;
+import BookLink.BookLink.Domain.Community.BookReport.BookReportDto;
+import BookLink.BookLink.Domain.Community.FreeBoard.FreeBoardDto;
+import BookLink.BookLink.Domain.CommunityReply.BookClubReply.BookClubReplyDto;
+import BookLink.BookLink.Domain.CommunityReply.BookClubReply.BookClubReplyUpdateDto;
 import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Service.Community.BookClubService;
 import BookLink.BookLink.Service.Community.BookReportService;
@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.MalformedURLException;
@@ -188,6 +187,8 @@ public class CommunityController {
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);
     }
+
+    // 댓글 작성 필요
 
 
 

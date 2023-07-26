@@ -1,4 +1,4 @@
-package BookLink.BookLink.Domain.CommunityReply;
+package BookLink.BookLink.Domain.CommunityReply.BookClubReply;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

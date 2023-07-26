@@ -1,4 +1,4 @@
-package BookLink.BookLink.Domain.Community;
+package BookLink.BookLink.Domain.Community.FreeBoard;
 
 import BookLink.BookLink.Domain.Common.BaseTimeEntity;
 import BookLink.BookLink.Domain.Member.Member;
@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -17,6 +18,7 @@ import javax.validation.constraints.NotNull;
 @Getter
 @NoArgsConstructor
 @DynamicInsert
+@DynamicUpdate
 public class FreeBoard extends BaseTimeEntity {
 
     @Id
@@ -27,6 +29,9 @@ public class FreeBoard extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer")
     private Member writer;
+
+    @NotNull
+    private String category;
 
     @NotNull
     private String title;
@@ -44,8 +49,9 @@ public class FreeBoard extends BaseTimeEntity {
     private Long reply_cnt;
 
     @Builder
-    public FreeBoard(Member writer, String title, String content) {
+    public FreeBoard(Member writer, String category, String title, String content) {
         this.writer = writer;
+        this.category = category;
         this.title = title;
         this.content = content;
     }

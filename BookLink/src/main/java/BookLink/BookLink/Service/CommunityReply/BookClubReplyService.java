@@ -1,7 +1,7 @@
 package BookLink.BookLink.Service.CommunityReply;
 
-import BookLink.BookLink.Domain.CommunityReply.BookClubReplyDto;
-import BookLink.BookLink.Domain.CommunityReply.BookClubReplyUpdateDto;
+import BookLink.BookLink.Domain.CommunityReply.BookClubReply.BookClubReplyDto;
+import BookLink.BookLink.Domain.CommunityReply.BookClubReply.BookClubReplyUpdateDto;
 import BookLink.BookLink.Domain.ResponseDto;
 
 import java.net.MalformedURLException;

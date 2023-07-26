@@ -1,7 +1,7 @@
-package BookLink.BookLink.Domain.CommunityReply;
+package BookLink.BookLink.Domain.CommunityReply.BookReportReply;
 
 import BookLink.BookLink.Domain.Common.BaseTimeEntity;
-import BookLink.BookLink.Domain.Community.BookClub;
+import BookLink.BookLink.Domain.Community.BookReport.BookReport;
 import BookLink.BookLink.Domain.Member.Member;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,7 +18,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @DynamicInsert // for default 적용
 @DynamicUpdate // 변경 필드만 update 반영
-public class BookClubReply extends BaseTimeEntity {
+public class BookReportReply extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +27,7 @@ public class BookClubReply extends BaseTimeEntity {
     @NotNull
     @ManyToOne
     @JoinColumn(name = "post_id")
-    private BookClub post;
+    private BookReport post;
 
     @NotNull
     @ManyToOne
@@ -42,46 +42,18 @@ public class BookClubReply extends BaseTimeEntity {
 
     @ManyToOne
     @JoinColumn(name = "parent")
-    private BookClubReply parent; // 가짜 매핑 X
-
-    @ColumnDefault("false")
-    private boolean isDeleted;
-
-    @ColumnDefault("false")
-    private boolean isUpdated;
-
-    public void updateParent(BookClubReply parent) {
-        this.parent = parent;
-    }
-
-    public void updateReply(String content) {
-        this.content = content;
-        this.isUpdated = true;
-    }
-
-    public void updateDeleted() {
-        this.isDeleted = true;
-    }
-
-    public void increaseLikeCnt() {
-        this.like_cnt += 1;
-    }
-
-    public void decreaseLikeCnt() {
-        this.like_cnt -= 1;
-    }
+    private BookReportReply parent;
 
     @Builder
-    public BookClubReply(BookClub post, Member writer, String content, BookClubReply parent) {
+    public BookReportReply(BookReport post, Member writer, String content, Long like_cnt, BookReportReply parent) {
         this.post = post;
         this.writer = writer;
         this.content = content;
+        this.like_cnt = like_cnt;
         this.parent = parent;
-
-        this.like_cnt = 0L;
-        this.isDeleted = false;
-        this.isUpdated = false;
-
     }
 
+    public void updateParent(BookReportReply parent) {
+        this.parent = parent;
+    }
 }

@@ -1,10 +1,11 @@
-package BookLink.BookLink.Domain.Community;
+package BookLink.BookLink.Domain.Community.BookClub;
 
 import BookLink.BookLink.Domain.Common.BaseTimeEntity;
 import BookLink.BookLink.Domain.Member.Member;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -32,13 +33,13 @@ public class BookClub extends BaseTimeEntity {
     @NotNull
     private String location;
 
-    @NotNull
+    @ColumnDefault("0")
     private Long like_cnt;
 
-    @NotNull
+    @ColumnDefault("0")
     private Long view_cnt;
 
-    @NotNull
+    @ColumnDefault("0")
     private Long reply_cnt;
 
     @Builder
@@ -52,4 +53,5 @@ public class BookClub extends BaseTimeEntity {
         this.view_cnt = 0L;
         this.reply_cnt = 0L;
     }
+
 }
