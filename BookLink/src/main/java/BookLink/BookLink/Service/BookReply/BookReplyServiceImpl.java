@@ -109,6 +109,8 @@ public class BookReplyServiceImpl implements BookReplyService {
         updateReply.updateReply(replyDto.getContent());
 
         replyDto.setContent(updateReply.getContent());
+
+        responseDto.setStatus(HttpStatus.CREATED);
         responseDto.setData(replyDto);
 
         return responseDto;
@@ -130,6 +132,8 @@ public class BookReplyServiceImpl implements BookReplyService {
         }
 
         deleteReply.updateDeleted();
+
+        responseDto.setStatus(HttpStatus.NO_CONTENT);
 
         return responseDto;
     }

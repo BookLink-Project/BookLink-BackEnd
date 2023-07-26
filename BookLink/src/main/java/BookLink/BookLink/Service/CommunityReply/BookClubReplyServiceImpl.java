@@ -74,8 +74,8 @@ public class BookClubReplyServiceImpl implements BookClubReplyService{
                 savedReply.getCreatedTime(),
                 savedReply.getContent(),
                 loginMember.getNickname(),
-                // loginMember.getImage()
-                new URL("https://soccerquick.s3.ap-northeast-2.amazonaws.com/1689834239634.png") // TODO dummy
+                loginMember.getImage()
+                //new URL("https://soccerquick.s3.ap-northeast-2.amazonaws.com/1689834239634.png") // TODO dummy
         );
         responseDto.setData(responseData);
 
@@ -108,6 +108,8 @@ public class BookClubReplyServiceImpl implements BookClubReplyService{
         updateReply.updateReply(replyDto.getContent());
 
         replyDto.setContent(updateReply.getContent());
+
+        responseDto.setStatus(HttpStatus.CREATED);
         responseDto.setData(replyDto);
 
         return responseDto;
@@ -129,6 +131,8 @@ public class BookClubReplyServiceImpl implements BookClubReplyService{
         }
 
         deleteReply.updateDeleted();
+
+        responseDto.setStatus(HttpStatus.NO_CONTENT);
 
         return responseDto;
     }
