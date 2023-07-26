@@ -1,6 +1,6 @@
-package BookLink.BookLink.Domain.CommunityReply;
+package BookLink.BookLink.Domain.CommunityReply.BookClubReply;
 
-import BookLink.BookLink.Domain.Community.BookClub;
+import BookLink.BookLink.Domain.Community.BookClub.BookClub;
 import BookLink.BookLink.Domain.Member.Member;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

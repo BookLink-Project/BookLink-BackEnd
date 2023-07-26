@@ -1,10 +1,10 @@
 package BookLink.BookLink.Service.Community;
 
-import BookLink.BookLink.Domain.Community.BookClub;
-import BookLink.BookLink.Domain.Community.BookClubDetailDto;
-import BookLink.BookLink.Domain.Community.BookClubDto;
-import BookLink.BookLink.Domain.CommunityReply.BookClubReply;
-import BookLink.BookLink.Domain.CommunityReply.BookClubRepliesDto;
+import BookLink.BookLink.Domain.Community.BookClub.BookClub;
+import BookLink.BookLink.Domain.Community.BookClub.BookClubDetailDto;
+import BookLink.BookLink.Domain.Community.BookClub.BookClubDto;
+import BookLink.BookLink.Domain.CommunityReply.BookClubReply.BookClubReply;
+import BookLink.BookLink.Domain.CommunityReply.BookClubReply.BookClubRepliesDto;
 import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Repository.Community.BookClubLikeRepository;

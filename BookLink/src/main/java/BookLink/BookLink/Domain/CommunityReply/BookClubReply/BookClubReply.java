@@ -1,7 +1,7 @@
-package BookLink.BookLink.Domain.CommunityReply;
+package BookLink.BookLink.Domain.CommunityReply.BookClubReply;
 
 import BookLink.BookLink.Domain.Common.BaseTimeEntity;
-import BookLink.BookLink.Domain.Community.BookClub;
+import BookLink.BookLink.Domain.Community.BookClub.BookClub;
 import BookLink.BookLink.Domain.Member.Member;
 import lombok.Builder;
 import lombok.Getter;

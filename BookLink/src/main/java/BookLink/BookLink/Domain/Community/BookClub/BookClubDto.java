@@ -1,4 +1,4 @@
-package BookLink.BookLink.Domain.Community;
+package BookLink.BookLink.Domain.Community.BookClub;
 
 import BookLink.BookLink.Domain.Member.Member;
 import lombok.Builder;

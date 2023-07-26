@@ -1,24 +1,19 @@
 package BookLink.BookLink.Service.Community;
 
-import BookLink.BookLink.Domain.Community.BookReport;
-import BookLink.BookLink.Domain.Community.BookReportDto;
-import BookLink.BookLink.Domain.Community.BookReportLike;
-import BookLink.BookLink.Domain.Community.FreeBoard;
+import BookLink.BookLink.Domain.Community.BookReport.BookReport;
+import BookLink.BookLink.Domain.Community.BookReport.BookReportDto;
+import BookLink.BookLink.Domain.Community.BookReport.BookReportLike;
 import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Repository.Community.BookReportLikeRepository;
 import BookLink.BookLink.Repository.Community.BookReportRepository;
-import BookLink.BookLink.Repository.Community.FreeBoardRepository;
 import BookLink.BookLink.Repository.Member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor

@@ -1,9 +1,9 @@
 package BookLink.BookLink.Service.CommunityReply;
 
-import BookLink.BookLink.Domain.Community.BookClub;
-import BookLink.BookLink.Domain.CommunityReply.BookClubReply;
-import BookLink.BookLink.Domain.CommunityReply.BookClubReplyDto;
-import BookLink.BookLink.Domain.CommunityReply.BookClubReplyUpdateDto;
+import BookLink.BookLink.Domain.Community.BookClub.BookClub;
+import BookLink.BookLink.Domain.CommunityReply.BookClubReply.BookClubReply;
+import BookLink.BookLink.Domain.CommunityReply.BookClubReply.BookClubReplyDto;
+import BookLink.BookLink.Domain.CommunityReply.BookClubReply.BookClubReplyUpdateDto;
 import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Repository.CommunityReply.BookClubReplyRepository;

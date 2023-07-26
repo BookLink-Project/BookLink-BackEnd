@@ -1,10 +1,10 @@
-package BookLink.BookLink.Domain.Community;
+package BookLink.BookLink.Domain.Community.BookReport;
 
 import BookLink.BookLink.Domain.Member.Member;
 import lombok.*;
-import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class BookReportDto {
 
@@ -19,6 +19,7 @@ public class BookReportDto {
         private String publisher;
         private LocalDate pud_date;
         // 표지이미지
+        private String category;
         private String title;
         private String content;
 
@@ -28,6 +29,7 @@ public class BookReportDto {
                     .authors(request.getAuthors())
                     .publisher(request.getPublisher())
                     .pud_date(request.getPud_date())
+                    .category(request.getCategory())
                     .title(request.getTitle())
                     .content(request.getContent())
                     .writer(writer)
@@ -46,6 +48,7 @@ public class BookReportDto {
         private String publisher;
         private LocalDate pud_date;
         // 표지이미지
+        private String category;
         private String title;
         private String content;
         private String writer;
@@ -54,20 +57,24 @@ public class BookReportDto {
         private Long view_cnt;
         private Long reply_cnt;
 
+        private LocalDateTime localDateTime;
+
         @Builder
-        public Response(Long id, String book_title, String authors, String publisher, LocalDate pud_date, String title, String content,
-                        String writer, Long like_cnt, Long view_cnt, Long reply_cnt) {
+        public Response(Long id, String book_title, String authors, String publisher, LocalDate pud_date, String category, String title, String content,
+                        String writer, Long like_cnt, Long view_cnt, Long reply_cnt, LocalDateTime localDateTime) {
             this.id = id;
             this.book_title = book_title;
             this.authors = authors;
             this.publisher = publisher;
             this.pud_date = pud_date;
+            this.category = category;
             this.title = title;
             this.content = content;
             this.writer = writer;
             this.like_cnt = like_cnt;
             this.view_cnt = view_cnt;
             this.reply_cnt = reply_cnt;
+            this.localDateTime = localDateTime;
         }
 
         public static BookReportDto.Response toDto(BookReport bookReport) {
@@ -77,12 +84,14 @@ public class BookReportDto {
                     .authors(bookReport.getAuthors())
                     .publisher(bookReport.getPublisher())
                     .pud_date(bookReport.getPud_date())
+                    .category(bookReport.getCategory())
                     .title(bookReport.getTitle())
                     .content(bookReport.getContent())
                     .writer(bookReport.getWriter().getNickname())
                     .like_cnt(bookReport.getLike_cnt())
                     .view_cnt(bookReport.getView_cnt())
                     .reply_cnt(bookReport.getReply_cnt())
+                    .localDateTime(bookReport.getLastModifiedTime())
                     .build();
         }
     }

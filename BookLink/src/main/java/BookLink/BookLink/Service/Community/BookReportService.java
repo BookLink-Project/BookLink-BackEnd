@@ -1,6 +1,6 @@
 package BookLink.BookLink.Service.Community;
 
-import BookLink.BookLink.Domain.Community.BookReportDto;
+import BookLink.BookLink.Domain.Community.BookReport.BookReportDto;
 import BookLink.BookLink.Domain.ResponseDto;
 
 

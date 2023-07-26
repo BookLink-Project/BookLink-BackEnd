@@ -1,7 +1,7 @@
 package BookLink.BookLink.Repository.Community;
 
-import BookLink.BookLink.Domain.Community.BookClub;
-import BookLink.BookLink.Domain.Community.BookClubLike;
+import BookLink.BookLink.Domain.Community.BookClub.BookClub;
+import BookLink.BookLink.Domain.Community.BookClub.BookClubLike;
 import BookLink.BookLink.Domain.Member.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
