@@ -1,6 +1,7 @@
 package BookLink.BookLink.Controller;
 
 import BookLink.BookLink.Domain.Community.BookClub.BookClubDto;
+import BookLink.BookLink.Domain.Community.BookClub.BookClubUpdateDto;
 import BookLink.BookLink.Domain.Community.BookReport.BookReportDto;
 import BookLink.BookLink.Domain.Community.FreeBoard.FreeBoardDto;
 import BookLink.BookLink.Domain.CommunityReply.BookClubReply.BookClubReplyDto;
@@ -76,6 +77,27 @@ public class CommunityController {
                                                     @AuthenticationPrincipal String memEmail) throws MalformedURLException {
 
         ResponseDto responseDto = bookClubService.showPost(memEmail, id);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+
+    }
+
+    @PatchMapping("/book-club/{id}") // 독서모임 글 수정
+    public ResponseEntity<ResponseDto> modifyBookClub(@PathVariable Long id,
+                                                      @RequestBody BookClubUpdateDto bookClubDto) {
+
+        ResponseDto responseDto = bookClubService.modifyPost(id, bookClubDto);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+
+    }
+
+    @DeleteMapping("/book-club/{id}") // 독서모임 글 삭제
+    public ResponseEntity<ResponseDto> deleteBookClub(@PathVariable Long id) {
+
+        ResponseDto responseDto = bookClubService.deletePost(id);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);

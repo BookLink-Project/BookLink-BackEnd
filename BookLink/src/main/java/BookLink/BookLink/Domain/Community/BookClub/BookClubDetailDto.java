@@ -26,6 +26,7 @@ public class BookClubDetailDto {
     private Long reply_cnt;
 
     private boolean isLiked;
+    private boolean isUpdated;
 
     private List<BookClubRepliesDto> replies = new ArrayList<>();
 

@@ -3,6 +3,7 @@ package BookLink.BookLink.Service.Community;
 import BookLink.BookLink.Domain.Community.BookClub.BookClub;
 import BookLink.BookLink.Domain.Community.BookClub.BookClubDetailDto;
 import BookLink.BookLink.Domain.Community.BookClub.BookClubDto;
+import BookLink.BookLink.Domain.Community.BookClub.BookClubUpdateDto;
 import BookLink.BookLink.Domain.CommunityReply.BookClubReply.BookClubReply;
 import BookLink.BookLink.Domain.CommunityReply.BookClubReply.BookClubRepliesDto;
 import BookLink.BookLink.Domain.Member.Member;
@@ -15,6 +16,7 @@ import BookLink.BookLink.Repository.Member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -72,7 +74,7 @@ public class BookClubServiceImpl implements BookClubService {
                     .content(bookClub.getContent())
                     .location(bookClub.getLocation())
                     .date(bookClub.getCreatedTime())
-                    .reply_cnt(10L) // TODO dummy
+                    .reply_cnt(bookClub.getReply_cnt())
                     .build();
 
             responseData.add(response);
@@ -157,7 +159,6 @@ public class BookClubServiceImpl implements BookClubService {
         // END 댓글 조회
 
         BookClubDetailDto result = new BookClubDetailDto(
-
                 post.getTitle(),
                 post.getLocation(),
                 post.getContent(),
@@ -168,10 +169,50 @@ public class BookClubServiceImpl implements BookClubService {
                 post.getLike_cnt(),
                 post.getReply_cnt(),
                 isLiked,
+                post.isUpdated(),
                 replies
         );
         responseDto.setData(result);
 
         return responseDto;
+    }
+
+    @Override
+    @Transactional
+    public ResponseDto modifyPost(Long id, BookClubUpdateDto bookClubDto) {
+
+        ResponseDto responseDto = new ResponseDto();
+
+        BookClub updatePost = bookClubRepository.findById(id).orElse(null);
+
+        if (updatePost == null) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("없는 글");
+            return responseDto;
+        }
+
+        String newTitle = bookClubDto.getTitle();
+        String newContent = bookClubDto.getContent();
+
+        updatePost.updatePost(newTitle, newContent);
+
+        responseDto.setStatus(HttpStatus.CREATED);
+
+        bookClubDto.setTitle(newTitle);
+        bookClubDto.setContent(newContent);
+        responseDto.setData(bookClubDto);
+
+        return responseDto;
+    }
+
+    @Override
+    @Transactional
+    public ResponseDto deletePost(Long id) {
+
+        ResponseDto responseDto = new ResponseDto();
+
+        // 냅다 삭제할지 isDeleted 컬럼 생성할지
+
+        return null;
     }
 }
