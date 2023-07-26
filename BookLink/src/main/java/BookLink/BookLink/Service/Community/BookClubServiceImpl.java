@@ -143,8 +143,7 @@ public class BookClubServiceImpl implements BookClubService {
                         writer.getNickname(),
                         reply.getContent(),
                         reply.getCreatedTime(),
-                        //writer.getImage(),
-                        new URL("https://soccerquick.s3.ap-northeast-2.amazonaws.com/1689834239634.png"), // TODO dummy
+                        writer.getImage(),
                         reply.getLike_cnt(),
                         sub_reply_cnt,
                         isLikedReply,
@@ -164,8 +163,7 @@ public class BookClubServiceImpl implements BookClubService {
                 post.getContent(),
                 post.getCreatedTime(),
                 post.getWriter().getNickname(),
-                //post.getWriter().getImage(),
-                new URL("https://soccerquick.s3.ap-northeast-2.amazonaws.com/1689834239634.png"), // TODO dummy
+                post.getWriter().getImage(),
                 post.getView_cnt(),
                 post.getLike_cnt(),
                 post.getReply_cnt(),

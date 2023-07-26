@@ -193,7 +193,7 @@ public class BookServiceImpl implements BookService{
         item.setLiked(isLikedBook);
 
         // 댓글 조회
-        List<BookReply> replyList = bookReplyRepository.findByIsbnOrderByParentDescIdDesc(isbn13); // TODO sorting
+        List<BookReply> replyList = bookReplyRepository.findByIsbnOrderByParentDescIdDesc(isbn13);
 
         List<BookRepliesDto> replies = new ArrayList<BookRepliesDto>();
 
@@ -231,8 +231,7 @@ public class BookServiceImpl implements BookService{
                         writer.getNickname(),
                         reply.getContent(),
                         reply.getCreatedTime(),
-                        new URL("https://soccerquick.s3.ap-northeast-2.amazonaws.com/1689834239634.png"), // TODO dummy
-                        // writer.getImage()
+                        writer.getImage(),
                         reply.getLike_cnt(),
                         sub_reply_cnt,
                         isLikedReply,

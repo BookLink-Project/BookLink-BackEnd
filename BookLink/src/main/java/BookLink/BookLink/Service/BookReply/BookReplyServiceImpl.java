@@ -47,10 +47,6 @@ public class BookReplyServiceImpl implements BookReplyService {
 
         if (replyDto.getParentId() != 0) { // 자식 댓글의 경우 parent 찾기
 
-            // 유효한 parent인지 확인 TODO exception
-            // 프론트에서 걸러지는 부분이지만 한 번 더 처리? or not
-            // bookReplyRepository.findByIdAndParent(replyDto.getParentId()).orElse(null);
-
             BookReply parent = bookReplyRepository.findById(replyDto.getParentId()).orElse(null);
 
             if (parent == null) {
@@ -78,8 +74,7 @@ public class BookReplyServiceImpl implements BookReplyService {
                 savedReply.getCreatedTime(),
                 savedReply.getContent(),
                 loginMember.getNickname(),
-                // loginMember.getImage()
-                new URL("https://soccerquick.s3.ap-northeast-2.amazonaws.com/1689834239634.png") // TODO dummy
+                 loginMember.getImage()
         );
         responseDto.setData(responseData);
 

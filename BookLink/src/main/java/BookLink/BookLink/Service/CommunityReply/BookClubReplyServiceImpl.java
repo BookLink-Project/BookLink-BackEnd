@@ -75,7 +75,6 @@ public class BookClubReplyServiceImpl implements BookClubReplyService{
                 savedReply.getContent(),
                 loginMember.getNickname(),
                 loginMember.getImage()
-                //new URL("https://soccerquick.s3.ap-northeast-2.amazonaws.com/1689834239634.png") // TODO dummy
         );
         responseDto.setData(responseData);
 
