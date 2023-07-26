@@ -19,7 +19,7 @@ public class BookClubDetailDto {
     private String content;
     private LocalDateTime date;
     private String writer;
-    private URL writer_image;
+    private URL image;
 
     private Long view_cnt;
     private Long like_cnt;
