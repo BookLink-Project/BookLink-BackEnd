@@ -42,6 +42,9 @@ public class BookClub extends BaseTimeEntity {
     @ColumnDefault("0")
     private Long reply_cnt;
 
+    @ColumnDefault("false")
+    private boolean isUpdated;
+
     @Builder
     public BookClub(String title, String content, Member writer, String location) {
         this.title = title;
@@ -52,6 +55,21 @@ public class BookClub extends BaseTimeEntity {
         this.like_cnt = 0L;
         this.view_cnt = 0L;
         this.reply_cnt = 0L;
+
+        this.isUpdated = false;
     }
 
+    public void increaseReplyCnt() {
+        this.reply_cnt += 1;
+    }
+
+    public void decreaseReplyCnt() {
+        this.reply_cnt -= 1;
+    }
+
+    public void updatePost(String title, String content) {
+        this.title = title;
+        this.content = content;
+        this.isUpdated = true;
+    }
 }

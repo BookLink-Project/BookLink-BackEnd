@@ -3,6 +3,7 @@ package BookLink.BookLink.Service.Community;
 import BookLink.BookLink.Domain.Community.BookClub.BookClub;
 import BookLink.BookLink.Domain.Community.BookClub.BookClubDetailDto;
 import BookLink.BookLink.Domain.Community.BookClub.BookClubDto;
+import BookLink.BookLink.Domain.Community.BookClub.BookClubUpdateDto;
 import BookLink.BookLink.Domain.CommunityReply.BookClubReply.BookClubReply;
 import BookLink.BookLink.Domain.CommunityReply.BookClubReply.BookClubRepliesDto;
 import BookLink.BookLink.Domain.Member.Member;
@@ -15,6 +16,7 @@ import BookLink.BookLink.Repository.Member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -52,9 +54,6 @@ public class BookClubServiceImpl implements BookClubService {
             return responseDto;
         }
 
-        responseDto.setStatus(HttpStatus.OK);
-        responseDto.setMessage("성공");
-
         return responseDto;
     }
 
@@ -75,15 +74,13 @@ public class BookClubServiceImpl implements BookClubService {
                     .content(bookClub.getContent())
                     .location(bookClub.getLocation())
                     .date(bookClub.getCreatedTime())
-                    .reply_cnt(10L) // TODO dummy
+                    .reply_cnt(bookClub.getReply_cnt())
                     .build();
 
             responseData.add(response);
 
         }
 
-        responseDto.setStatus(HttpStatus.OK);
-        responseDto.setMessage("목록 조회 성공");
         responseDto.setData(responseData);
 
         return responseDto;
@@ -148,8 +145,7 @@ public class BookClubServiceImpl implements BookClubService {
                         writer.getNickname(),
                         reply.getContent(),
                         reply.getCreatedTime(),
-                        //writer.getImage(),
-                        new URL("https://soccerquick.s3.ap-northeast-2.amazonaws.com/1689834239634.png"), // TODO dummy
+                        writer.getImage(),
                         reply.getLike_cnt(),
                         sub_reply_cnt,
                         isLikedReply,
@@ -162,25 +158,61 @@ public class BookClubServiceImpl implements BookClubService {
         }
         // END 댓글 조회
 
-        responseDto.setStatus(HttpStatus.OK);
-        responseDto.setMessage("글 조회 성공");
-
         BookClubDetailDto result = new BookClubDetailDto(
-
                 post.getTitle(),
                 post.getLocation(),
                 post.getContent(),
                 post.getCreatedTime(),
                 post.getWriter().getNickname(),
-                //post.getWriter().getImage(),
-                new URL("https://soccerquick.s3.ap-northeast-2.amazonaws.com/1689834239634.png"), // TODO dummy
+                post.getWriter().getImage(),
                 post.getView_cnt(),
                 post.getLike_cnt(),
                 post.getReply_cnt(),
                 isLiked,
+                post.isUpdated(),
                 replies
         );
         responseDto.setData(result);
+
+        return responseDto;
+    }
+
+    @Override
+    @Transactional
+    public ResponseDto modifyPost(Long id, BookClubUpdateDto bookClubDto) {
+
+        ResponseDto responseDto = new ResponseDto();
+
+        BookClub updatePost = bookClubRepository.findById(id).orElse(null);
+
+        if (updatePost == null) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("없는 글");
+            return responseDto;
+        }
+
+        String newTitle = bookClubDto.getTitle();
+        String newContent = bookClubDto.getContent();
+
+        updatePost.updatePost(newTitle, newContent);
+
+        responseDto.setStatus(HttpStatus.CREATED);
+
+        bookClubDto.setTitle(newTitle);
+        bookClubDto.setContent(newContent);
+        responseDto.setData(bookClubDto);
+
+        return responseDto;
+    }
+
+    @Override
+    public ResponseDto deletePost(Long id) {
+
+        ResponseDto responseDto = new ResponseDto();
+
+        bookClubRepository.deleteById(id);
+
+        responseDto.setStatus(HttpStatus.NO_CONTENT);
 
         return responseDto;
     }

@@ -12,9 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -26,7 +23,7 @@ public class BookReplyServiceImpl implements BookReplyService {
 
     @Override
     @Transactional
-    public ResponseDto writeReply(String memEmail, String isbn, BookReplyDto.Request replyDto) throws MalformedURLException {
+    public ResponseDto writeReply(String memEmail, String isbn, BookReplyDto.Request replyDto) {
 
         /*
         Long bookId = bookRepository.findByIsbn(isbn);
@@ -46,10 +43,6 @@ public class BookReplyServiceImpl implements BookReplyService {
         BookReply savedReply;
 
         if (replyDto.getParentId() != 0) { // 자식 댓글의 경우 parent 찾기
-
-            // 유효한 parent인지 확인 TODO exception
-            // 프론트에서 걸러지는 부분이지만 한 번 더 처리? or not
-            // bookReplyRepository.findByIdAndParent(replyDto.getParentId()).orElse(null);
 
             BookReply parent = bookReplyRepository.findById(replyDto.getParentId()).orElse(null);
 
@@ -73,16 +66,12 @@ public class BookReplyServiceImpl implements BookReplyService {
 
         }
 
-        responseDto.setMessage("성공");
-        responseDto.setStatus(HttpStatus.OK);
-
         BookReplyDto.Response responseData = new BookReplyDto.Response(
                 savedReply.getId(),
                 savedReply.getCreatedTime(),
                 savedReply.getContent(),
                 loginMember.getNickname(),
-                // loginMember.getImage()
-                new URL("https://soccerquick.s3.ap-northeast-2.amazonaws.com/1689834239634.png") // TODO dummy
+                 loginMember.getImage()
         );
         responseDto.setData(responseData);
 
@@ -111,10 +100,9 @@ public class BookReplyServiceImpl implements BookReplyService {
 
         updateReply.updateReply(replyDto.getContent());
 
-        responseDto.setMessage("댓글 수정 성공");
-        responseDto.setStatus(HttpStatus.OK);
-
         replyDto.setContent(updateReply.getContent());
+
+        responseDto.setStatus(HttpStatus.CREATED);
         responseDto.setData(replyDto);
 
         return responseDto;
@@ -135,10 +123,15 @@ public class BookReplyServiceImpl implements BookReplyService {
             return responseDto;
         }
 
+        if (deleteReply.isDeleted()) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("이미 삭제된 댓글");
+            return responseDto;
+        }
+
         deleteReply.updateDeleted();
 
-        responseDto.setStatus(HttpStatus.OK);
-        responseDto.setMessage("댓글 삭제 성공");
+        responseDto.setStatus(HttpStatus.NO_CONTENT);
 
         return responseDto;
     }
@@ -177,20 +170,10 @@ public class BookReplyServiceImpl implements BookReplyService {
             replyLikeRepository.save(replyLike);
             bookReply.increaseLikeCnt();
 
-            responseDto.setStatus(HttpStatus.OK);
             responseDto.setMessage("좋아요 성공");
 
             BookReplyLikeDto bookReplyLikeDto = new BookReplyLikeDto(bookReply.getLike_cnt());
             responseDto.setData(bookReplyLikeDto);
-
-            // TODO exception
-            /*
-            catch (Exception ex) { // SQLIntegrityConstraintViolationException
-
-                responseDto.setStatus(HttpStatus.BAD_REQUEST);
-                responseDto.setMessage("좋아요 불가");
-            }
-            */
 
         } else { // 좋아요 눌린 상태
 
@@ -199,20 +182,11 @@ public class BookReplyServiceImpl implements BookReplyService {
             replyLikeRepository.delete(replyLike);
             bookReply.decreaseLikeCnt();
 
-            responseDto.setStatus(HttpStatus.OK);
             responseDto.setMessage("좋아요 취소 성공");
 
             BookReplyLikeDto bookReplyLikeDto = new BookReplyLikeDto(bookReply.getLike_cnt());
             responseDto.setData(bookReplyLikeDto);
 
-            // TODO exception
-            /*
-            catch (Exception ex) { // IllegalArgumentException
-
-                responseDto.setStatus(HttpStatus.BAD_REQUEST);
-                responseDto.setMessage("좋아요 취소 불가");
-            }
-            */
         }
         return responseDto;
     }
