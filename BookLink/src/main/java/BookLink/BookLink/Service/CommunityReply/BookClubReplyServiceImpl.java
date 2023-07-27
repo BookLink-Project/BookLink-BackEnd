@@ -1,11 +1,13 @@
 package BookLink.BookLink.Service.CommunityReply;
 
+import BookLink.BookLink.Domain.BookReply.BookReply;
+import BookLink.BookLink.Domain.BookReply.BookReplyLike;
+import BookLink.BookLink.Domain.BookReply.BookReplyLikeDto;
 import BookLink.BookLink.Domain.Community.BookClub.BookClub;
-import BookLink.BookLink.Domain.CommunityReply.BookClubReply.BookClubReply;
-import BookLink.BookLink.Domain.CommunityReply.BookClubReply.BookClubReplyDto;
-import BookLink.BookLink.Domain.CommunityReply.BookClubReply.BookClubReplyUpdateDto;
+import BookLink.BookLink.Domain.CommunityReply.BookClubReply.*;
 import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.ResponseDto;
+import BookLink.BookLink.Repository.CommunityReply.BookClubReplyLikeRepository;
 import BookLink.BookLink.Repository.CommunityReply.BookClubReplyRepository;
 import BookLink.BookLink.Repository.Community.BookClubRepository;
 import BookLink.BookLink.Repository.Member.MemberRepository;
@@ -21,6 +23,7 @@ public class BookClubReplyServiceImpl implements BookClubReplyService{
     private final MemberRepository memberRepository;
     private final BookClubRepository bookClubRepository;
     private final BookClubReplyRepository bookClubReplyRepository;
+    private final BookClubReplyLikeRepository bookClubReplyLikeRepository;
 
 
     @Override
@@ -139,6 +142,57 @@ public class BookClubReplyServiceImpl implements BookClubReplyService{
         post.decreaseReplyCnt();
 
         responseDto.setStatus(HttpStatus.NO_CONTENT);
+
+        return responseDto;
+    }
+
+    @Override
+    @Transactional
+    public ResponseDto likeReply(String memEmail, Long postId, Long replyId) {
+
+        ResponseDto responseDto = new ResponseDto();
+
+        Member loginMember = memberRepository.findByEmail(memEmail).orElse(null);
+
+        if (loginMember == null) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("로그인 필요");
+            return responseDto;
+        }
+
+        BookClubReply reply = bookClubReplyRepository.findById(replyId).orElse(null);
+
+        if (reply == null) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("존재하지 않는 댓글");
+            return responseDto;
+        }
+
+        BookClubReplyLike replyLike = bookClubReplyLikeRepository.findByMemberAndReply(loginMember, reply).orElse(null);
+
+        if (replyLike == null) { // 좋아요 안 눌린 상태
+
+            replyLike = BookClubReplyLike.builder()
+                    .member(loginMember)
+                    .reply(reply)
+                    .build();
+
+            bookClubReplyLikeRepository.save(replyLike);
+            reply.increaseLikeCnt();
+
+            responseDto.setMessage("좋아요 성공");
+
+        } else { // 좋아요 눌린 상태
+
+            bookClubReplyLikeRepository.delete(replyLike);
+            reply.decreaseLikeCnt();
+
+            responseDto.setMessage("좋아요 취소 성공");
+
+        }
+
+        BookClubReplyLikeDto likeDto = new BookClubReplyLikeDto(reply.getLike_cnt());
+        responseDto.setData(likeDto);
 
         return responseDto;
     }

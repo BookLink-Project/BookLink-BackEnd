@@ -14,4 +14,6 @@ public interface BookClubReplyService {
 
     ResponseDto deleteReply(Long postId, Long replyId);
 
+    ResponseDto likeReply(String memEmail, Long postId, Long replyId);
+
 }
