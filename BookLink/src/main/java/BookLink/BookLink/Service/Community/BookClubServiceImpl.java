@@ -1,9 +1,8 @@
 package BookLink.BookLink.Service.Community;
 
-import BookLink.BookLink.Domain.Community.BookClub.BookClub;
-import BookLink.BookLink.Domain.Community.BookClub.BookClubDetailDto;
-import BookLink.BookLink.Domain.Community.BookClub.BookClubDto;
-import BookLink.BookLink.Domain.Community.BookClub.BookClubUpdateDto;
+import BookLink.BookLink.Domain.Book.BookLike;
+import BookLink.BookLink.Domain.Book.BookLikeDto;
+import BookLink.BookLink.Domain.Community.BookClub.*;
 import BookLink.BookLink.Domain.CommunityReply.BookClubReply.BookClubReply;
 import BookLink.BookLink.Domain.CommunityReply.BookClubReply.BookClubRepliesDto;
 import BookLink.BookLink.Domain.Member.Member;
@@ -204,5 +203,54 @@ public class BookClubServiceImpl implements BookClubService {
         responseDto.setStatus(HttpStatus.NO_CONTENT);
 
         return responseDto;
+    }
+
+    @Override
+    public ResponseDto likePost(String memEmail, Long id) {
+
+        ResponseDto responseDto = new ResponseDto();
+
+        Member loginMember = memberRepository.findByEmail(memEmail).orElse(null);
+
+        if (loginMember == null) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("로그인 필요");
+            return responseDto;
+        }
+
+        BookClub post = bookClubRepository.findById(id).orElse(null);
+
+        if (post == null) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("없는 글");
+            return responseDto;
+        }
+
+        boolean is_liked = bookClubLikeRepository.existsByMemberAndPost(loginMember, post);
+
+        if (!is_liked) { // 좋아요 안 눌린 상태
+
+            BookClubLike postLike = BookClubLike.builder()
+                    .post(post)
+                    .member(loginMember)
+                    .build();
+
+            bookClubLikeRepository.save(postLike);
+
+            responseDto.setMessage("좋아요 성공");
+
+        } else { // 좋아요 눌린 상태
+
+            BookClubLike bookClubLike = bookClubLikeRepository.findByPostAndMember(post, loginMember);
+            bookClubLikeRepository.delete(bookClubLike);
+
+            responseDto.setMessage("좋아요 취소 성공");
+        }
+
+        BookClubLikeDto bookClubLikeDto = new BookClubLikeDto(bookClubLikeRepository.countByPost(post));
+        responseDto.setData(bookClubLikeDto);
+
+        return responseDto;
+
     }
 }

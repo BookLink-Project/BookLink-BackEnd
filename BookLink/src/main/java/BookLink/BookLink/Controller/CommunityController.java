@@ -104,6 +104,17 @@ public class CommunityController {
 
     }
 
+    @PostMapping("/book-club/{id}/like") // 독서모임 글 좋아요
+    public ResponseEntity<ResponseDto> likeBookClub(@PathVariable Long id,
+                                                    @AuthenticationPrincipal String memEmail) {
+
+        ResponseDto responseDto = bookClubService.likePost(memEmail, id);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+
+    }
+
     @PostMapping("/book-club/{id}") // 독서모임 댓글 작성
     public ResponseEntity<ResponseDto> writeCookClubReply(@PathVariable Long id,
                                                     @RequestBody BookClubReplyDto.Request replyDto,
@@ -133,6 +144,17 @@ public class CommunityController {
                                                            @PathVariable Long replyId) {
 
         ResponseDto responseDto = bookClubReplyService.deleteReply(id, replyId);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+
+    }
+
+    @PostMapping("/book-club/{id}/{replyId}/like") // 독서모임 댓글 좋아요
+    public ResponseEntity<ResponseDto> likeBookClubReply(@PathVariable Long id,
+                                                    @AuthenticationPrincipal String memEmail) {
+
+        ResponseDto responseDto = bookClubService.likePost(memEmail, id);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);

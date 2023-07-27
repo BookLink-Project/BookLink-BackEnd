@@ -18,4 +18,6 @@ public interface BookClubService {
 
     ResponseDto deletePost(Long id);
 
+    ResponseDto likePost(String memEmail, Long id);
+
 }
