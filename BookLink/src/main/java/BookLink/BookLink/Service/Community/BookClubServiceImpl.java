@@ -18,8 +18,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -88,7 +86,7 @@ public class BookClubServiceImpl implements BookClubService {
     }
 
     @Override
-    public ResponseDto showPost(String memEmail, Long id) throws MalformedURLException {
+    public ResponseDto showPost(String memEmail, Long id) {
 
         ResponseDto responseDto = new ResponseDto();
 
@@ -122,37 +120,20 @@ public class BookClubServiceImpl implements BookClubService {
             boolean isLikedReply = bookClubReplyLikeRepository.existsByMemberAndReply(loginMember, reply);
 
             BookClubRepliesDto rv;
-            if (reply.isDeleted()) {
 
-                rv = new BookClubRepliesDto(
-                        replyId,
-                        parentId,
-                        "(삭제)",
-                        "삭제된 댓글입니다.",
-                        null,
-                        null,
-                        null,
-                        sub_reply_cnt,
-                        null,
-                        null
+            rv = new BookClubRepliesDto(
+                    replyId,
+                    parentId,
+                    writer.getNickname(),
+                    reply.getContent(),
+                    reply.getCreatedTime(),
+                    writer.getImage(),
+                    reply.getLike_cnt(),
+                    sub_reply_cnt,
+                    isLikedReply,
+                    reply.isUpdated()
 
-                );
-            } else {
-
-                rv = new BookClubRepliesDto(
-                        replyId,
-                        parentId,
-                        writer.getNickname(),
-                        reply.getContent(),
-                        reply.getCreatedTime(),
-                        writer.getImage(),
-                        reply.getLike_cnt(),
-                        sub_reply_cnt,
-                        isLikedReply,
-                        reply.isUpdated()
-
-                );
-            }
+            );
             replies.add(rv);
 
         }
@@ -209,6 +190,14 @@ public class BookClubServiceImpl implements BookClubService {
     public ResponseDto deletePost(Long id) {
 
         ResponseDto responseDto = new ResponseDto();
+
+        BookClub post = bookClubRepository.findById(id).orElse(null);
+
+        if (post == null) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("없는 글");
+            return responseDto;
+        }
 
         bookClubRepository.deleteById(id);
 

@@ -114,7 +114,6 @@ public class BookClubReplyServiceImpl implements BookClubReplyService{
     }
 
     @Override
-    @Transactional
     public ResponseDto deleteReply(Long postId, Long replyId) {
 
         ResponseDto responseDto = new ResponseDto();
@@ -135,13 +134,7 @@ public class BookClubReplyServiceImpl implements BookClubReplyService{
             return responseDto;
         }
 
-        if (deleteReply.isDeleted()) {
-            responseDto.setStatus(HttpStatus.BAD_REQUEST);
-            responseDto.setMessage("이미 삭제된 댓글");
-            return responseDto;
-        }
-
-        deleteReply.updateDeleted();
+        bookClubReplyRepository.deleteById(replyId);
 
         post.decreaseReplyCnt();
 
