@@ -74,7 +74,7 @@ public class CommunityController {
 
     @GetMapping("/book-club/{id}") // 독서모임 글 상세 조회
     public ResponseEntity<ResponseDto> showBookClub(@PathVariable Long id,
-                                                    @AuthenticationPrincipal String memEmail) throws MalformedURLException {
+                                                    @AuthenticationPrincipal String memEmail) {
 
         ResponseDto responseDto = bookClubService.showPost(memEmail, id);
 

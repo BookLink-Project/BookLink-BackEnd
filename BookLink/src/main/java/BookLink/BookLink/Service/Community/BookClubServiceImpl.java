@@ -83,6 +83,7 @@ public class BookClubServiceImpl implements BookClubService {
     }
 
     @Override
+    @Transactional
     public ResponseDto showPost(String memEmail, Long id) {
 
         ResponseDto responseDto = new ResponseDto();
@@ -96,6 +97,8 @@ public class BookClubServiceImpl implements BookClubService {
             responseDto.setMessage("없는 글");
             return responseDto;
         }
+
+        post.increaseViewCnt(); // 조회수 증가
 
         boolean isLiked = bookClubLikeRepository.existsByMemberAndPost(loginMember, post);
 
