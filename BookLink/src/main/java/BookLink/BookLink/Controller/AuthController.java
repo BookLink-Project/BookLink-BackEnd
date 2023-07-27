@@ -1,6 +1,7 @@
 package BookLink.BookLink.Controller;
 
 import BookLink.BookLink.Domain.ResponseDto;
+import BookLink.BookLink.Domain.Token.AuthorizationDto;
 import BookLink.BookLink.Service.OAuth.OAuthService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -32,9 +33,9 @@ public class AuthController {
      * [GET] /oauth/kakao/callback
      */
     @GetMapping("/kakao")
-    public ResponseEntity<ResponseDto> kakaoCallback(HttpServletResponse response, @RequestParam String code) {
-        System.out.println(code);
-        String kakaoAccessToken = oAuthService.getKakaoAccessToken(response, code);
+    public ResponseEntity<ResponseDto> kakaoCallback(HttpServletResponse response, @RequestBody AuthorizationDto authorizationDto) {
+        System.out.println(authorizationDto.getCode());
+        String kakaoAccessToken = oAuthService.getKakaoAccessToken(response, authorizationDto.getCode());
         System.out.println("체크");
         System.out.println(kakaoAccessToken);
         ResponseDto responseDto = oAuthService.createKakaoUser(kakaoAccessToken);
