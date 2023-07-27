@@ -1,9 +1,16 @@
 package BookLink.BookLink.Service.OAuth;
 
+import BookLink.BookLink.Domain.Member.KakaoMemberDto;
+import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.ResponseDto;
+import BookLink.BookLink.Repository.Member.MemberRepository;
+import BookLink.BookLink.Service.Member.MemberService;
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +22,11 @@ import java.time.LocalDateTime;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class OAuthService{
+
+    private final MemberService memberService;
+    private final MemberRepository memberRepository;
 
     public String getKakaoAccessToken (HttpServletResponse response, String code) {
         String access_Token = "";
@@ -81,6 +92,8 @@ public class OAuthService{
 
     public ResponseDto createKakaoUser(String token) {
 
+        ResponseDto responseDto = new ResponseDto();
+
         String reqURL = "https://kapi.kakao.com/v2/user/me";
 
         //access_token을 이용하여 사용자 정보 조회
@@ -112,19 +125,27 @@ public class OAuthService{
 
             int id = element.getAsJsonObject().get("id").getAsInt();
 //            boolean hasEmail = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("has_email").getAsBoolean();
-            element.getAsJsonObject().get("kakao_account.nickname");
-            String email = "";
-            String nickname = "";
-            String birthday = "";
+
 //            if (hasEmail) {
 //            element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("profile").getAsString();
-            email = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("email").getAsString();
-            birthday = element.getAsJsonObject().getAsJsonObject("kakao_account").getAsJsonObject().get("birthday").getAsString();
-//            }
+            String email = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("email").getAsString();
+            String profile = element.getAsJsonObject().getAsJsonObject("kakao_account").getAsJsonObject().get("profile").getAsString();
 
-            System.out.println("id : " + id);
-            System.out.println("email : " + email);
-            System.out.println("email : " + birthday);
+            Gson gson = new Gson();
+            KakaoMemberDto.Request kakaoMemberDto = gson.fromJson(profile, KakaoMemberDto.Request.class);
+
+            Member member = KakaoMemberDto.Request.toEntity(kakaoMemberDto, email);
+            ResponseDto nicknameDoubleCheck = memberService.nicknameDoubleCheck(member.getNickname());
+
+            if (nicknameDoubleCheck.getStatus() != HttpStatus.OK) {
+                responseDto.setMessage("닉네임이 이미 존재합니다");
+                responseDto.setStatus(HttpStatus.CONFLICT);
+
+                return responseDto;
+            } else {
+                Member savedMember = memberRepository.save(member);
+                responseDto.setData(savedMember);
+            }
 
             br.close();
 
@@ -133,7 +154,7 @@ public class OAuthService{
             e.printStackTrace();
         }
 
-        ResponseDto responseDto = new ResponseDto();
+
 
         responseDto.setStatus(HttpStatus.OK);
         responseDto.setMessage("토큰 받기 완료");

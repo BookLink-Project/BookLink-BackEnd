@@ -32,14 +32,15 @@ public class AuthController {
      * [GET] /oauth/kakao/callback
      */
     @GetMapping("/kakao")
-    public Void kakaoCallback(HttpServletResponse response, @RequestParam String code) {
+    public ResponseEntity<ResponseDto> kakaoCallback(HttpServletResponse response, @RequestParam String code) {
         System.out.println(code);
         String kakaoAccessToken = oAuthService.getKakaoAccessToken(response, code);
         System.out.println("체크");
         System.out.println(kakaoAccessToken);
-//        return ResponseEntity.status(responseDto.getStatus())
-//                .body(responseDto);
-        return null;
+        ResponseDto responseDto = oAuthService.createKakaoUser(kakaoAccessToken);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
     }
 
 }
