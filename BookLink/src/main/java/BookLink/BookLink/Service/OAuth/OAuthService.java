@@ -1,10 +1,9 @@
 package BookLink.BookLink.Service.OAuth;
 
 import BookLink.BookLink.Domain.ResponseDto;
-import BookLink.BookLink.utils.JwtUtil;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -12,12 +11,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.time.LocalDateTime;
 
+@Slf4j
 @Service
-@RequiredArgsConstructor
-public class OAuthService {
-
-    private final JwtUtil jwtUtil;
+public class OAuthService{
 
     public String getKakaoAccessToken (HttpServletResponse response, String code) {
         String access_Token = "";
@@ -31,14 +29,19 @@ public class OAuthService {
             //POST 요청을 위해 기본값이 false인 setDoOutput을 true로
             conn.setRequestMethod("POST");
             conn.setDoOutput(true);
-
+            conn.setRequestProperty("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
             //POST 요청에 필요로 요구하는 파라미터 스트림을 통해 전송
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
             StringBuilder sb = new StringBuilder();
+//            sb.append("Content-type=application/x-www-form-urlencoded;charset=utf-8");
             sb.append("grant_type=authorization_code");
-            sb.append("&client_id=58a848e037fa5a7cc6d9b27e27b55037"); // TODO REST_API_KEY 입력
-            sb.append("&redirect_uri=http://localhost:8080/login/oauth2/code/kakao"); // TODO 인가코드 받은 redirect_uri 입력
+            sb.append("&client_id=a26cfc9d4e51bc963e1a9a78d50ba2ad"); // TODO REST_API_KEY 입력
+//            sb.append("&client_secret=uBhUfs9tmspn6HsH2Yz72GftLNpteTfI");
+            sb.append("&redirect_uri=http://localhost:5173/auth"); // TODO 인가코드 받은 redirect_uri 입력
             sb.append("&code=" + code);
+
+            log.info(sb.toString());
+
             bw.write(sb.toString());
             bw.flush();
 
@@ -63,18 +66,11 @@ public class OAuthService {
             access_Token = element.getAsJsonObject().get("access_token").getAsString();
             refresh_Token = element.getAsJsonObject().get("refresh_token").getAsString();
 
-            jwtUtil.setCookieAccessToken(response, access_Token);
-            jwtUtil.setCookieRefreshToken(response, refresh_Token);
-
-
             System.out.println("access_token : " + access_Token);
             System.out.println("refresh_token : " + refresh_Token);
 
             br.close();
             bw.close();
-
-
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -115,14 +111,20 @@ public class OAuthService {
             JsonElement element = parser.parse(result);
 
             int id = element.getAsJsonObject().get("id").getAsInt();
-            boolean hasEmail = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("has_email").getAsBoolean();
+//            boolean hasEmail = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("has_email").getAsBoolean();
+            element.getAsJsonObject().get("kakao_account.nickname");
             String email = "";
-            if (hasEmail) {
-                email = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("email").getAsString();
-            }
+            String nickname = "";
+            String birthday = "";
+//            if (hasEmail) {
+//            element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("profile").getAsString();
+            email = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("email").getAsString();
+            birthday = element.getAsJsonObject().getAsJsonObject("kakao_account").getAsJsonObject().get("birthday").getAsString();
+//            }
 
             System.out.println("id : " + id);
             System.out.println("email : " + email);
+            System.out.println("email : " + birthday);
 
             br.close();
 
