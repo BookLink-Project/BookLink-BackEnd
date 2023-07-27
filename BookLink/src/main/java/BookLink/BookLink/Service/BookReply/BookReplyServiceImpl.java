@@ -123,13 +123,7 @@ public class BookReplyServiceImpl implements BookReplyService {
             return responseDto;
         }
 
-        if (deleteReply.isDeleted()) {
-            responseDto.setStatus(HttpStatus.BAD_REQUEST);
-            responseDto.setMessage("이미 삭제된 댓글");
-            return responseDto;
-        }
-
-        deleteReply.updateDeleted();
+        bookReplyRepository.deleteById(replyId);
 
         responseDto.setStatus(HttpStatus.NO_CONTENT);
 

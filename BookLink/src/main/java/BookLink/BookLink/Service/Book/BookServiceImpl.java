@@ -209,35 +209,19 @@ public class BookServiceImpl implements BookService{
             boolean isLikedReply = bookReplyLikeRepository.existsByMemberAndReply(loginMember, reply);// 좋아요 상태
 
             BookRepliesDto rv;
-            if (reply.isDeleted()) {
 
-                rv = new BookRepliesDto(
-                        replyId,
-                        parentId,
-                        "(삭제)",
-                        "삭제된 댓글입니다.",
-                        null,
-                        null,
-                        null,
-                        sub_reply_cnt,
-                        null,
-                        null
-                );
-
-            } else {
-                rv = new BookRepliesDto(
-                        replyId,
-                        parentId,
-                        writer.getNickname(),
-                        reply.getContent(),
-                        reply.getCreatedTime(),
-                        writer.getImage(),
-                        reply.getLike_cnt(),
-                        sub_reply_cnt,
-                        isLikedReply,
-                        reply.isUpdated()
-                );
-            }
+            rv = new BookRepliesDto(
+                    replyId,
+                    parentId,
+                    writer.getNickname(),
+                    reply.getContent(),
+                    reply.getCreatedTime(),
+                    writer.getImage(),
+                    reply.getLike_cnt(),
+                    sub_reply_cnt,
+                    isLikedReply,
+                    reply.isUpdated()
+            );
             replies.add(rv);
         }
 
