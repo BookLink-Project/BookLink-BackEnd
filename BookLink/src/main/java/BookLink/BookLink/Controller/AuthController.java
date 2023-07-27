@@ -32,7 +32,7 @@ public class AuthController {
      * 카카오 callback
      * [GET] /oauth/kakao/callback
      */
-    @GetMapping("/kakao")
+    @PostMapping("/kakao")
     public ResponseEntity<ResponseDto> kakaoCallback(HttpServletResponse response, @RequestBody AuthorizationDto authorizationDto) {
         System.out.println(authorizationDto.getCode());
         String kakaoAccessToken = oAuthService.getKakaoAccessToken(response, authorizationDto.getCode());
