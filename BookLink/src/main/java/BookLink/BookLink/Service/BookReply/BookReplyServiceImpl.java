@@ -92,12 +92,6 @@ public class BookReplyServiceImpl implements BookReplyService {
             return responseDto;
         }
 
-        if (updateReply.getContent().equals(replyDto.getContent())) {
-            responseDto.setStatus(HttpStatus.BAD_REQUEST);
-            responseDto.setMessage("수정된 내용 없음");
-            return responseDto;
-        }
-
         updateReply.updateReply(replyDto.getContent());
 
         replyDto.setContent(updateReply.getContent());
