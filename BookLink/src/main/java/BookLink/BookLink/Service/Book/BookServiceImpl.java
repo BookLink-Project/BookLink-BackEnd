@@ -22,7 +22,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -209,35 +208,19 @@ public class BookServiceImpl implements BookService{
             boolean isLikedReply = bookReplyLikeRepository.existsByMemberAndReply(loginMember, reply);// 좋아요 상태
 
             BookRepliesDto rv;
-            if (reply.isDeleted()) {
 
-                rv = new BookRepliesDto(
-                        replyId,
-                        parentId,
-                        "(삭제)",
-                        "삭제된 댓글입니다.",
-                        null,
-                        null,
-                        null,
-                        sub_reply_cnt,
-                        null,
-                        null
-                );
-
-            } else {
-                rv = new BookRepliesDto(
-                        replyId,
-                        parentId,
-                        writer.getNickname(),
-                        reply.getContent(),
-                        reply.getCreatedTime(),
-                        writer.getImage(),
-                        reply.getLike_cnt(),
-                        sub_reply_cnt,
-                        isLikedReply,
-                        reply.isUpdated()
-                );
-            }
+            rv = new BookRepliesDto(
+                    replyId,
+                    parentId,
+                    writer.getNickname(),
+                    reply.getContent(),
+                    reply.getCreatedTime(),
+                    writer.getImage(),
+                    reply.getLike_cnt(),
+                    sub_reply_cnt,
+                    isLikedReply,
+                    reply.isUpdated()
+            );
             replies.add(rv);
         }
 
@@ -261,11 +244,11 @@ public class BookServiceImpl implements BookService{
             return responseDto;
         }
 
-        boolean is_liked = bookLikeRepository.existsByMemberAndIsbn(loginMember, isbn);
+        BookLike bookLike = bookLikeRepository.findByMemberAndIsbn(loginMember, isbn).orElse(null);
 
-        if (!is_liked) { // 좋아요 안 눌린 상태
+        if (bookLike == null) { // 좋아요 안 눌린 상태
 
-            BookLike bookLike = BookLike.builder()
+            bookLike = BookLike.builder()
                     .isbn(isbn)
                     .member(loginMember)
                     .build();
@@ -274,21 +257,16 @@ public class BookServiceImpl implements BookService{
 
             responseDto.setMessage("좋아요 성공");
 
-            BookLikeDto bookLikeDto = new BookLikeDto(bookLikeRepository.countByIsbn(isbn));
-            responseDto.setData(bookLikeDto);
-
-
         } else { // 좋아요 눌린 상태
 
-            BookLike bookLike = bookLikeRepository.findByIsbnAndMember(isbn, loginMember);
             bookLikeRepository.delete(bookLike);
 
             responseDto.setMessage("좋아요 취소 성공");
 
-            BookLikeDto bookLikeDto = new BookLikeDto(bookLikeRepository.countByIsbn(isbn));
-            responseDto.setData(bookLikeDto);
-
         }
+
+        BookLikeDto bookLikeDto = new BookLikeDto(bookLikeRepository.countByIsbn(isbn));
+        responseDto.setData(bookLikeDto);
 
         return responseDto;
 

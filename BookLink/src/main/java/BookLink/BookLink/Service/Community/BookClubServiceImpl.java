@@ -1,9 +1,6 @@
 package BookLink.BookLink.Service.Community;
 
-import BookLink.BookLink.Domain.Community.BookClub.BookClub;
-import BookLink.BookLink.Domain.Community.BookClub.BookClubDetailDto;
-import BookLink.BookLink.Domain.Community.BookClub.BookClubDto;
-import BookLink.BookLink.Domain.Community.BookClub.BookClubUpdateDto;
+import BookLink.BookLink.Domain.Community.BookClub.*;
 import BookLink.BookLink.Domain.CommunityReply.BookClubReply.BookClubReply;
 import BookLink.BookLink.Domain.CommunityReply.BookClubReply.BookClubRepliesDto;
 import BookLink.BookLink.Domain.Member.Member;
@@ -18,8 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -88,7 +83,8 @@ public class BookClubServiceImpl implements BookClubService {
     }
 
     @Override
-    public ResponseDto showPost(String memEmail, Long id) throws MalformedURLException {
+    @Transactional
+    public ResponseDto showPost(String memEmail, Long id) {
 
         ResponseDto responseDto = new ResponseDto();
 
@@ -101,6 +97,8 @@ public class BookClubServiceImpl implements BookClubService {
             responseDto.setMessage("없는 글");
             return responseDto;
         }
+
+        post.increaseViewCnt(); // 조회수 증가
 
         boolean isLiked = bookClubLikeRepository.existsByMemberAndPost(loginMember, post);
 
@@ -122,37 +120,20 @@ public class BookClubServiceImpl implements BookClubService {
             boolean isLikedReply = bookClubReplyLikeRepository.existsByMemberAndReply(loginMember, reply);
 
             BookClubRepliesDto rv;
-            if (reply.isDeleted()) {
 
-                rv = new BookClubRepliesDto(
-                        replyId,
-                        parentId,
-                        "(삭제)",
-                        "삭제된 댓글입니다.",
-                        null,
-                        null,
-                        null,
-                        sub_reply_cnt,
-                        null,
-                        null
+            rv = new BookClubRepliesDto(
+                    replyId,
+                    parentId,
+                    writer.getNickname(),
+                    reply.getContent(),
+                    reply.getCreatedTime(),
+                    writer.getImage(),
+                    reply.getLike_cnt(),
+                    sub_reply_cnt,
+                    isLikedReply,
+                    reply.isUpdated()
 
-                );
-            } else {
-
-                rv = new BookClubRepliesDto(
-                        replyId,
-                        parentId,
-                        writer.getNickname(),
-                        reply.getContent(),
-                        reply.getCreatedTime(),
-                        writer.getImage(),
-                        reply.getLike_cnt(),
-                        sub_reply_cnt,
-                        isLikedReply,
-                        reply.isUpdated()
-
-                );
-            }
+            );
             replies.add(rv);
 
         }
@@ -210,10 +191,69 @@ public class BookClubServiceImpl implements BookClubService {
 
         ResponseDto responseDto = new ResponseDto();
 
+        BookClub post = bookClubRepository.findById(id).orElse(null);
+
+        if (post == null) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("없는 글");
+            return responseDto;
+        }
+
         bookClubRepository.deleteById(id);
 
         responseDto.setStatus(HttpStatus.NO_CONTENT);
 
         return responseDto;
+    }
+
+    @Override
+    @Transactional
+    public ResponseDto likePost(String memEmail, Long id) {
+
+        ResponseDto responseDto = new ResponseDto();
+
+        Member loginMember = memberRepository.findByEmail(memEmail).orElse(null);
+
+        if (loginMember == null) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("로그인 필요");
+            return responseDto;
+        }
+
+        BookClub post = bookClubRepository.findById(id).orElse(null);
+
+        if (post == null) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("없는 글");
+            return responseDto;
+        }
+
+        BookClubLike bookClubLike = bookClubLikeRepository.findByMemberAndPost(loginMember, post).orElse(null);
+
+        if (bookClubLike == null) { // 좋아요 안 눌린 상태
+
+            bookClubLike = BookClubLike.builder()
+                    .post(post)
+                    .member(loginMember)
+                    .build();
+
+            bookClubLikeRepository.save(bookClubLike);
+            post.increaseLikeCnt();
+
+            responseDto.setMessage("좋아요 성공");
+
+        } else { // 좋아요 눌린 상태
+
+            bookClubLikeRepository.delete(bookClubLike);
+            post.decreaseLikeCnt();
+
+            responseDto.setMessage("좋아요 취소 성공");
+        }
+
+        BookClubLikeDto bookClubLikeDto = new BookClubLikeDto(post.getLike_cnt());
+        responseDto.setData(bookClubLikeDto);
+
+        return responseDto;
+
     }
 }
