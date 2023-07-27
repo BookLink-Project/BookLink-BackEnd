@@ -152,11 +152,11 @@ public class BookReplyServiceImpl implements BookReplyService {
             return responseDto;
         }
 
-        boolean is_liked = replyLikeRepository.existsByMemberAndReply(loginMember, bookReply);
+        BookReplyLike replyLike = replyLikeRepository.findByReplyAndMember(bookReply, loginMember).orElse(null);
 
-        if (!is_liked) { // 좋아요 안 눌린 상태
+        if (replyLike == null) { // 좋아요 안 눌린 상태
 
-            BookReplyLike replyLike = BookReplyLike.builder()
+            replyLike = BookReplyLike.builder()
                     .member(loginMember)
                     .reply(bookReply)
                     .build();
@@ -166,22 +166,18 @@ public class BookReplyServiceImpl implements BookReplyService {
 
             responseDto.setMessage("좋아요 성공");
 
-            BookReplyLikeDto bookReplyLikeDto = new BookReplyLikeDto(bookReply.getLike_cnt());
-            responseDto.setData(bookReplyLikeDto);
-
         } else { // 좋아요 눌린 상태
-
-            BookReplyLike replyLike = replyLikeRepository.findByReplyAndMember(bookReply, loginMember);
 
             replyLikeRepository.delete(replyLike);
             bookReply.decreaseLikeCnt();
 
             responseDto.setMessage("좋아요 취소 성공");
 
-            BookReplyLikeDto bookReplyLikeDto = new BookReplyLikeDto(bookReply.getLike_cnt());
-            responseDto.setData(bookReplyLikeDto);
-
         }
+
+        BookReplyLikeDto bookReplyLikeDto = new BookReplyLikeDto(bookReply.getLike_cnt());
+        responseDto.setData(bookReplyLikeDto);
+
         return responseDto;
     }
 

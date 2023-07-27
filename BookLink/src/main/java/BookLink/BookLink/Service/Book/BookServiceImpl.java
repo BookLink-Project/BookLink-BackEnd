@@ -22,7 +22,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -245,11 +244,11 @@ public class BookServiceImpl implements BookService{
             return responseDto;
         }
 
-        boolean is_liked = bookLikeRepository.existsByMemberAndIsbn(loginMember, isbn);
+        BookLike bookLike = bookLikeRepository.findByMemberAndIsbn(loginMember, isbn).orElse(null);
 
-        if (!is_liked) { // 좋아요 안 눌린 상태
+        if (bookLike == null) { // 좋아요 안 눌린 상태
 
-            BookLike bookLike = BookLike.builder()
+            bookLike = BookLike.builder()
                     .isbn(isbn)
                     .member(loginMember)
                     .build();
@@ -260,7 +259,6 @@ public class BookServiceImpl implements BookService{
 
         } else { // 좋아요 눌린 상태
 
-            BookLike bookLike = bookLikeRepository.findByIsbnAndMember(isbn, loginMember);
             bookLikeRepository.delete(bookLike);
 
             responseDto.setMessage("좋아요 취소 성공");

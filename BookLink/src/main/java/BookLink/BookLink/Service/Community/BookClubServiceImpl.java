@@ -1,7 +1,5 @@
 package BookLink.BookLink.Service.Community;
 
-import BookLink.BookLink.Domain.Book.BookLike;
-import BookLink.BookLink.Domain.Book.BookLikeDto;
 import BookLink.BookLink.Domain.Community.BookClub.*;
 import BookLink.BookLink.Domain.CommunityReply.BookClubReply.BookClubReply;
 import BookLink.BookLink.Domain.CommunityReply.BookClubReply.BookClubRepliesDto;
@@ -206,6 +204,7 @@ public class BookClubServiceImpl implements BookClubService {
     }
 
     @Override
+    @Transactional
     public ResponseDto likePost(String memEmail, Long id) {
 
         ResponseDto responseDto = new ResponseDto();
@@ -226,28 +225,29 @@ public class BookClubServiceImpl implements BookClubService {
             return responseDto;
         }
 
-        boolean is_liked = bookClubLikeRepository.existsByMemberAndPost(loginMember, post);
+        BookClubLike bookClubLike = bookClubLikeRepository.findByMemberAndPost(loginMember, post).orElse(null);
 
-        if (!is_liked) { // 좋아요 안 눌린 상태
+        if (bookClubLike == null) { // 좋아요 안 눌린 상태
 
-            BookClubLike postLike = BookClubLike.builder()
+            bookClubLike = BookClubLike.builder()
                     .post(post)
                     .member(loginMember)
                     .build();
 
-            bookClubLikeRepository.save(postLike);
+            bookClubLikeRepository.save(bookClubLike);
+            post.increaseLikeCnt();
 
             responseDto.setMessage("좋아요 성공");
 
         } else { // 좋아요 눌린 상태
 
-            BookClubLike bookClubLike = bookClubLikeRepository.findByPostAndMember(post, loginMember);
             bookClubLikeRepository.delete(bookClubLike);
+            post.decreaseLikeCnt();
 
             responseDto.setMessage("좋아요 취소 성공");
         }
 
-        BookClubLikeDto bookClubLikeDto = new BookClubLikeDto(bookClubLikeRepository.countByPost(post));
+        BookClubLikeDto bookClubLikeDto = new BookClubLikeDto(post.getLike_cnt());
         responseDto.setData(bookClubLikeDto);
 
         return responseDto;
