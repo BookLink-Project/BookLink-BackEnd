@@ -4,6 +4,7 @@ import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Domain.Token.AuthorizationDto;
 import BookLink.BookLink.Service.OAuth.OAuthService;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 //@RequestMapping("/api/auth-test")
 @RequestMapping("/login/oauth2/code")
 public class AuthController {
