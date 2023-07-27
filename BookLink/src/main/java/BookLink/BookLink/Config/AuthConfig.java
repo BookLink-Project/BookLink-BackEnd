@@ -40,6 +40,7 @@ public class AuthConfig {
                 .and()
                     .authorizeRequests()
                     .antMatchers("/api/v1/members/**").permitAll()
+                    .antMatchers("/login/oauth2/code/**").permitAll()
 //                .antMatchers("/api/v1/books/**").permitAll()
 //                .antMatchers("/api/v1/communities/**").permitAll()
                     .antMatchers(HttpMethod.POST, "/api/**").authenticated()
