@@ -18,7 +18,7 @@ public class BookReportDto {
         private String authors;
         private String publisher;
         private LocalDate pud_date;
-        // 표지이미지
+        private String cover;
         private String category;
         private String title;
         private String content;
@@ -29,6 +29,7 @@ public class BookReportDto {
                     .authors(request.getAuthors())
                     .publisher(request.getPublisher())
                     .pud_date(request.getPud_date())
+                    .cover(request.getCover())
                     .category(request.getCategory())
                     .title(request.getTitle())
                     .content(request.getContent())
@@ -47,7 +48,7 @@ public class BookReportDto {
         private String authors;
         private String publisher;
         private LocalDate pud_date;
-        // 표지이미지
+        private String cover;
         private String category;
         private String title;
         private String content;
@@ -60,13 +61,15 @@ public class BookReportDto {
         private LocalDateTime localDateTime;
 
         @Builder
-        public Response(Long id, String book_title, String authors, String publisher, LocalDate pud_date, String category, String title, String content,
+        public Response(Long id, String book_title, String authors, String publisher, LocalDate pud_date,
+                        String cover, String category, String title, String content,
                         String writer, Long like_cnt, Long view_cnt, Long reply_cnt, LocalDateTime localDateTime) {
             this.id = id;
             this.book_title = book_title;
             this.authors = authors;
             this.publisher = publisher;
             this.pud_date = pud_date;
+            this.cover = cover;
             this.category = category;
             this.title = title;
             this.content = content;
@@ -84,6 +87,7 @@ public class BookReportDto {
                     .authors(bookReport.getAuthors())
                     .publisher(bookReport.getPublisher())
                     .pud_date(bookReport.getPud_date())
+                    .cover(bookReport.getCover())
                     .category(bookReport.getCategory())
                     .title(bookReport.getTitle())
                     .content(bookReport.getContent())

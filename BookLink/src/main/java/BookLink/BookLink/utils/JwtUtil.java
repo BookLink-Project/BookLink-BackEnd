@@ -52,6 +52,7 @@ public class JwtUtil {
     }
     */
 
+    // token으로 email 반환?
     public String getEmailFromToken(String token) {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token)
                 .getBody().get("email", String.class);
@@ -89,14 +90,15 @@ public class JwtUtil {
 
         long time = type.equals("Access") ? expired_access : expired_refresh;
 
-        return Jwts.builder()
-                .setClaims(claims)
+        return Jwts.builder() // JWT 토큰을 생성하는 빌더 반환
+                .setClaims(claims)  // 클레임으로 email 식별자 설정
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + time))
-                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .setExpiration(new Date(System.currentTimeMillis() + time)) // 토큰 만료시간 설정
+                .signWith(SignatureAlgorithm.HS256, secretKey) // HS256 알고리즘 사용
                 .compact();
     }
 
+    // JwtFilter 클래스에서 token을 반환하기 위한 메서드
     public String getCookieToken(HttpServletRequest request, String type) {
 
         String token = type.equals("Access") ? "Access_Token" : "Refresh_Token";

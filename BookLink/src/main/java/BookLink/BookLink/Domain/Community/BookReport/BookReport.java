@@ -38,7 +38,9 @@ public class BookReport extends BaseTimeEntity {
     @NotNull
     private LocalDate pud_date;
 
-    // 표지이미지
+    @NotNull
+    private String cover; // 도서 표지 미리보기 URL
+
     @NotNull
     private String category;
 
@@ -63,12 +65,13 @@ public class BookReport extends BaseTimeEntity {
     private Long reply_cnt;
 
     @Builder
-    public BookReport(String book_title, String authors, String publisher, LocalDate pud_date, String category,
+    public BookReport(String book_title, String authors, String publisher, LocalDate pud_date, String cover, String category,
                       String title, String content, Member writer) {
         this.book_title = book_title;
         this.authors = authors;
         this.publisher = publisher;
         this.pud_date = pud_date;
+        this.cover = cover;
         this.category = category;
         this.title = title;
         this.content = content;
