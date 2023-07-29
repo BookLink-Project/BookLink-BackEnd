@@ -14,4 +14,5 @@ public interface BookClubReplyRepository extends JpaRepository<BookClubReply, Lo
     Long countByParentId(Long parentId);
 
     Optional<BookClubReply> findByIdAndPostId(Long replyId, Long postId);
+
 }

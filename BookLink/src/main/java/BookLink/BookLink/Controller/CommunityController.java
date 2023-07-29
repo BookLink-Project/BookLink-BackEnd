@@ -5,15 +5,18 @@ import BookLink.BookLink.Domain.Community.BookReport.BookReportDto;
 import BookLink.BookLink.Domain.Community.FreeBoard.FreeBoardDto;
 import BookLink.BookLink.Domain.CommunityReply.BookClubReply.BookClubReplyDto;
 import BookLink.BookLink.Domain.CommunityReply.BookClubReply.BookClubReplyUpdateDto;
+import BookLink.BookLink.Domain.CommunityReply.BookReportReply.BookReportReplyDto;
 import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Service.Community.BookClubService;
 import BookLink.BookLink.Service.Community.BookReportService;
 import BookLink.BookLink.Service.Community.FreeBoardService;
 import BookLink.BookLink.Service.CommunityReply.BookClubReplyService;
+import BookLink.BookLink.Service.CommunityReply.BookReportReplyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.MalformedURLException;
@@ -28,6 +31,7 @@ public class CommunityController {
     private final BookClubService bookClubService;
     private final BookReportService bookReportService;
     private final BookClubReplyService bookClubReplyService;
+    private final BookReportReplyService bookReportReplyService;
 
     @GetMapping() // 커뮤니티 홈
     public ResponseDto communityHome() {
@@ -180,7 +184,7 @@ public class CommunityController {
 
     // DeleteMapping
 
-    @PostMapping("/board/report/like/{id}")
+    @PostMapping("/board/report/{id}/like")
     public ResponseEntity<ResponseDto> likePost(@PathVariable Long id, @AuthenticationPrincipal String memEmail) {
         ResponseDto responseDto = bookReportService.likePost(id, memEmail);
 
@@ -188,7 +192,50 @@ public class CommunityController {
                 .body(responseDto);
     }
 
-    // 댓글 작성 필요
+    @DeleteMapping("/board/report/{id}")
+    public ResponseEntity<ResponseDto> deletePost(@PathVariable Long id) {
+        ResponseDto responseDto = bookReportService.deletePost(id);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+    }
+
+    @PostMapping("/board/report/{id}")
+    public ResponseEntity<ResponseDto> writeReply(@AuthenticationPrincipal String memEmail,
+                                                  @PathVariable Long id, @RequestBody BookReportReplyDto.Request requestDto) {
+        ResponseDto responseDto = bookReportReplyService.writeReply(memEmail, id, requestDto);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+    }
+
+    @PatchMapping("/board/report/{id}/{replyId}")
+    public ResponseEntity<ResponseDto> updateReply(@PathVariable Long id, @PathVariable Long replyId,
+                                                   @RequestBody BookReportReplyDto.Request requestDto) {
+
+        ResponseDto responseDto = bookReportReplyService.updateReply(id, replyId, requestDto);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+    }
+
+    @DeleteMapping("/board/report/{id}/{replyId}")
+    public ResponseEntity<ResponseDto> deleteReply(@PathVariable Long id, @PathVariable Long replyId) {
+        ResponseDto responseDto = bookReportReplyService.deleteReply(id, replyId);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+    }
+
+    @PostMapping("/board/report/{id}/{replyId}/like")
+    public ResponseEntity<ResponseDto> likeReply(@AuthenticationPrincipal String memEmail, @PathVariable Long id,
+                                                 @PathVariable Long replyId) {
+
+        ResponseDto responseDto = bookReportReplyService.likeReply(memEmail, id, replyId);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+    }
 
 
 

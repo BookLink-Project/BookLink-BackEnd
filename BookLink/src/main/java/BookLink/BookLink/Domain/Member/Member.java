@@ -33,7 +33,7 @@ public class Member extends BaseTimeEntity {
     private String email; // 아이디
 
     // 새로 추가
-    private String social_id;
+    private String socialId;
 
     private String password;
 
@@ -50,7 +50,7 @@ public class Member extends BaseTimeEntity {
     private String image; // 이미지 경로
 
     // 새로 추가
-    private SocialType social_type;
+    private SocialType socialType;
 
     // 새로 추가
     private Role role;
@@ -77,14 +77,14 @@ public class Member extends BaseTimeEntity {
     public Member(String email, String social_id, String password, String nickname, String name,
                   LocalDate birth, String address, String image, SocialType social_type, Role role) {
         this.email = email;
-        this.social_id = social_id;
+        this.socialId = social_id;
         this.password = password;
         this.nickname = nickname;
         this.name = name;
         this.birth = birth;
         this.address = address;
         this.image = image;
-        this.social_type = social_type;
+        this.socialType = social_type;
         this.role = role;
     }
 }

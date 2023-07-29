@@ -15,6 +15,7 @@ public class BookReportDto {
     public static class Request {
 
         private String book_title;
+        private String isbn;
         private String authors;
         private String publisher;
         private LocalDate pud_date;
@@ -26,6 +27,7 @@ public class BookReportDto {
         public static BookReport toEntity(BookReportDto.Request request, Member writer) {
             return BookReport.builder()
                     .book_title(request.getBook_title())
+                    .isbn(request.getIsbn())
                     .authors(request.getAuthors())
                     .publisher(request.getPublisher())
                     .pud_date(request.getPud_date())

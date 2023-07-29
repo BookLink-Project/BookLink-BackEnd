@@ -1,5 +1,6 @@
 package BookLink.BookLink.Service.OAuth.handler;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -12,6 +13,7 @@ import java.io.IOException;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class OAuth2LoginFailureHandler implements AuthenticationFailureHandler {
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception)
