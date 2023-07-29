@@ -30,6 +30,9 @@ public class BookReport extends BaseTimeEntity {
     private String book_title;
 
     @NotNull
+    private String isbn;
+
+    @NotNull
     private String authors;
 
     @NotNull
@@ -65,9 +68,10 @@ public class BookReport extends BaseTimeEntity {
     private Long reply_cnt;
 
     @Builder
-    public BookReport(String book_title, String authors, String publisher, LocalDate pud_date, String cover, String category,
+    public BookReport(String book_title, String isbn, String authors, String publisher, LocalDate pud_date, String cover, String category,
                       String title, String content, Member writer) {
         this.book_title = book_title;
+        this.isbn = isbn;
         this.authors = authors;
         this.publisher = publisher;
         this.pud_date = pud_date;
@@ -89,5 +93,16 @@ public class BookReport extends BaseTimeEntity {
 
     public void like_plus() { this.like_cnt += 1; }
     public void like_minus() { this.like_cnt -= 1; }
+
+
+    public void replyCnt_plus() {
+        this.reply_cnt += 1;
+    }
+
+    public void replyCnt_minus() {
+        this.reply_cnt -= 1;
+    }
+
+
 
 }

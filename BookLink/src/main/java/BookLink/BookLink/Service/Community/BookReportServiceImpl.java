@@ -130,10 +130,26 @@ public class BookReportServiceImpl implements BookReportService{
         }
 
         return responseDto;
-
-
     }
 
+    @Override
+    public ResponseDto deletePost(Long id) {
+        ResponseDto responseDto = new ResponseDto();
+
+        BookReport post = bookReportRepository.findById(id).orElse(null);
+
+        if (post == null) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("없는 글");
+            return responseDto;
+        }
+
+        bookReportRepository.deleteById(id);
+
+        responseDto.setStatus(HttpStatus.NO_CONTENT);
+
+        return responseDto;
+    }
 
 
 }
