@@ -1,6 +1,7 @@
 package BookLink.BookLink.Service.Book;
 
 import BookLink.BookLink.Domain.Book.*;
+import BookLink.BookLink.Domain.Community.BookReport.BookReport;
 import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Domain.BookReply.BookReply;
@@ -11,6 +12,7 @@ import BookLink.BookLink.Repository.Book.BookLikeRepository;
 import BookLink.BookLink.Repository.Book.BookRentRepository;
 import BookLink.BookLink.Repository.Book.BookRepository;
 import BookLink.BookLink.Repository.BookReply.BookReplyLikeRepository;
+import BookLink.BookLink.Repository.Community.BookReportRepository;
 import BookLink.BookLink.Repository.Member.MemberRepository;
 import BookLink.BookLink.Repository.BookReply.BookReplyRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -41,6 +42,7 @@ public class BookServiceImpl implements BookService{
     private final BookReplyRepository bookReplyRepository;
     private final BookReplyLikeRepository bookReplyLikeRepository;
     private final MemberRepository memberRepository;
+    private final BookReportRepository bookReportRepository;
 
     private String search_url = "http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=ttbelwlahstmxjf2304001&QueryType=Title&MaxResults=30&start=1&SearchTarget=Book&Cover=Big&output=js&InputEncoding=utf-8&Version=20131101";
     private String list_url = "http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=ttbelwlahstmxjf2304001&QueryType=Bestseller&MaxResults=30&start=1&SearchTarget=Book&Cover=Big&output=js&Version=20131101";
@@ -150,18 +152,18 @@ public class BookServiceImpl implements BookService{
     }
 
     @Override
-    public ResponseDto showBook(String memEmail, String isbn13) throws MalformedURLException {
+    public ResponseDto showBook(String memEmail, String isbn13) {
 
         ResponseDto responseDto = new ResponseDto();
 
         RestTemplate restTemplate = new RestTemplate();
 
-        URI targetUri = UriComponentsBuilder
+        URI bookUri = UriComponentsBuilder
                 .fromUriString(detail_url)
                 .queryParam("ItemId", isbn13)
                 .build().encode(StandardCharsets.UTF_8).toUri();
 
-        ResponseEntity<BookDetailDto> resultResponse = restTemplate.exchange(targetUri, HttpMethod.GET, null, BookDetailDto.class);
+        ResponseEntity<BookDetailDto> resultResponse = restTemplate.exchange(bookUri, HttpMethod.GET, null, BookDetailDto.class);
 
         BookDetailDto result = resultResponse.getBody(); // not return null
 
@@ -191,7 +193,7 @@ public class BookServiceImpl implements BookService{
         item.setOwner_cnt((long)(Math.random() * 10)); // TODO dummy
         item.setLiked(isLikedBook);
 
-        // 댓글 조회
+        // START 댓글 조회
         List<BookReply> replyList = bookReplyRepository.findByIsbnOrderByParentDescIdDesc(isbn13);
 
         List<BookRepliesDto> replies = new ArrayList<BookRepliesDto>();
@@ -223,8 +225,43 @@ public class BookServiceImpl implements BookService{
             );
             replies.add(rv);
         }
-
         result.setReplies(replies);
+
+        // START 카테고리 추천 도서
+        int categoryId = item.getCategoryId();
+
+        URI recommendUri = UriComponentsBuilder
+                .fromUriString(list_url)
+                .queryParam("CategoryId", categoryId)
+                .build().encode(StandardCharsets.UTF_8).toUri();
+
+        ResponseEntity<BookRecommendDto> rec_resultResponse = restTemplate.exchange(recommendUri, HttpMethod.GET, null, BookRecommendDto.class);
+
+        BookRecommendDto rec_result = rec_resultResponse.getBody();
+
+        List<BookRecommendDto.Item> recommend_books = new ArrayList<>();
+
+        if (rec_result != null) {
+            for (int i = 0; i < 3; i++) {
+                BookRecommendDto.Item item1 = rec_result.getItem().get((int) (Math.random() * 30));
+                recommend_books.add(item1);
+            }
+        }
+        result.setRecommended_books(recommend_books);
+
+        // START 관련 게시글
+//        List<BookRelatedPostDto> related_posts = new ArrayList<>();
+
+//        List<BookReport> reports = bookReportRepository.findByIsbn(isbn);
+
+
+//        result.setRelated_posts(related_posts);
+
+
+        // END 관련 게시글
+
+
+
 
         responseDto.setData(result);
 
