@@ -1,5 +1,6 @@
 package BookLink.BookLink.Service.OAuth.MemberInfo;
 
+import java.net.URL;
 import java.util.Map;
 
 // DTO
@@ -15,7 +16,7 @@ public abstract class OAuth2MemberInfo {
 
     public abstract String getNickname();
 
-    public abstract String getImageUrl();
+    public abstract URL getImageUrl();
 
 //    public abstract String getEmail();
 

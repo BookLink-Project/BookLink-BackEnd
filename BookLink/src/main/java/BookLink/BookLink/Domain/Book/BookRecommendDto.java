@@ -5,15 +5,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class BookListDto {
+public class BookRecommendDto {
 
-    List<Item> item = new ArrayList<>();
+    private List<Item> item = new ArrayList<>();
 
     @Getter
     @Setter
@@ -24,12 +26,9 @@ public class BookListDto {
         private String title;
         private String author;
         private String publisher;
-        private String priceStandard;
+        private LocalDate pubDate;
+        private Integer priceStandard;
         private String cover;
-
-        private Long like_cnt;
-        private Long reply_cnt;
-        private Long owner_cnt;
     }
 
 }

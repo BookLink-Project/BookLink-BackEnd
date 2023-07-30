@@ -15,8 +15,10 @@ import java.util.List;
 @AllArgsConstructor
 public class BookDetailDto {
 
-    List<Item> item = new ArrayList<>();
-    List<BookRepliesDto> replies = new ArrayList<>();
+    private List<Item> item = new ArrayList<>();
+    private List<BookRepliesDto> replies = new ArrayList<>();
+    private List<BookRecommendDto.Item> recommended_books;
+    private List<BookRelatedPostDto> related_posts = new ArrayList<>();
 
     @Getter
     @Setter
@@ -31,6 +33,8 @@ public class BookDetailDto {
         private String pubDate;
         private String description;
         private String cover;
+        private Integer categoryId;
+        private String categoryName;
 
         private Long like_cnt;
         private Long reply_cnt;

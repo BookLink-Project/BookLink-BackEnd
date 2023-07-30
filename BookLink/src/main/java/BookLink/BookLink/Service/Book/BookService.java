@@ -16,7 +16,7 @@ public interface BookService {
 
     ResponseDto searchBook(Integer category, String searchWord);
 
-    ResponseDto showBook(String memEmail, String isbn13) throws MalformedURLException;
+    ResponseDto showBook(String memEmail, String isbn13);
 
     ResponseDto likeBook(String memEmail, String isbn);
 
