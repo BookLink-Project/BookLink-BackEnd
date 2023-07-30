@@ -117,7 +117,7 @@ public class BookController {
                                                       @PathVariable Long replyId,
                                                       @AuthenticationPrincipal String memEmail) {
 
-        ResponseDto responseDto = bookReplyService.likeReply(memEmail, replyId);
+        ResponseDto responseDto = bookReplyService.likeReply(memEmail, replyId, isbn);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);

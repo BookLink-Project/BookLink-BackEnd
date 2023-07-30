@@ -170,15 +170,14 @@ public class BookServiceImpl implements BookService{
         if (result == null) {
             return responseDto; // all null
         }
-
         if (result.getItem().isEmpty()) {
             responseDto.setStatus(HttpStatus.NOT_FOUND);
             responseDto.setMessage("없는 책");
             responseDto.setData(null);
-
             return responseDto;
         }
 
+        // 1. 책 정보
         BookDetailDto.Item item = result.getItem().get(0);
 
         String isbn = item.getIsbn13();
@@ -186,14 +185,16 @@ public class BookServiceImpl implements BookService{
         Long reply_cnt = bookReplyRepository.countByIsbn(isbn); // 댓글 수
 
         Member loginMember = memberRepository.findByEmail(memEmail).orElse(null);
-        boolean isLikedBook = bookLikeRepository.existsByMemberAndIsbn(loginMember, isbn);// 좋아요 상태
+        boolean isLikedBook = bookLikeRepository.existsByMemberAndIsbn(loginMember, isbn); // 좋아요 상태
+
+        item.setCategoryName(item.getCategoryName().split(">")[1]);
 
         item.setLike_cnt(like_cnt);
         item.setReply_cnt(reply_cnt);
         item.setOwner_cnt(0L); // TODO dummy
         item.setLiked(isLikedBook);
 
-        // START 댓글 조회
+        // 2. 댓글 정보
         List<BookReply> replyList = bookReplyRepository.findByIsbnOrderByParentDescIdDesc(isbn13);
 
         List<BookRepliesDto> replies = new ArrayList<BookRepliesDto>();
@@ -207,7 +208,7 @@ public class BookServiceImpl implements BookService{
             // 대댓글 수 (부모 : 자식)
             Long sub_reply_cnt = parentId.equals(replyId) ? bookReplyRepository.countByParentId(parentId) - 1 : 0;
 
-            boolean isLikedReply = bookReplyLikeRepository.existsByMemberAndReply(loginMember, reply);// 좋아요 상태
+            boolean isLikedReply = bookReplyLikeRepository.existsByMemberAndReply(loginMember, reply); // 좋아요 상태
 
             BookRepliesDto rv;
 
@@ -227,7 +228,7 @@ public class BookServiceImpl implements BookService{
         }
         result.setReplies(replies);
 
-        // START 카테고리 추천 도서
+        // 3. 카테고리 추천 도서
         int categoryId = item.getCategoryId();
 
         URI recommendUri = UriComponentsBuilder
@@ -261,7 +262,7 @@ public class BookServiceImpl implements BookService{
         }
         result.setRecommended_books(recommend_books);
 
-        // START 관련 게시글
+        // 4. 관련 게시글
         List<BookRelatedPostDto> related_posts = new ArrayList<>();
 
         List<BookReport> reports = bookReportRepository.findTop5ByIsbnOrderByCreatedTimeDesc(isbn);
@@ -277,7 +278,6 @@ public class BookServiceImpl implements BookService{
             related_posts.add(post);
         }
         result.setRelated_posts(related_posts);
-        // END 관련 게시글
 
         responseDto.setData(result);
 
