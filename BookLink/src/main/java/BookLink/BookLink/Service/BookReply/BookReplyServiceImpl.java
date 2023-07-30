@@ -126,7 +126,7 @@ public class BookReplyServiceImpl implements BookReplyService {
 
     @Override
     @Transactional
-    public ResponseDto likeReply(String memEmail, Long replyId) {
+    public ResponseDto likeReply(String memEmail, Long replyId, String isbn) {
 
         ResponseDto responseDto = new ResponseDto();
 
@@ -138,7 +138,7 @@ public class BookReplyServiceImpl implements BookReplyService {
             return responseDto;
         }
 
-        BookReply bookReply = bookReplyRepository.findById(replyId).orElse(null);
+        BookReply bookReply = bookReplyRepository.findByIdAndIsbn(replyId, isbn).orElse(null);
 
         if (bookReply == null) {
             responseDto.setStatus(HttpStatus.BAD_REQUEST);

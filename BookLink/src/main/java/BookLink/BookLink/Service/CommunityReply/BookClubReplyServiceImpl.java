@@ -183,7 +183,7 @@ public class BookClubReplyServiceImpl implements BookClubReplyService{
 
         // TODO 글-댓글 매칭 안 될 경우 예외 처리
 
-        BookClubReply reply = bookClubReplyRepository.findById(replyId).orElse(null);
+        BookClubReply reply = bookClubReplyRepository.findByIdAndPostId(replyId, postId).orElse(null);
 
         if (reply == null) {
             responseDto.setStatus(HttpStatus.BAD_REQUEST);
