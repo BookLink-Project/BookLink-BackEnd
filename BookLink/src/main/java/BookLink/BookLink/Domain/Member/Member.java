@@ -47,7 +47,7 @@ public class Member extends BaseTimeEntity {
     private String address;
 
     @ColumnDefault("'https://soccerquick.s3.ap-northeast-2.amazonaws.com/1689834239634.png'")
-    private String image; // 이미지 경로
+    private URL image; // 이미지 경로
 
     // 새로 추가
     private SocialType socialType;
@@ -75,7 +75,7 @@ public class Member extends BaseTimeEntity {
 
     @Builder
     public Member(String email, String social_id, String password, String nickname, String name,
-                  LocalDate birth, String address, String image, SocialType social_type, Role role) {
+                  LocalDate birth, String address, URL image, SocialType social_type, Role role) {
         this.email = email;
         this.socialId = social_id;
         this.password = password;
