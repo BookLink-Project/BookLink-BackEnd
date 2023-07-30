@@ -117,6 +117,7 @@ public class BookClubReplyServiceImpl implements BookClubReplyService{
     }
 
     @Override
+    @Transactional
     public ResponseDto deleteReply(Long postId, Long replyId) {
 
         ResponseDto responseDto = new ResponseDto();
@@ -137,9 +138,23 @@ public class BookClubReplyServiceImpl implements BookClubReplyService{
             return responseDto;
         }
 
-        bookClubReplyRepository.deleteById(replyId);
+        Long parentId = deleteReply.getParent().getId();
 
-        post.decreaseReplyCnt();
+        if (parentId.equals(replyId)) { // 부모 댓글의 경우
+
+            Long delete_cnt = bookClubReplyRepository.countByParentId(replyId);
+            System.out.println(delete_cnt);
+            post.decreaseReplyCnt(delete_cnt);
+
+            bookClubReplyRepository.deleteById(replyId);
+
+        } else { // 자식 댓글의 경우
+
+            bookClubReplyRepository.deleteById(replyId);
+
+            post.decreaseReplyCnt(1L);
+
+        }
 
         responseDto.setStatus(HttpStatus.NO_CONTENT);
 

@@ -59,8 +59,8 @@ public class BookClub extends BaseTimeEntity {
         this.reply_cnt += 1;
     }
 
-    public void decreaseReplyCnt() {
-        this.reply_cnt -= 1;
+    public void decreaseReplyCnt(Long cnt) {
+        this.reply_cnt -= cnt;
     }
 
     public void increaseLikeCnt() {
