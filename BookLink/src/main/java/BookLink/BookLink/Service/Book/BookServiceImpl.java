@@ -105,7 +105,7 @@ public class BookServiceImpl implements BookService{
 
             item.setLike_cnt(like_cnt);
             item.setReply_cnt(reply_cnt);
-            item.setOwner_cnt((long)(Math.random()*10)); // TODO dummy
+            item.setOwner_cnt(0L); // TODO dummy
         }
 
         responseDto.setData(result);
@@ -143,7 +143,7 @@ public class BookServiceImpl implements BookService{
 
             item.setLike_cnt(like_cnt);
             item.setReply_cnt(reply_cnt);
-            item.setOwner_cnt((long)(Math.random() * 10)); // TODO dummy
+            item.setOwner_cnt(0L); // TODO dummy
         }
 
         responseDto.setData(result);
@@ -190,7 +190,7 @@ public class BookServiceImpl implements BookService{
 
         item.setLike_cnt(like_cnt);
         item.setReply_cnt(reply_cnt);
-        item.setOwner_cnt((long)(Math.random() * 10)); // TODO dummy
+        item.setOwner_cnt(0L); // TODO dummy
         item.setLiked(isLikedBook);
 
         // START 댓글 조회
@@ -242,26 +242,42 @@ public class BookServiceImpl implements BookService{
         List<BookRecommendDto.Item> recommend_books = new ArrayList<>();
 
         if (rec_result != null) {
+
+            List<Integer> nums = new ArrayList<>();
+
+            int num;
             for (int i = 0; i < 3; i++) {
-                BookRecommendDto.Item item1 = rec_result.getItem().get((int) (Math.random() * 30));
+                while (true) { // 중복 제거
+                    num = (int) (Math.random() * 30);
+                    log.info("num = {}", num);
+                    if (!nums.contains(num)) {
+                        nums.add(num);
+                        break;
+                    }
+                }
+                BookRecommendDto.Item item1 = rec_result.getItem().get(num);
                 recommend_books.add(item1);
             }
         }
         result.setRecommended_books(recommend_books);
 
         // START 관련 게시글
-//        List<BookRelatedPostDto> related_posts = new ArrayList<>();
+        List<BookRelatedPostDto> related_posts = new ArrayList<>();
 
-//        List<BookReport> reports = bookReportRepository.findByIsbn(isbn);
+        List<BookReport> reports = bookReportRepository.findTop5ByIsbnOrderByCreatedTimeDesc(isbn);
 
-
-//        result.setRelated_posts(related_posts);
-
-
+        for (BookReport report : reports) {
+            BookRelatedPostDto post = BookRelatedPostDto.builder()
+                    .title(report.getTitle())
+                    .content(report.getContent())
+                    .date(report.getCreatedTime())
+                    .writer(report.getWriter().getNickname())
+                    .image(report.getWriter().getImage())
+                    .build();
+            related_posts.add(post);
+        }
+        result.setRelated_posts(related_posts);
         // END 관련 게시글
-
-
-
 
         responseDto.setData(result);
 

@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface BookReportRepository extends JpaRepository<BookReport, Long> {
 
-//    List<BookReport> findByIsbn(String isbn);
+    List<BookReport> findTop5ByIsbnOrderByCreatedTimeDesc(String isbn);
 
 }
