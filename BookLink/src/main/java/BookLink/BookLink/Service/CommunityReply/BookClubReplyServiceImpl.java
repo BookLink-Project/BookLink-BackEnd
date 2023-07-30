@@ -175,6 +175,14 @@ public class BookClubReplyServiceImpl implements BookClubReplyService{
             return responseDto;
         }
 
+        if (!bookClubRepository.existsById(postId)) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("없는 글");
+            return responseDto;
+        }
+
+        // TODO 글-댓글 매칭 안 될 경우 예외 처리
+
         BookClubReply reply = bookClubReplyRepository.findById(replyId).orElse(null);
 
         if (reply == null) {
