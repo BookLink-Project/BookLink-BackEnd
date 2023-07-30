@@ -56,4 +56,16 @@ public class BookReportReply extends BaseTimeEntity {
     public void updateParent(BookReportReply parent) {
         this.parent = parent;
     }
+
+    public void updateReply(String content) {
+        this.content = content;
+    }
+
+    public void increaseLikeCnt() {
+        this.like_cnt += 1;
+    }
+
+    public void decreaseLikeCnt() {
+        this.like_cnt -= 1;
+    }
 }

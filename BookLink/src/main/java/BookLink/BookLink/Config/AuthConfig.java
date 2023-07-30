@@ -2,6 +2,10 @@ package BookLink.BookLink.Config;
 
 
 import BookLink.BookLink.Repository.Token.RefreshTokenRepository;
+import BookLink.BookLink.Service.OAuth.CustomOAuth2Member;
+import BookLink.BookLink.Service.OAuth.Service.CustomOAuth2MemberService;
+import BookLink.BookLink.Service.OAuth.handler.OAuth2LoginFailureHandler;
+import BookLink.BookLink.Service.OAuth.handler.OAuth2LoginSuccessHandler;
 import BookLink.BookLink.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -24,6 +28,9 @@ public class AuthConfig {
 
     private final JwtUtil jwtUtil;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+    private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
+    private final CustomOAuth2MemberService customOAuth2MemberService;
     // private final JwtFilter jwtFilter; // 생성자 대신
 
     @Bean
@@ -48,9 +55,16 @@ public class AuthConfig {
                     .sessionManagement() // 세션을 사용하지 않기 때문에 STATELESS
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                    .addFilterBefore(new JwtFilter(jwtUtil, refreshTokenRepository), UsernamePasswordAuthenticationFilter.class)
+                    .oauth2Login()
+                    .successHandler(oAuth2LoginSuccessHandler) // 동의하고 계속하기를 눌렀을 때 Handler 설정
+                    .failureHandler(oAuth2LoginFailureHandler) // 소셜 로그인 실패 시 핸들러 설정
+//                    .userInfoEndpoint().userService(customOAuth2MemberService) // customUserService 설정
+                .and()
+                .addFilterBefore(new JwtFilter(jwtUtil, refreshTokenRepository), UsernamePasswordAuthenticationFilter.class)
+//        http.addFilterBefore(jwtAuthenticationProcessingFilter(), CustomJsonUsernamePasswordAuthenticationFilter.class);
                 .build();
     }
+
 
 
 

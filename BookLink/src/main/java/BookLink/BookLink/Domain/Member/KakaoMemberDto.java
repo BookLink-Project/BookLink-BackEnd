@@ -1,6 +1,5 @@
 package BookLink.BookLink.Domain.Member;
 
-import BookLink.BookLink.Domain.Common.SocialType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,8 +7,6 @@ import lombok.Setter;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 public class KakaoMemberDto {
 
@@ -24,14 +21,14 @@ public class KakaoMemberDto {
         private String profile_image_url;
         private String is_default_image;
 
-        public static Member toEntity(KakaoMemberDto.Request request, String email) throws MalformedURLException {
-            return Member.builder()
-                    .email(email)
-                    .nickname(request.getNickname())
-                    .image(toUrl(request.profile_image_url))
-                    .socialType(SocialType.KAKAO)
-                    .build();
-        }
+//        public static Member toEntity(KakaoMemberDto.Request request, String email) throws MalformedURLException {
+//            return Member.builder()
+//                    .email(email)
+//                    .nickname(request.getNickname())
+//                    .image(toUrl(request.profile_image_url))
+//                    .socialType(SocialType.KAKAO)
+//                    .build();
+//        }
 
 
     }
