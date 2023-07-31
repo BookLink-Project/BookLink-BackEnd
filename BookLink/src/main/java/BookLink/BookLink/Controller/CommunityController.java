@@ -227,7 +227,6 @@ public class CommunityController {
                 .body(responseDto);
     }
 
-    // DeleteMapping
 
     @PostMapping("/board/report/{id}/like")
     public ResponseEntity<ResponseDto> likePost(@PathVariable Long id, @AuthenticationPrincipal String memEmail) {

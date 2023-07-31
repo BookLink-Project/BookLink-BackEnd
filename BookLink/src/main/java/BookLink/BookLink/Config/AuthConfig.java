@@ -54,10 +54,10 @@ public class AuthConfig {
                 .and()
                     .sessionManagement() // 세션을 사용하지 않기 때문에 STATELESS
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                    .oauth2Login()
-                    .successHandler(oAuth2LoginSuccessHandler) // 동의하고 계속하기를 눌렀을 때 Handler 설정
-                    .failureHandler(oAuth2LoginFailureHandler) // 소셜 로그인 실패 시 핸들러 설정
+//                .and()
+//                    .oauth2Login()
+//                    .successHandler(oAuth2LoginSuccessHandler) // 동의하고 계속하기를 눌렀을 때 Handler 설정
+//                    .failureHandler(oAuth2LoginFailureHandler) // 소셜 로그인 실패 시 핸들러 설정
 //                    .userInfoEndpoint().userService(customOAuth2MemberService) // customUserService 설정
                 .and()
                 .addFilterBefore(new JwtFilter(jwtUtil, refreshTokenRepository), UsernamePasswordAuthenticationFilter.class)
