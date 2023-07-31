@@ -7,6 +7,7 @@ import BookLink.BookLink.Domain.Community.FreeBoard.FreeBoardDto;
 import BookLink.BookLink.Domain.CommunityReply.BookClubReply.BookClubReplyDto;
 import BookLink.BookLink.Domain.CommunityReply.BookClubReply.BookClubReplyUpdateDto;
 import BookLink.BookLink.Domain.CommunityReply.BookReportReply.BookReportReplyDto;
+import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Service.Community.BookClubService;
 import BookLink.BookLink.Service.Community.BookReportService;
@@ -46,9 +47,9 @@ public class CommunityController {
 
     @PostMapping("/board/free") // 자유글 작성
     public ResponseEntity<ResponseDto> writeFreeBoard (@RequestBody FreeBoardDto.Request freeBoardDto,
-                                       @AuthenticationPrincipal String memEmail) {
+                                       @AuthenticationPrincipal Member member) {
 
-        ResponseDto responseDto = freeBoardService.writePost(memEmail, freeBoardDto);
+        ResponseDto responseDto = freeBoardService.writePost(member.getEmail(), freeBoardDto);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);
