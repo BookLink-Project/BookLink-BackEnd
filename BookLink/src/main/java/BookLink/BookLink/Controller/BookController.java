@@ -62,7 +62,7 @@ public class BookController {
 
     @GetMapping("/{isbn}") // 상세 조회
     public ResponseEntity<ResponseDto> showDetail(@PathVariable String isbn,
-                                                  @AuthenticationPrincipal String memEmail) throws MalformedURLException {
+                                                  @AuthenticationPrincipal String memEmail) {
 
         ResponseDto responseDto = bookService.showBook(memEmail, isbn);
 
@@ -117,7 +117,7 @@ public class BookController {
                                                       @PathVariable Long replyId,
                                                       @AuthenticationPrincipal String memEmail) {
 
-        ResponseDto responseDto = bookReplyService.likeReply(memEmail, replyId);
+        ResponseDto responseDto = bookReplyService.likeReply(memEmail, replyId, isbn);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);

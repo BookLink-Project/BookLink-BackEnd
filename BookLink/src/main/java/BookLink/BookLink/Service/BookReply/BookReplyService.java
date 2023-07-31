@@ -10,7 +10,7 @@ public interface BookReplyService {
 
     ResponseDto writeReply(String memEmail, String isbn, BookReplyDto.Request replyDto) throws MalformedURLException;
 
-    ResponseDto likeReply(String memEmail, Long replyId);
+    ResponseDto likeReply(String memEmail, Long replyId, String isbn);
 
     ResponseDto updateReply(String isbn, Long replyId, BookReplyUpdateDto replyDto);
 

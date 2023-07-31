@@ -1,5 +1,6 @@
 package BookLink.BookLink.Service.OAuth.MemberInfo;
 
+import java.net.URL;
 import java.util.Map;
 
 public class KakaoOAuth2MemberInfo extends OAuth2MemberInfo {
@@ -26,7 +27,7 @@ public class KakaoOAuth2MemberInfo extends OAuth2MemberInfo {
     }
 
     @Override
-    public String getImageUrl() {
+    public URL getImageUrl() {
         Map<String, Object> account = (Map<String, Object>) attributes.get("kakao_account");
         Map<String, Object> profile = (Map<String, Object>) account.get("profile");
 
@@ -34,7 +35,7 @@ public class KakaoOAuth2MemberInfo extends OAuth2MemberInfo {
             return null;
         }
 
-        return (String) profile.get("thumbnail_image_url");
+        return (URL) profile.get("thumbnail_image_url");
     }
 }
 

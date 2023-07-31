@@ -5,12 +5,11 @@ import BookLink.BookLink.Domain.Member.Member;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 
 @Entity
@@ -30,7 +29,7 @@ public class BookReply extends BaseTimeEntity {
     private Long bookId;
      */
     @NotNull
-    private String isbn; // TODO foreign key in API?
+    private String isbn;
 
     @NotNull
     @ManyToOne
@@ -45,10 +44,8 @@ public class BookReply extends BaseTimeEntity {
 
     @ManyToOne
     @JoinColumn(name = "parent")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private BookReply parent; // 가짜 매핑 X
-
-    @ColumnDefault("false")
-    private boolean isDeleted;
 
     @ColumnDefault("false")
     private boolean isUpdated;
@@ -60,10 +57,6 @@ public class BookReply extends BaseTimeEntity {
     public void updateReply(String content) {
         this.content = content;
         this.isUpdated = true;
-    }
-
-    public void updateDeleted() {
-        this.isDeleted = true;
     }
 
     public void increaseLikeCnt() {
@@ -82,7 +75,6 @@ public class BookReply extends BaseTimeEntity {
         this.parent = parent;
 
         this.like_cnt = 0L;
-        this.isDeleted = false;
         this.isUpdated = false;
 
     }

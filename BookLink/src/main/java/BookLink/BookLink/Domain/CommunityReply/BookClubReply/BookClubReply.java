@@ -6,11 +6,10 @@ import BookLink.BookLink.Domain.Member.Member;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.*;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 
 @Entity
@@ -27,6 +26,7 @@ public class BookClubReply extends BaseTimeEntity {
     @NotNull
     @ManyToOne
     @JoinColumn(name = "post_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private BookClub post;
 
     @NotNull
@@ -42,10 +42,8 @@ public class BookClubReply extends BaseTimeEntity {
 
     @ManyToOne
     @JoinColumn(name = "parent")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private BookClubReply parent; // 가짜 매핑 X
-
-    @ColumnDefault("false")
-    private boolean isDeleted;
 
     @ColumnDefault("false")
     private boolean isUpdated;
@@ -57,10 +55,6 @@ public class BookClubReply extends BaseTimeEntity {
     public void updateReply(String content) {
         this.content = content;
         this.isUpdated = true;
-    }
-
-    public void updateDeleted() {
-        this.isDeleted = true;
     }
 
     public void increaseLikeCnt() {
@@ -79,7 +73,6 @@ public class BookClubReply extends BaseTimeEntity {
         this.parent = parent;
 
         this.like_cnt = 0L;
-        this.isDeleted = false;
         this.isUpdated = false;
 
     }

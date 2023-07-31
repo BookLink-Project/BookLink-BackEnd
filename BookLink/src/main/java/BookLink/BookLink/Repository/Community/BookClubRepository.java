@@ -8,4 +8,7 @@ import java.util.List;
 public interface BookClubRepository extends JpaRepository<BookClub, Long> {
 
     List<BookClub> findAll();
+
+    boolean existsById(Long id);
+
 }

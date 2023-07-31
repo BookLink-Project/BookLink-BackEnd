@@ -1,6 +1,7 @@
 package BookLink.BookLink.Service.Book;
 
 import BookLink.BookLink.Domain.Book.*;
+import BookLink.BookLink.Domain.Community.BookReport.BookReport;
 import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Domain.BookReply.BookReply;
@@ -11,6 +12,7 @@ import BookLink.BookLink.Repository.Book.BookLikeRepository;
 import BookLink.BookLink.Repository.Book.BookRentRepository;
 import BookLink.BookLink.Repository.Book.BookRepository;
 import BookLink.BookLink.Repository.BookReply.BookReplyLikeRepository;
+import BookLink.BookLink.Repository.Community.BookReportRepository;
 import BookLink.BookLink.Repository.Member.MemberRepository;
 import BookLink.BookLink.Repository.BookReply.BookReplyRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,9 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +42,7 @@ public class BookServiceImpl implements BookService{
     private final BookReplyRepository bookReplyRepository;
     private final BookReplyLikeRepository bookReplyLikeRepository;
     private final MemberRepository memberRepository;
+    private final BookReportRepository bookReportRepository;
 
     private String search_url = "http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=ttbelwlahstmxjf2304001&QueryType=Title&MaxResults=30&start=1&SearchTarget=Book&Cover=Big&output=js&InputEncoding=utf-8&Version=20131101";
     private String list_url = "http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=ttbelwlahstmxjf2304001&QueryType=Bestseller&MaxResults=30&start=1&SearchTarget=Book&Cover=Big&output=js&Version=20131101";
@@ -104,11 +105,9 @@ public class BookServiceImpl implements BookService{
 
             item.setLike_cnt(like_cnt);
             item.setReply_cnt(reply_cnt);
-            item.setOwner_cnt((long)(Math.random()*10)); // TODO dummy
+            item.setOwner_cnt(0L); // TODO dummy
         }
 
-        responseDto.setStatus(HttpStatus.OK);
-        responseDto.setMessage("성공");
         responseDto.setData(result);
 
         return responseDto;
@@ -144,44 +143,41 @@ public class BookServiceImpl implements BookService{
 
             item.setLike_cnt(like_cnt);
             item.setReply_cnt(reply_cnt);
-            item.setOwner_cnt((long)(Math.random() * 10)); // TODO dummy
+            item.setOwner_cnt(0L); // TODO dummy
         }
 
-        responseDto.setStatus(HttpStatus.OK);
-        responseDto.setMessage("성공");
         responseDto.setData(result);
 
         return responseDto;
     }
 
     @Override
-    public ResponseDto showBook(String memEmail, String isbn13) throws MalformedURLException {
+    public ResponseDto showBook(String memEmail, String isbn13) {
 
         ResponseDto responseDto = new ResponseDto();
 
         RestTemplate restTemplate = new RestTemplate();
 
-        URI targetUri = UriComponentsBuilder
+        URI bookUri = UriComponentsBuilder
                 .fromUriString(detail_url)
                 .queryParam("ItemId", isbn13)
                 .build().encode(StandardCharsets.UTF_8).toUri();
 
-        ResponseEntity<BookDetailDto> resultResponse = restTemplate.exchange(targetUri, HttpMethod.GET, null, BookDetailDto.class);
+        ResponseEntity<BookDetailDto> resultResponse = restTemplate.exchange(bookUri, HttpMethod.GET, null, BookDetailDto.class);
 
         BookDetailDto result = resultResponse.getBody(); // not return null
 
         if (result == null) {
             return responseDto; // all null
         }
-
         if (result.getItem().isEmpty()) {
             responseDto.setStatus(HttpStatus.NOT_FOUND);
             responseDto.setMessage("없는 책");
             responseDto.setData(null);
-
             return responseDto;
         }
 
+        // 1. 책 정보
         BookDetailDto.Item item = result.getItem().get(0);
 
         String isbn = item.getIsbn13();
@@ -189,15 +185,17 @@ public class BookServiceImpl implements BookService{
         Long reply_cnt = bookReplyRepository.countByIsbn(isbn); // 댓글 수
 
         Member loginMember = memberRepository.findByEmail(memEmail).orElse(null);
-        boolean isLikedBook = bookLikeRepository.existsByMemberAndIsbn(loginMember, isbn);// 좋아요 상태
+        boolean isLikedBook = bookLikeRepository.existsByMemberAndIsbn(loginMember, isbn); // 좋아요 상태
+
+        item.setCategoryName(item.getCategoryName().split(">")[1]);
 
         item.setLike_cnt(like_cnt);
         item.setReply_cnt(reply_cnt);
-        item.setOwner_cnt((long)(Math.random() * 10)); // TODO dummy
+        item.setOwner_cnt(0L); // TODO dummy
         item.setLiked(isLikedBook);
 
-        // 댓글 조회
-        List<BookReply> replyList = bookReplyRepository.findByIsbnOrderByParentDescIdDesc(isbn13); // TODO sorting
+        // 2. 댓글 정보
+        List<BookReply> replyList = bookReplyRepository.findByIsbnOrderByParentDescIdDesc(isbn13);
 
         List<BookRepliesDto> replies = new ArrayList<BookRepliesDto>();
 
@@ -210,46 +208,77 @@ public class BookServiceImpl implements BookService{
             // 대댓글 수 (부모 : 자식)
             Long sub_reply_cnt = parentId.equals(replyId) ? bookReplyRepository.countByParentId(parentId) - 1 : 0;
 
-            boolean isLikedReply = bookReplyLikeRepository.existsByMemberAndReply(loginMember, reply);// 좋아요 상태
+            boolean isLikedReply = bookReplyLikeRepository.existsByMemberAndReply(loginMember, reply); // 좋아요 상태
 
             BookRepliesDto rv;
-            if (reply.isDeleted()) {
 
-                rv = new BookRepliesDto(
-                        replyId,
-                        parentId,
-                        "(삭제)",
-                        "삭제된 댓글입니다.",
-                        null,
-                        null,
-                        null,
-                        sub_reply_cnt,
-                        null,
-                        null
-                );
-
-            } else {
-                rv = new BookRepliesDto(
-                        replyId,
-                        parentId,
-                        writer.getNickname(),
-                        reply.getContent(),
-                        reply.getCreatedTime(),
-                        new URL("https://soccerquick.s3.ap-northeast-2.amazonaws.com/1689834239634.png"), // TODO dummy
-                        // writer.getImage()
-                        reply.getLike_cnt(),
-                        sub_reply_cnt,
-                        isLikedReply,
-                        reply.isUpdated()
-                );
-            }
+            rv = new BookRepliesDto(
+                    replyId,
+                    parentId,
+                    writer.getNickname(),
+                    reply.getContent(),
+                    reply.getCreatedTime(),
+                    writer.getImage(),
+                    reply.getLike_cnt(),
+                    sub_reply_cnt,
+                    isLikedReply,
+                    reply.isUpdated()
+            );
             replies.add(rv);
         }
-
         result.setReplies(replies);
 
-        responseDto.setStatus(HttpStatus.OK);
-        responseDto.setMessage("성공");
+        // 3. 카테고리 추천 도서
+        int categoryId = item.getCategoryId();
+
+        URI recommendUri = UriComponentsBuilder
+                .fromUriString(list_url)
+                .queryParam("CategoryId", categoryId)
+                .build().encode(StandardCharsets.UTF_8).toUri();
+
+        ResponseEntity<BookRecommendDto> rec_resultResponse = restTemplate.exchange(recommendUri, HttpMethod.GET, null, BookRecommendDto.class);
+
+        BookRecommendDto rec_result = rec_resultResponse.getBody();
+
+        List<BookRecommendDto.Item> recommend_books = new ArrayList<>();
+
+        if (rec_result != null) {
+
+            List<Integer> nums = new ArrayList<>();
+
+            int num;
+            for (int i = 0; i < 3; i++) {
+                while (true) { // 중복 제거
+                    num = (int) (Math.random() * 30);
+                    log.info("num = {}", num);
+                    if (!nums.contains(num)) {
+                        nums.add(num);
+                        break;
+                    }
+                }
+                BookRecommendDto.Item item1 = rec_result.getItem().get(num);
+                recommend_books.add(item1);
+            }
+        }
+        result.setRecommended_books(recommend_books);
+
+        // 4. 관련 게시글
+        List<BookRelatedPostDto> related_posts = new ArrayList<>();
+
+        List<BookReport> reports = bookReportRepository.findTop5ByIsbnOrderByCreatedTimeDesc(isbn);
+
+        for (BookReport report : reports) {
+            BookRelatedPostDto post = BookRelatedPostDto.builder()
+                    .title(report.getTitle())
+                    .content(report.getContent())
+                    .date(report.getCreatedTime())
+                    .writer(report.getWriter().getNickname())
+                    .image(report.getWriter().getImage())
+                    .build();
+            related_posts.add(post);
+        }
+        result.setRelated_posts(related_posts);
+
         responseDto.setData(result);
 
         return responseDto;
@@ -268,36 +297,29 @@ public class BookServiceImpl implements BookService{
             return responseDto;
         }
 
-        boolean is_liked = bookLikeRepository.existsByMemberAndIsbn(loginMember, isbn);
+        BookLike bookLike = bookLikeRepository.findByMemberAndIsbn(loginMember, isbn).orElse(null);
 
-        if (!is_liked) { // 좋아요 안 눌린 상태
+        if (bookLike == null) { // 좋아요 안 눌린 상태
 
-            BookLike bookLike = BookLike.builder()
+            bookLike = BookLike.builder()
                     .isbn(isbn)
                     .member(loginMember)
                     .build();
 
             bookLikeRepository.save(bookLike);
 
-            responseDto.setStatus(HttpStatus.OK);
             responseDto.setMessage("좋아요 성공");
-
-            BookLikeDto bookLikeDto = new BookLikeDto(bookLikeRepository.countByIsbn(isbn));
-            responseDto.setData(bookLikeDto);
-
 
         } else { // 좋아요 눌린 상태
 
-            BookLike bookLike = bookLikeRepository.findByIsbnAndMember(isbn, loginMember);
             bookLikeRepository.delete(bookLike);
 
-            responseDto.setStatus(HttpStatus.OK);
             responseDto.setMessage("좋아요 취소 성공");
 
-            BookLikeDto bookLikeDto = new BookLikeDto(bookLikeRepository.countByIsbn(isbn));
-            responseDto.setData(bookLikeDto);
-
         }
+
+        BookLikeDto bookLikeDto = new BookLikeDto(bookLikeRepository.countByIsbn(isbn));
+        responseDto.setData(bookLikeDto);
 
         return responseDto;
 
