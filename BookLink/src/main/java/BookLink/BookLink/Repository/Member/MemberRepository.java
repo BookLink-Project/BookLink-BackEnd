@@ -1,9 +1,8 @@
 package BookLink.BookLink.Repository.Member;
 
 import BookLink.BookLink.Domain.Member.Member;
-import BookLink.BookLink.Service.OAuth.SocialType;
+import BookLink.BookLink.Domain.Common.SocialType;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
 
