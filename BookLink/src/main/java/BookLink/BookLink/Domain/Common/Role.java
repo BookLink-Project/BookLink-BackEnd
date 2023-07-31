@@ -1,4 +1,4 @@
-package BookLink.BookLink.Service.OAuth;
+package BookLink.BookLink.Domain.Common;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
