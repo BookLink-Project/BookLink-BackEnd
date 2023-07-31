@@ -181,11 +181,11 @@ public class BookServiceImpl implements BookService{
         BookDetailDto.Item item = result.getItem().get(0);
 
         String isbn = item.getIsbn13();
-        Long like_cnt = bookLikeRepository.countByIsbn(isbn); // 좋아요 수
-        Long reply_cnt = bookReplyRepository.countByIsbn(isbn); // 댓글 수
+        Long like_cnt = bookLikeRepository.countByIsbn(isbn);
+        Long reply_cnt = bookReplyRepository.countByIsbn(isbn);
 
         Member loginMember = memberRepository.findByEmail(memEmail).orElse(null);
-        boolean isLikedBook = bookLikeRepository.existsByMemberAndIsbn(loginMember, isbn); // 좋아요 상태
+        boolean isLikedBook = bookLikeRepository.existsByMemberAndIsbn(loginMember, isbn);
 
         item.setCategoryName(item.getCategoryName().split(">")[1]);
 
@@ -208,7 +208,7 @@ public class BookServiceImpl implements BookService{
             // 대댓글 수 (부모 : 자식)
             Long sub_reply_cnt = parentId.equals(replyId) ? bookReplyRepository.countByParentId(parentId) - 1 : 0;
 
-            boolean isLikedReply = bookReplyLikeRepository.existsByMemberAndReply(loginMember, reply); // 좋아요 상태
+            boolean isLikedReply = bookReplyLikeRepository.existsByMemberAndReply(loginMember, reply);
 
             BookRepliesDto rv;
 
@@ -269,6 +269,7 @@ public class BookServiceImpl implements BookService{
 
         for (BookReport report : reports) {
             BookRelatedPostDto post = BookRelatedPostDto.builder()
+                    .id(report.getId())
                     .title(report.getTitle())
                     .content(report.getContent())
                     .date(report.getCreatedTime())

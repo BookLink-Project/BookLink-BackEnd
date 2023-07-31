@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class BookRelatedPostDto {
 
+    private Long id;
     private String title;
     private String content;
     private LocalDateTime date;
