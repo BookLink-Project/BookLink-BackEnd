@@ -17,7 +17,6 @@ public class MemberPrincipalService implements UserDetailsService {
 
     @Override // DB에 존재하는지
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        System.out.println("PrincipalDetailService.loadUserByUsername");
 
         // 우린 이메일로 로그인 하니까.
         Member member = memberRepository.findByEmail(email)
