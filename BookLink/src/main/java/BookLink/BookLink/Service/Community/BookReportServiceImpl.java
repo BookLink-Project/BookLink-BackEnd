@@ -100,25 +100,28 @@ public class BookReportServiceImpl implements BookReportService{
     }
 
     @Override
+    @Transactional
     public ResponseDto likePost(Long id, String memEmail) {
         ResponseDto responseDto = new ResponseDto();
 
-        Optional<Member> byEmail = memberRepository.findByEmail(memEmail);
-        Member member = byEmail.get();
+        Member member = memberRepository.findByEmail(memEmail).orElse(null);
+        BookReport bookReport = bookReportRepository.findById(id).orElse(null);
 
-        Optional<BookReport> byId = bookReportRepository.findById(id);
-        BookReport bookReport = byId.get();
-        Long reportId = bookReport.getId();
+        if (bookReport == null) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("없는 글입니다");
+            return responseDto;
+        }
 
-        boolean exists = bookReportLikeRepository.existsByMemberAndPost(member, bookReport);
+        BookReportLike bookReportLike = bookReportLikeRepository.findByMemberAndPost(member, bookReport).orElse(null);
 
-        if (exists) {
-            bookReportLikeRepository.deleteById(reportId);
+        if (bookReportLike != null) {
+            bookReportLikeRepository.delete(bookReportLike);
             bookReport.like_minus();
 
             responseDto.setMessage("좋아요 취소");
         } else {
-            BookReportLike bookReportLike = BookReportLike.builder()
+            bookReportLike = BookReportLike.builder()
                     .post(bookReport)
                     .member(member)
                     .build();

@@ -31,7 +31,7 @@ public class AuthConfig {
 //    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
 //    private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
 //    private final CustomOAuth2MemberService customOAuth2MemberService;
-    // private final JwtFilter jwtFilter; // 생성자 대신
+//     private final JwtFilter jwtFilter; // 생성자 대신
 
     @Bean
     public PasswordEncoder passwordEncoder() { // 회원가입 시 비밀번호 암호화

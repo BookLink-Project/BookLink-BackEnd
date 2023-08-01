@@ -59,7 +59,7 @@ dependencies {
 	implementation group: 'org.json', name: 'json', version: '20230618'
 	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.15.2'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
-//	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 	implementation 'com.google.code.gson:gson:2.10.1'
 
 	compileOnly 'org.projectlombok:lombok'
