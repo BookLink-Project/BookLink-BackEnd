@@ -10,18 +10,21 @@ import BookLink.BookLink.Domain.Common.SocialType;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-//@DynamicUpdate
 @DynamicInsert
 public class Member extends BaseTimeEntity {
 
@@ -32,8 +35,7 @@ public class Member extends BaseTimeEntity {
     @NotNull
     private String email; // 아이디
 
-    // 새로 추가
-    private String socialId;
+    private String socialId; // 새로 추가
 
     private String password;
 
@@ -47,13 +49,11 @@ public class Member extends BaseTimeEntity {
     private String address;
 
     @ColumnDefault("'https://soccerquick.s3.ap-northeast-2.amazonaws.com/1689834239634.png'")
-    private URL image; // 이미지 경로
+    private URL image;
 
-//     새로 추가
-    private SocialType socialType;
+    private SocialType socialType; // 새로 추가
 
-//     새로 추가
-    private Role role;
+    private Role role; // 새로 추가
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "card_id")
@@ -64,10 +64,6 @@ public class Member extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "writer")
     private List<BookReport> reports = new ArrayList<>();
-
-//    @OneToMany(mappedBy = "writer")
-//    private List<FreeBoard> freeBoards = new ArrayList<>();
-
 
 //    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
 //    @JoinColumn(name = "rent_id")
