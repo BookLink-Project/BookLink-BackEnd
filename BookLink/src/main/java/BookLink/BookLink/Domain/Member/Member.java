@@ -33,7 +33,7 @@ public class Member extends BaseTimeEntity {
     private String email; // 아이디
 
     // 새로 추가
-//    private String socialId;
+    private String socialId;
 
     private String password;
 
@@ -49,11 +49,11 @@ public class Member extends BaseTimeEntity {
     @ColumnDefault("'https://soccerquick.s3.ap-northeast-2.amazonaws.com/1689834239634.png'")
     private URL image; // 이미지 경로
 
-    // 새로 추가
-//    private SocialType socialType;
+//     새로 추가
+    private SocialType socialType;
 
-    // 새로 추가
-//    private Role role;
+//     새로 추가
+    private Role role;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "card_id")
@@ -74,17 +74,17 @@ public class Member extends BaseTimeEntity {
 //    private List<BookRent> bookRent;
 
     @Builder
-    public Member(String email, String password, String nickname, String name,
-                  LocalDate birth, String address, URL image) {
+    public Member(String email, String social_id, String password, String nickname, String name,
+                  LocalDate birth, String address, URL image, SocialType social_type, Role role) {
         this.email = email;
-//        this.socialId = social_id;
+        this.socialId = social_id;
         this.password = password;
         this.nickname = nickname;
         this.name = name;
         this.birth = birth;
         this.address = address;
         this.image = image;
-//        this.socialType = social_type;
-//        this.role = role;
+        this.socialType = social_type;
+        this.role = role;
     }
 }

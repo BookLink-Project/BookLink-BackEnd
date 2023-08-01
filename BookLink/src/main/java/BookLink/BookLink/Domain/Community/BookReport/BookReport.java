@@ -80,6 +80,10 @@ public class BookReport extends BaseTimeEntity {
         this.title = title;
         this.content = content;
         this.writer = writer;
+
+        this.like_cnt = 0L;
+        this.view_cnt = 0L;
+        this.reply_cnt = 0L;
     }
 
     public void update(String title, String content) {
@@ -92,8 +96,8 @@ public class BookReport extends BaseTimeEntity {
     }
 
     public void like_plus() { this.like_cnt += 1; }
-    public void like_minus() { this.like_cnt -= 1; }
 
+    public void like_minus() { this.like_cnt -= 1; }
 
     public void replyCnt_plus() {
         this.reply_cnt += 1;
