@@ -6,11 +6,10 @@ import BookLink.BookLink.Domain.Member.Member;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.*;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 
 @Entity
@@ -42,15 +41,21 @@ public class BookReportReply extends BaseTimeEntity {
 
     @ManyToOne
     @JoinColumn(name = "parent")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private BookReportReply parent;
 
+    @ColumnDefault("false")
+    private boolean isUpdated;
+
     @Builder
-    public BookReportReply(BookReport post, Member writer, String content, Long like_cnt, BookReportReply parent) {
+    public BookReportReply(BookReport post, Member writer, String content , BookReportReply parent) {
         this.post = post;
         this.writer = writer;
         this.content = content;
-        this.like_cnt = like_cnt;
         this.parent = parent;
+
+        this.like_cnt = 0L;
+        this.isUpdated = false;
     }
 
     public void updateParent(BookReportReply parent) {
@@ -59,6 +64,7 @@ public class BookReportReply extends BaseTimeEntity {
 
     public void updateReply(String content) {
         this.content = content;
+        this.isUpdated = true;
     }
 
     public void increaseLikeCnt() {
