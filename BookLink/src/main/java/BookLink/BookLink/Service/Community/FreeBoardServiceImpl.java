@@ -22,14 +22,11 @@ import java.util.Optional;
 public class FreeBoardServiceImpl implements FreeBoardService {
 
     private final FreeBoardRepository freeBoardRepository;
-    private final MemberRepository memberRepository;
 
     @Override
-    public ResponseDto writePost(String memEmail, FreeBoardDto.Request freeBoardDto) {
+    public ResponseDto writePost(Member loginMember, FreeBoardDto.Request freeBoardDto) {
 
         ResponseDto responseDto = new ResponseDto();
-
-        Member loginMember = memberRepository.findByEmail(memEmail).orElse(null);
 
         FreeBoard freeBoard = freeBoardDto.toEntity(loginMember);
 
