@@ -2,6 +2,7 @@ package BookLink.BookLink.Config;
 
 
 import BookLink.BookLink.Repository.Token.RefreshTokenRepository;
+import BookLink.BookLink.Service.Member.MemberPrincipalService;
 import BookLink.BookLink.Service.OAuth.Service.CustomOAuth2MemberService;
 import BookLink.BookLink.Service.OAuth.handler.OAuth2LoginFailureHandler;
 import BookLink.BookLink.Service.OAuth.handler.OAuth2LoginSuccessHandler;
@@ -25,6 +26,8 @@ public class AuthConfig {
 
     private final JwtUtil jwtUtil;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final MemberPrincipalService memberPrincipalService;
+
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
     private final CustomOAuth2MemberService customOAuth2MemberService;
@@ -57,7 +60,8 @@ public class AuthConfig {
                 .failureHandler(oAuth2LoginFailureHandler) // 소셜 로그인 실패 시 핸들러 설정
                 .userInfoEndpoint().userService(customOAuth2MemberService); // customUserService 설정
 
-        httpSecurity.addFilterBefore(new JwtFilter(jwtUtil, refreshTokenRepository), UsernamePasswordAuthenticationFilter.class);
+        httpSecurity.addFilterBefore(new JwtFilter(jwtUtil, refreshTokenRepository, memberPrincipalService),
+                UsernamePasswordAuthenticationFilter.class);
 
         return httpSecurity.build();
     }

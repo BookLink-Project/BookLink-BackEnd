@@ -1,11 +1,12 @@
 package BookLink.BookLink.Service.Community;
 
 import BookLink.BookLink.Domain.Community.FreeBoard.FreeBoardDto;
+import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.ResponseDto;
 
 public interface FreeBoardService {
 
-    ResponseDto writePost(String memEmail, FreeBoardDto.Request freeBoardDto);
+    ResponseDto writePost(Member member, FreeBoardDto.Request freeBoardDto);
 
     ResponseDto freeBoardList();
 

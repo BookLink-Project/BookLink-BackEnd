@@ -9,7 +9,6 @@ import BookLink.BookLink.Repository.Community.BookClubLikeRepository;
 import BookLink.BookLink.Repository.CommunityReply.BookClubReplyLikeRepository;
 import BookLink.BookLink.Repository.CommunityReply.BookClubReplyRepository;
 import BookLink.BookLink.Repository.Community.BookClubRepository;
-import BookLink.BookLink.Repository.Member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -22,18 +21,21 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BookClubServiceImpl implements BookClubService {
 
-    private final MemberRepository memberRepository;
     private final BookClubRepository bookClubRepository;
     private final BookClubLikeRepository bookClubLikeRepository;
     private final BookClubReplyRepository bookClubReplyRepository;
     private final BookClubReplyLikeRepository bookClubReplyLikeRepository;
 
     @Override
-    public ResponseDto writePost(String memEmail, BookClubDto.Request bookClubDto) {
+    public ResponseDto writePost(Member loginMember, BookClubDto.Request bookClubDto) {
 
         ResponseDto responseDto = new ResponseDto();
 
-        Member loginMember = memberRepository.findByEmail(memEmail).orElse(null);
+        if (loginMember == null) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("로그인 필요");
+            return responseDto;
+        }
 
         BookClub bookClub = bookClubDto.toEntity(loginMember);
 
@@ -73,9 +75,7 @@ public class BookClubServiceImpl implements BookClubService {
                     .build();
 
             responseData.add(response);
-
         }
-
         responseDto.setData(responseData);
 
         return responseDto;
@@ -84,11 +84,15 @@ public class BookClubServiceImpl implements BookClubService {
 
     @Override
     @Transactional
-    public ResponseDto showPost(String memEmail, Long id) {
+    public ResponseDto showPost(Member loginMember, Long id) {
 
         ResponseDto responseDto = new ResponseDto();
 
-        Member loginMember = memberRepository.findByEmail(memEmail).orElse(null);
+        if (loginMember == null) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("로그인 필요");
+            return responseDto;
+        }
 
         BookClub post = bookClubRepository.findById(id).orElse(null);
 
@@ -114,7 +118,7 @@ public class BookClubServiceImpl implements BookClubService {
             Member writer = reply.getWriter();
 
             // 대댓글 수 (부모 : 자식)
-            Long sub_reply_cnt = parentId.equals(replyId) ? bookClubReplyRepository.countByParentId(parentId) - 1 : 0; // 대댓글 수
+            Long sub_reply_cnt = parentId.equals(replyId) ? bookClubReplyRepository.countByParentId(parentId) - 1 : 0;
 
             // 좋아요 상태
             boolean isLikedReply = bookClubReplyLikeRepository.existsByMemberAndReply(loginMember, reply);
@@ -132,10 +136,8 @@ public class BookClubServiceImpl implements BookClubService {
                     sub_reply_cnt,
                     isLikedReply,
                     reply.isUpdated()
-
             );
             replies.add(rv);
-
         }
         // END 댓글 조회
 
@@ -208,11 +210,9 @@ public class BookClubServiceImpl implements BookClubService {
 
     @Override
     @Transactional
-    public ResponseDto likePost(String memEmail, Long id) {
+    public ResponseDto likePost(Member loginMember, Long id) {
 
         ResponseDto responseDto = new ResponseDto();
-
-        Member loginMember = memberRepository.findByEmail(memEmail).orElse(null);
 
         if (loginMember == null) {
             responseDto.setStatus(HttpStatus.BAD_REQUEST);

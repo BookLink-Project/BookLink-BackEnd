@@ -13,7 +13,6 @@ import BookLink.BookLink.Repository.Book.BookRentRepository;
 import BookLink.BookLink.Repository.Book.BookRepository;
 import BookLink.BookLink.Repository.BookReply.BookReplyLikeRepository;
 import BookLink.BookLink.Repository.Community.BookReportRepository;
-import BookLink.BookLink.Repository.Member.MemberRepository;
 import BookLink.BookLink.Repository.BookReply.BookReplyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +29,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class BookServiceImpl implements BookService{
+public class BookServiceImpl implements BookService {
 
 //    @Value("${kakao.key}")
 //    private String key;
@@ -41,7 +40,6 @@ public class BookServiceImpl implements BookService{
     private final BookRentRepository bookRentRepository;
     private final BookReplyRepository bookReplyRepository;
     private final BookReplyLikeRepository bookReplyLikeRepository;
-    private final MemberRepository memberRepository;
     private final BookReportRepository bookReportRepository;
 
     private String search_url = "http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=ttbelwlahstmxjf2304001&QueryType=Title&MaxResults=30&start=1&SearchTarget=Book&Cover=Big&output=js&InputEncoding=utf-8&Version=20131101";
@@ -84,6 +82,7 @@ public class BookServiceImpl implements BookService{
         URI targetUrl = UriComponentsBuilder
                 .fromUriString(list_url)
                 .queryParam("CategoryId", category != null ? category : 0)
+                .queryParam("outofStockfilter", 1)
                 .build()
                 .encode(StandardCharsets.UTF_8)
                 .toUri();
@@ -100,8 +99,8 @@ public class BookServiceImpl implements BookService{
 
         for (BookListDto.Item item : items) {
             String isbn = item.getIsbn13();
-            Long like_cnt = bookLikeRepository.countByIsbn(isbn); // 좋아요 수
-            Long reply_cnt = bookReplyRepository.countByIsbn(isbn); // 댓글 수
+            Long like_cnt = bookLikeRepository.countByIsbn(isbn);
+            Long reply_cnt = bookReplyRepository.countByIsbn(isbn);
 
             item.setLike_cnt(like_cnt);
             item.setReply_cnt(reply_cnt);
@@ -124,6 +123,7 @@ public class BookServiceImpl implements BookService{
                 .fromUriString(search_url)
                 .queryParam("CategoryId", category != null ? category : 0)
                 .queryParam("query", searchWord)
+                .queryParam("outofStockfilter", 1)
                 .build().encode(StandardCharsets.UTF_8).toUri();
 
         ResponseEntity<BookListDto> resultResponse = restTemplate.exchange(targetUri, HttpMethod.GET, null, BookListDto.class);
@@ -138,8 +138,9 @@ public class BookServiceImpl implements BookService{
 
         for (BookListDto.Item item : items) {
             String isbn = item.getIsbn13();
-            Long like_cnt = bookLikeRepository.countByIsbn(isbn); // 좋아요 수
-            Long reply_cnt = bookReplyRepository.countByIsbn(isbn); // 댓글 수
+//            if (isbn == null) {} // TODO filtering
+            Long like_cnt = bookLikeRepository.countByIsbn(isbn);
+            Long reply_cnt = bookReplyRepository.countByIsbn(isbn);
 
             item.setLike_cnt(like_cnt);
             item.setReply_cnt(reply_cnt);
@@ -152,7 +153,7 @@ public class BookServiceImpl implements BookService{
     }
 
     @Override
-    public ResponseDto showBook(String memEmail, String isbn13) {
+    public ResponseDto showBook(Member loginMember, String isbn13) {
 
         ResponseDto responseDto = new ResponseDto();
 
@@ -184,7 +185,6 @@ public class BookServiceImpl implements BookService{
         Long like_cnt = bookLikeRepository.countByIsbn(isbn);
         Long reply_cnt = bookReplyRepository.countByIsbn(isbn);
 
-        Member loginMember = memberRepository.findByEmail(memEmail).orElse(null);
         boolean isLikedBook = bookLikeRepository.existsByMemberAndIsbn(loginMember, isbn);
 
         item.setCategoryName(item.getCategoryName().split(">")[1]);
@@ -250,7 +250,6 @@ public class BookServiceImpl implements BookService{
             for (int i = 0; i < 3; i++) {
                 while (true) { // 중복 제거
                     num = (int) (Math.random() * 30);
-                    log.info("num = {}", num);
                     if (!nums.contains(num)) {
                         nums.add(num);
                         break;
@@ -286,17 +285,9 @@ public class BookServiceImpl implements BookService{
     }
 
     @Override
-    public ResponseDto likeBook(String memEmail, String isbn) {
+    public ResponseDto likeBook(Member loginMember, String isbn) {
 
         ResponseDto responseDto = new ResponseDto();
-
-        Member loginMember = memberRepository.findByEmail(memEmail).orElse(null);
-
-        if (loginMember == null) {
-            responseDto.setStatus(HttpStatus.BAD_REQUEST);
-            responseDto.setMessage("로그인 필요");
-            return responseDto;
-        }
 
         BookLike bookLike = bookLikeRepository.findByMemberAndIsbn(loginMember, isbn).orElse(null);
 
@@ -316,16 +307,13 @@ public class BookServiceImpl implements BookService{
             bookLikeRepository.delete(bookLike);
 
             responseDto.setMessage("좋아요 취소 성공");
-
         }
 
         BookLikeDto bookLikeDto = new BookLikeDto(bookLikeRepository.countByIsbn(isbn));
         responseDto.setData(bookLikeDto);
 
         return responseDto;
-
     }
-
 
     @Override
     public ResponseDto joinMyBook(BookDto.Request bookDto) {
@@ -363,11 +351,8 @@ public class BookServiceImpl implements BookService{
             bookRepository.save(book);
         }
 
-
         responseDto.setStatus(HttpStatus.OK);
         responseDto.setMessage("DB 저장 완료");
         return responseDto;
-
-
     }
 }
