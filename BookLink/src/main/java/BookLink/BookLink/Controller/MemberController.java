@@ -1,10 +1,7 @@
 package BookLink.BookLink.Controller;
 
 import BookLink.BookLink.Domain.Email.EmailDto;
-import BookLink.BookLink.Domain.Member.LoginDto;
-import BookLink.BookLink.Domain.Member.Member;
-import BookLink.BookLink.Domain.Member.MemberDto;
-import BookLink.BookLink.Domain.Member.NicknameDto;
+import BookLink.BookLink.Domain.Member.*;
 import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Exception.Enum.CommonErrorCode;
 import BookLink.BookLink.Exception.RestApiException;
@@ -12,8 +9,10 @@ import BookLink.BookLink.Service.Email.EmailService;
 import BookLink.BookLink.Service.Member.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @RestController
@@ -75,6 +74,16 @@ public class MemberController {
                                                 HttpServletResponse response) throws Exception {
 
         ResponseDto responseDto = memberService.loginJwt(loginDto, response);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<ResponseDto> logoutMember(HttpServletResponse response,
+                                                    @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
+
+        ResponseDto responseDto = memberService.logoutJwt(response, memberPrincipal);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);

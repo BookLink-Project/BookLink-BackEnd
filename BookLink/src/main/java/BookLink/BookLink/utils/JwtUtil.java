@@ -132,19 +132,9 @@ public class JwtUtil {
         response.addCookie(cookie);
     }
 
-    public void removeTokenCookies(HttpServletResponse response) throws IOException {
+    public void invalidTokenResponse(HttpServletResponse response) throws IOException {
 
-        Cookie access_cookie = new Cookie("Access_Token", null);
-        Cookie refresh_cookie = new Cookie("Refresh_Token", null);
-
-        access_cookie.setPath("/");
-        refresh_cookie.setPath("/");
-
-        access_cookie.setMaxAge(0);
-        refresh_cookie.setMaxAge(0);
-
-        response.addCookie(access_cookie);
-        response.addCookie(refresh_cookie);
+        removeTokenCookie(response);
 
         // 메시지 반환
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -161,6 +151,20 @@ public class JwtUtil {
 
         PrintWriter writer = response.getWriter();
         writer.print(result);
+    }
 
+    public void removeTokenCookie(HttpServletResponse response) {
+
+        Cookie access_cookie = new Cookie("Access_Token", null);
+        Cookie refresh_cookie = new Cookie("Refresh_Token", null);
+
+        access_cookie.setPath("/");
+        refresh_cookie.setPath("/");
+
+        access_cookie.setMaxAge(0);
+        refresh_cookie.setMaxAge(0);
+
+        response.addCookie(access_cookie);
+        response.addCookie(refresh_cookie);
     }
 }
