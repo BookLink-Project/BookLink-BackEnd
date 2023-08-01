@@ -1,7 +1,6 @@
-package BookLink.BookLink.Domain.Book;
+package BookLink.BookLink.Domain.CommunityReply.BookReportReply;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -9,16 +8,21 @@ import java.net.URL;
 import java.time.LocalDateTime;
 
 @Getter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BookRelatedPostDto {
+public class BookReportRepliesDto {
 
     private Long id;
-    private String title;
+    private Long parent_id;
+    private String writer;
     private String content;
     private LocalDateTime date;
-    private String writer;
     private URL image;
+    private Long like_cnt;
+    private Long sub_reply_cnt;
+
+    private Boolean isLiked;
+
+    private Boolean isUpdated;
 
 }

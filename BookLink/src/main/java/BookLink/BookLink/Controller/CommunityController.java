@@ -3,10 +3,13 @@ package BookLink.BookLink.Controller;
 import BookLink.BookLink.Domain.Community.BookClub.BookClubDto;
 import BookLink.BookLink.Domain.Community.BookClub.BookClubUpdateDto;
 import BookLink.BookLink.Domain.Community.BookReport.BookReportDto;
+import BookLink.BookLink.Domain.Community.BookReport.BookReportUpdateDto;
 import BookLink.BookLink.Domain.Community.FreeBoard.FreeBoardDto;
 import BookLink.BookLink.Domain.CommunityReply.BookClubReply.BookClubReplyDto;
 import BookLink.BookLink.Domain.CommunityReply.BookClubReply.BookClubReplyUpdateDto;
 import BookLink.BookLink.Domain.CommunityReply.BookReportReply.BookReportReplyDto;
+import BookLink.BookLink.Domain.CommunityReply.BookReportReply.BookReportReplyUpdateDto;
+import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Service.Community.BookClubService;
 import BookLink.BookLink.Service.Community.BookReportService;
@@ -46,9 +49,9 @@ public class CommunityController {
 
     @PostMapping("/board/free") // 자유글 작성
     public ResponseEntity<ResponseDto> writeFreeBoard (@RequestBody FreeBoardDto.Request freeBoardDto,
-                                       @AuthenticationPrincipal String memEmail) {
+                                       @AuthenticationPrincipal Member member) {
 
-        ResponseDto responseDto = freeBoardService.writePost(memEmail, freeBoardDto);
+        ResponseDto responseDto = freeBoardService.writePost(member.getEmail(), freeBoardDto);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);
@@ -196,8 +199,8 @@ public class CommunityController {
     }
 
     @GetMapping("/board/report/{id}")
-    public ResponseEntity<ResponseDto> reportDetail(@PathVariable Long id) {
-        ResponseDto responseDto = bookReportService.reportDetail(id);
+    public ResponseEntity<ResponseDto> reportDetail(@PathVariable Long id, @AuthenticationPrincipal String memEmail) {
+        ResponseDto responseDto = bookReportService.reportDetail(id, memEmail);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);
@@ -212,7 +215,7 @@ public class CommunityController {
     }
 
     @PatchMapping("/board/report/{id}")
-    public ResponseEntity<ResponseDto> reportUpdate(@PathVariable Long id, @RequestBody BookReportDto.Request requestDto) {
+    public ResponseEntity<ResponseDto> reportUpdate(@PathVariable Long id, @RequestBody BookReportUpdateDto requestDto) {
         ResponseDto responseDto = bookReportService.reportUpdate(id, requestDto);
 
         return ResponseEntity.status(responseDto.getStatus())
@@ -227,7 +230,6 @@ public class CommunityController {
                 .body(responseDto);
     }
 
-    // DeleteMapping
 
     @PostMapping("/board/report/{id}/like")
     public ResponseEntity<ResponseDto> likePost(@PathVariable Long id, @AuthenticationPrincipal String memEmail) {
@@ -245,6 +247,7 @@ public class CommunityController {
                 .body(responseDto);
     }
 
+    // 댓글 작성
     @PostMapping("/board/report/{id}")
     public ResponseEntity<ResponseDto> writeReply(@AuthenticationPrincipal String memEmail,
                                                   @PathVariable Long id, @RequestBody BookReportReplyDto.Request requestDto) {
@@ -256,7 +259,7 @@ public class CommunityController {
 
     @PatchMapping("/board/report/{id}/{replyId}")
     public ResponseEntity<ResponseDto> updateReply(@PathVariable Long id, @PathVariable Long replyId,
-                                                   @RequestBody BookReportReplyDto.Request requestDto) {
+                                                   @RequestBody BookReportReplyUpdateDto requestDto) {
 
         ResponseDto responseDto = bookReportReplyService.updateReply(id, replyId, requestDto);
 

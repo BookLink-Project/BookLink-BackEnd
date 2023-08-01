@@ -5,8 +5,8 @@ import BookLink.BookLink.Domain.Common.BaseTimeEntity;
 import BookLink.BookLink.Domain.Community.BookReport.BookReport;
 import BookLink.BookLink.Domain.BookReply.BookReply;
 
-import BookLink.BookLink.Service.OAuth.Role;
-import BookLink.BookLink.Service.OAuth.SocialType;
+import BookLink.BookLink.Domain.Common.Role;
+import BookLink.BookLink.Domain.Common.SocialType;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.ColumnDefault;
@@ -49,10 +49,10 @@ public class Member extends BaseTimeEntity {
     @ColumnDefault("'https://soccerquick.s3.ap-northeast-2.amazonaws.com/1689834239634.png'")
     private URL image; // 이미지 경로
 
-    // 새로 추가
+//     새로 추가
     private SocialType socialType;
 
-    // 새로 추가
+//     새로 추가
     private Role role;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)

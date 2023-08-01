@@ -5,7 +5,7 @@ import BookLink.BookLink.Domain.Token.TokenDto;
 import BookLink.BookLink.Repository.Member.MemberRepository;
 import BookLink.BookLink.Repository.Token.RefreshTokenRepository;
 import BookLink.BookLink.Service.OAuth.CustomOAuth2Member;
-import BookLink.BookLink.Service.OAuth.Role;
+import BookLink.BookLink.Domain.Common.Role;
 import BookLink.BookLink.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

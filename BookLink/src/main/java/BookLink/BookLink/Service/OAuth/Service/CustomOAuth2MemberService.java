@@ -4,7 +4,7 @@ import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Repository.Member.MemberRepository;
 import BookLink.BookLink.Service.OAuth.CustomOAuth2Member;
 import BookLink.BookLink.Service.OAuth.OAuthAttributes;
-import BookLink.BookLink.Service.OAuth.SocialType;
+import BookLink.BookLink.Domain.Common.SocialType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

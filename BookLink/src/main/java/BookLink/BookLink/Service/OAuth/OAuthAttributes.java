@@ -1,5 +1,7 @@
 package BookLink.BookLink.Service.OAuth;
 
+import BookLink.BookLink.Domain.Common.Role;
+import BookLink.BookLink.Domain.Common.SocialType;
 import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Service.OAuth.MemberInfo.KakaoOAuth2MemberInfo;
 import BookLink.BookLink.Service.OAuth.MemberInfo.OAuth2MemberInfo;

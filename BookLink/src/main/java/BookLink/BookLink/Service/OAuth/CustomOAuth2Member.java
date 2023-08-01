@@ -1,5 +1,6 @@
 package BookLink.BookLink.Service.OAuth;
 
+import BookLink.BookLink.Domain.Common.Role;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;

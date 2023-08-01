@@ -2,8 +2,12 @@ package BookLink.BookLink.Domain.CommunityReply.BookReportReply;
 
 import BookLink.BookLink.Domain.Community.BookReport.BookReport;
 import BookLink.BookLink.Domain.Member.Member;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.net.URL;
+import java.time.LocalDateTime;
 
 public class BookReportReplyDto {
 
@@ -23,5 +27,16 @@ public class BookReportReplyDto {
                     .parent(parent)
                     .build();
         }
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Response {
+        private Long replyId;
+        private LocalDateTime date;
+        private String content;
+        private String writer;
+        private URL image;
     }
 }

@@ -67,6 +67,10 @@ public class BookReport extends BaseTimeEntity {
     @ColumnDefault("0")
     private Long reply_cnt;
 
+    // 새로 추가
+    @ColumnDefault("false")
+    private boolean isUpdated;
+
     @Builder
     public BookReport(String book_title, String isbn, String authors, String publisher, LocalDate pud_date, String cover, String category,
                       String title, String content, Member writer) {
@@ -80,11 +84,18 @@ public class BookReport extends BaseTimeEntity {
         this.title = title;
         this.content = content;
         this.writer = writer;
+
+        this.like_cnt = 0L;
+        this.view_cnt = 0L;
+        this.reply_cnt = 0L;
+
+        this.isUpdated = false;
     }
 
-    public void update(String title, String content) {
+    public void updatePost(String title, String content) {
         this.title = title;
         this.content = content;
+        this.isUpdated = true;
     }
 
     public void view_plus() {
@@ -92,15 +103,15 @@ public class BookReport extends BaseTimeEntity {
     }
 
     public void like_plus() { this.like_cnt += 1; }
-    public void like_minus() { this.like_cnt -= 1; }
 
+    public void like_minus() { this.like_cnt -= 1; }
 
     public void replyCnt_plus() {
         this.reply_cnt += 1;
     }
 
-    public void replyCnt_minus() {
-        this.reply_cnt -= 1;
+    public void replyCnt_minus(Long cnt) {
+        this.reply_cnt -= cnt;
     }
 
 
