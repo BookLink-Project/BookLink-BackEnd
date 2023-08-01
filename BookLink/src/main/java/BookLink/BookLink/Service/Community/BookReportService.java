@@ -1,6 +1,7 @@
 package BookLink.BookLink.Service.Community;
 
 import BookLink.BookLink.Domain.Community.BookReport.BookReportDto;
+import BookLink.BookLink.Domain.Community.BookReport.BookReportUpdateDto;
 import BookLink.BookLink.Domain.ResponseDto;
 
 
@@ -10,9 +11,9 @@ public interface BookReportService {
 
     ResponseDto reportList();
 
-    ResponseDto reportDetail(Long id);
+    ResponseDto reportDetail(Long id, String memEmail);
 
-    ResponseDto reportUpdate(Long id, BookReportDto.Request requestDto);
+    ResponseDto reportUpdate(Long id, BookReportUpdateDto requestDto);
 
     ResponseDto likePost(Long id, String memEmail);
 

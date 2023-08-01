@@ -1,6 +1,5 @@
 package BookLink.BookLink.Domain.CommunityReply.BookReportReply;
 
-import BookLink.BookLink.Domain.CommunityReply.BookClubReply.BookClubReply;
 import BookLink.BookLink.Domain.Member.Member;
 import lombok.Builder;
 import lombok.NoArgsConstructor;

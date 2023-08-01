@@ -1,12 +1,15 @@
 package BookLink.BookLink.Service.Community;
 
-import BookLink.BookLink.Domain.Community.BookReport.BookReport;
-import BookLink.BookLink.Domain.Community.BookReport.BookReportDto;
-import BookLink.BookLink.Domain.Community.BookReport.BookReportLike;
+import BookLink.BookLink.Domain.Community.BookReport.*;
+import BookLink.BookLink.Domain.CommunityReply.BookReportReply.BookReportDetailDto;
+import BookLink.BookLink.Domain.CommunityReply.BookReportReply.BookReportRepliesDto;
+import BookLink.BookLink.Domain.CommunityReply.BookReportReply.BookReportReply;
 import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Repository.Community.BookReportLikeRepository;
 import BookLink.BookLink.Repository.Community.BookReportRepository;
+import BookLink.BookLink.Repository.CommunityReply.BookReportReplyLikeRepository;
+import BookLink.BookLink.Repository.CommunityReply.BookReportReplyRepository;
 import BookLink.BookLink.Repository.Member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,6 +25,8 @@ public class BookReportServiceImpl implements BookReportService{
     private final BookReportRepository bookReportRepository;
     private final MemberRepository memberRepository;
     private final BookReportLikeRepository bookReportLikeRepository;
+    private final BookReportReplyRepository bookReportReplyRepository;
+    private final BookReportReplyLikeRepository bookReportReplyLikeRepository;
 
     @Override
     public ResponseDto writeReport(BookReportDto.Request requestDto, String memEmail) {
@@ -60,41 +65,111 @@ public class BookReportServiceImpl implements BookReportService{
         return responseDto;
     }
 
+    //
     @Override
-    public ResponseDto reportDetail(Long id) {
-        Optional<BookReport> byId = bookReportRepository.findById(id);
+    @Transactional
+    public ResponseDto reportDetail(Long id, String memEmail) {
 
         ResponseDto responseDto = new ResponseDto();
 
-        if (byId.isEmpty()) {
-            // 에러처리
+        Member loginMember = memberRepository.findByEmail(memEmail).orElse(null);
+
+        BookReport post = bookReportRepository.findById(id).orElse(null);
+
+        if (post == null) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("없는 글");
+            return responseDto;
         }
 
-        BookReport bookReport = byId.get();
-        bookReport.view_plus();
-        BookReportDto.Response response = BookReportDto.Response.toDto(bookReport);
 
-//        responseDto.setStatus(HttpStatus.OK);
-//        responseDto.setMessage("올바른 접근입니다.");
-        responseDto.setData(response);
+        post.view_plus(); // 조회수 증가
+
+        boolean isLiked = bookReportLikeRepository.existsByMemberAndPost(loginMember, post);
+
+        // 댓글 조회
+        List<BookReportReply> replyList = bookReportReplyRepository.findByPostOrderByParentDescIdDesc(post);
+
+        List<BookReportRepliesDto> replies = new ArrayList<>();
+
+        for (BookReportReply reply : replyList) {
+
+            Long parentId = reply.getParent().getId();
+            Long replyId = reply.getId();
+            Member writer = reply.getWriter();
+
+            Long sub_reply_cnt = parentId.equals(replyId) ? bookReportReplyRepository.countByParentId(parentId) - 1 : 0; // 대댓글 수
+
+            // 좋아요 상태
+            boolean isLikedReply = bookReportReplyLikeRepository.existsByMemberAndReply(loginMember, reply);
+
+            BookReportRepliesDto rv;
+
+            rv = new BookReportRepliesDto(
+                    replyId,
+                    parentId,
+                    writer.getNickname(),
+                    reply.getContent(),
+                    reply.getCreatedTime(),
+                    writer.getImage(),
+                    reply.getLike_cnt(),
+                    sub_reply_cnt,
+                    isLikedReply,
+                    reply.isUpdated()
+            );
+            replies.add(rv);
+        }
+
+        //
+        BookReportDetailDto result = new BookReportDetailDto(
+                post.getBook_title(),
+                post.getIsbn(),
+                post.getAuthors(),
+                post.getPublisher(),
+                post.getPud_date(),
+                post.getCover(),
+                post.getCategory(),
+                post.getTitle(),
+                post.getContent(),
+                post.getCreatedTime(),
+                post.getWriter().getNickname(),
+                post.getWriter().getImage(),
+                post.getView_cnt(),
+                post.getLike_cnt(),
+                post.getReply_cnt(),
+                isLiked,
+                post.isUpdated(),
+                replies
+        );
+        responseDto.setData(result);
 
         return responseDto;
     }
 
     @Override
     @Transactional
-    public ResponseDto reportUpdate(Long id, BookReportDto.Request requestDto) {
-        Optional<BookReport> byId = bookReportRepository.findById(id);
-
-        if (byId.isEmpty()) {
-            //예외처리
-        }
-
-        BookReport bookReport = byId.get();
-        bookReport.update(requestDto.getTitle(), requestDto.getContent());
-//        bookReportRepository.save(bookReport);
+    public ResponseDto reportUpdate(Long id, BookReportUpdateDto bookReportUpdateDto) {
 
         ResponseDto responseDto = new ResponseDto();
+
+        BookReport updatePost = bookReportRepository.findById(id).orElse(null);
+
+        if (updatePost == null) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("없는 글");
+            return responseDto;
+        }
+
+        String newTitle = bookReportUpdateDto.getTitle();
+        String newContent = bookReportUpdateDto.getContent();
+
+        updatePost.updatePost(newTitle, newContent);
+
+        responseDto.setStatus(HttpStatus.CREATED);
+
+        bookReportUpdateDto.setTitle(newTitle);
+        bookReportUpdateDto.setContent(newContent);
+        responseDto.setData(bookReportUpdateDto);
 
         return responseDto;
     }
@@ -104,39 +179,50 @@ public class BookReportServiceImpl implements BookReportService{
     public ResponseDto likePost(Long id, String memEmail) {
         ResponseDto responseDto = new ResponseDto();
 
-        Member member = memberRepository.findByEmail(memEmail).orElse(null);
-        BookReport bookReport = bookReportRepository.findById(id).orElse(null);
+        Member loginMember = memberRepository.findByEmail(memEmail).orElse(null);
 
-        if (bookReport == null) {
+        if (loginMember == null) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("로그인 필요");
+            return responseDto;
+        }
+
+        BookReport post = bookReportRepository.findById(id).orElse(null);
+
+        if (post == null) {
             responseDto.setStatus(HttpStatus.BAD_REQUEST);
             responseDto.setMessage("없는 글입니다");
             return responseDto;
         }
 
-        BookReportLike bookReportLike = bookReportLikeRepository.findByMemberAndPost(member, bookReport).orElse(null);
+        BookReportLike bookReportLike = bookReportLikeRepository.findByMemberAndPost(loginMember, post).orElse(null);
 
-        if (bookReportLike != null) {
+        if (bookReportLike != null) { // 좋아요 눌린 상태
             bookReportLikeRepository.delete(bookReportLike);
-            bookReport.like_minus();
+            post.like_minus();
 
-            responseDto.setMessage("좋아요 취소");
-        } else {
+            responseDto.setMessage("좋아요 취소 성공");
+        } else { // 좋아요 안눌린 상태
             bookReportLike = BookReportLike.builder()
-                    .post(bookReport)
-                    .member(member)
+                    .post(post)
+                    .member(loginMember)
                     .build();
 
             bookReportLikeRepository.save(bookReportLike);
-            bookReport.like_plus();
+            post.like_plus();
 
             responseDto.setMessage("좋아요 성공");
         }
+
+        BookReportLikeDto bookReportLikeDto = new BookReportLikeDto(post.getLike_cnt());
+        responseDto.setData(bookReportLikeDto);
 
         return responseDto;
     }
 
     @Override
     public ResponseDto deletePost(Long id) {
+
         ResponseDto responseDto = new ResponseDto();
 
         BookReport post = bookReportRepository.findById(id).orElse(null);

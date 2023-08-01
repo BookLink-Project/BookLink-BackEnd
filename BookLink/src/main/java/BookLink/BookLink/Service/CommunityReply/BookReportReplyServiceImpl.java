@@ -1,9 +1,9 @@
 package BookLink.BookLink.Service.CommunityReply;
 
 import BookLink.BookLink.Domain.Community.BookReport.BookReport;
-import BookLink.BookLink.Domain.CommunityReply.BookReportReply.BookReportReply;
-import BookLink.BookLink.Domain.CommunityReply.BookReportReply.BookReportReplyDto;
-import BookLink.BookLink.Domain.CommunityReply.BookReportReply.BookReportReplyLike;
+import BookLink.BookLink.Domain.Community.BookReport.BookReportLikeDto;
+import BookLink.BookLink.Domain.CommunityReply.BookClubReply.BookClubReplyDto;
+import BookLink.BookLink.Domain.CommunityReply.BookReportReply.*;
 import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Repository.Community.BookReportRepository;
@@ -61,7 +61,7 @@ public class BookReportReplyServiceImpl implements BookReportReplyService {
             }
 
             BookReportReply bookReportReply = replyDto.toEntity(post, loginMember, parent);
-            bookReportReplyRepository.save(bookReportReply);
+            savedReply = bookReportReplyRepository.save(bookReportReply);
         } else { // 부모댓글의 경우
 
             BookReportReply bookReportReply = replyDto.toEntity(post, loginMember, null);
@@ -73,12 +73,22 @@ public class BookReportReplyServiceImpl implements BookReportReplyService {
         }
 
         post.replyCnt_plus();
+
+        BookReportReplyDto.Response responseData = new BookReportReplyDto.Response(
+                savedReply.getId(),
+                savedReply.getCreatedTime(),
+                savedReply.getContent(),
+                loginMember.getNickname(),
+                loginMember.getImage()
+        );
+        responseDto.setData(responseData);
+
         return responseDto;
     }
 
     @Override
     @Transactional
-    public ResponseDto updateReply(Long postId, Long replyId, BookReportReplyDto.Request replyDto) {
+    public ResponseDto updateReply(Long postId, Long replyId, BookReportReplyUpdateDto replyDto) {
 
         ResponseDto responseDto = new ResponseDto();
 
@@ -92,10 +102,16 @@ public class BookReportReplyServiceImpl implements BookReportReplyService {
 
         updateReply.updateReply(replyDto.getContent());
 
+        replyDto.setContent(updateReply.getContent());
+
+        responseDto.setStatus(HttpStatus.CREATED);
+        responseDto.setData(replyDto);
+
         return responseDto;
     }
 
     @Override
+    @Transactional
     public ResponseDto deleteReply(Long postId, Long replyId) {
 
         ResponseDto responseDto = new ResponseDto();
@@ -116,14 +132,28 @@ public class BookReportReplyServiceImpl implements BookReportReplyService {
             return responseDto;
         }
 
-        bookReportReplyRepository.deleteById(replyId);
+        Long parentId = deleteReply.getParent().getId();
 
-        post.replyCnt_minus();
+        if (parentId.equals(replyId)) { // 부모 댓글의 경우
+            Long delete_cnt = bookReportReplyRepository.countByParentId(replyId);
+            System.out.println(delete_cnt);
+            post.replyCnt_minus(delete_cnt);
+
+            bookReportReplyRepository.deleteById(replyId);
+        } else {
+
+            bookReportReplyRepository.deleteById(replyId);
+
+            post.replyCnt_minus(1L);
+        }
+
+        responseDto.setStatus(HttpStatus.NO_CONTENT);
 
         return responseDto;
     }
 
     @Override
+    @Transactional
     public ResponseDto likeReply(String memEmail, Long postId, Long replyId) {
 
         ResponseDto responseDto = new ResponseDto();
@@ -135,6 +165,16 @@ public class BookReportReplyServiceImpl implements BookReportReplyService {
             responseDto.setMessage("로그인 필요");
             return responseDto;
         }
+
+        BookReport post = bookReportRepository.findById(postId).orElse(null);
+
+        if (post == null) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("없는 글");
+            return responseDto;
+        }
+
+        // TODO 글-댓글 매칭 안 될 경우 예외 처리
 
         BookReportReply reply = bookReportReplyRepository.findById(replyId).orElse(null);
 
@@ -166,6 +206,8 @@ public class BookReportReplyServiceImpl implements BookReportReplyService {
             responseDto.setMessage("좋아요 취소 성공");
 
         }
+        BookReportReplyLikeDto likeDto = new BookReportReplyLikeDto(reply.getLike_cnt());
+        responseDto.setData(likeDto);
 
         return responseDto;
     }
