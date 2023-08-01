@@ -245,6 +245,7 @@ public class CommunityController {
                 .body(responseDto);
     }
 
+    // 댓글 작성
     @PostMapping("/board/report/{id}")
     public ResponseEntity<ResponseDto> writeReply(@AuthenticationPrincipal String memEmail,
                                                   @PathVariable Long id, @RequestBody BookReportReplyDto.Request requestDto) {

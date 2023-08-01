@@ -41,9 +41,16 @@ public class BookReportReplyServiceImpl implements BookReportReplyService {
 
         BookReport post = bookReportRepository.findById(postId).orElse(null);
 
+        if (post == null) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("없는 글입니다.");
+
+            return responseDto;
+        }
+
         BookReportReply savedReply;
 
-        if (replyDto.getParentId() != 0) {
+        if (replyDto.getParentId() != 0) { //자식댓글의 경우
 
             BookReportReply parent = bookReportReplyRepository.findById(replyDto.getParentId()).orElse(null);
 
@@ -55,7 +62,7 @@ public class BookReportReplyServiceImpl implements BookReportReplyService {
 
             BookReportReply bookReportReply = replyDto.toEntity(post, loginMember, parent);
             bookReportReplyRepository.save(bookReportReply);
-        } else {
+        } else { // 부모댓글의 경우
 
             BookReportReply bookReportReply = replyDto.toEntity(post, loginMember, null);
             savedReply = bookReportReplyRepository.save(bookReportReply);
@@ -65,10 +72,12 @@ public class BookReportReplyServiceImpl implements BookReportReplyService {
             updateReply.updateParent(savedReply);
         }
 
+        post.replyCnt_plus();
         return responseDto;
     }
 
     @Override
+    @Transactional
     public ResponseDto updateReply(Long postId, Long replyId, BookReportReplyDto.Request replyDto) {
 
         ResponseDto responseDto = new ResponseDto();
