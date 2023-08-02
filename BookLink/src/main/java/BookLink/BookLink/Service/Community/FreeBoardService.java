@@ -1,6 +1,7 @@
 package BookLink.BookLink.Service.Community;
 
 import BookLink.BookLink.Domain.Community.FreeBoard.FreeBoardDto;
+import BookLink.BookLink.Domain.Community.FreeBoard.FreeBoardUpdateDto;
 import BookLink.BookLink.Domain.ResponseDto;
 
 public interface FreeBoardService {
@@ -9,7 +10,11 @@ public interface FreeBoardService {
 
     ResponseDto freeBoardList();
 
-    ResponseDto freeBoardDetail(Long id);
+    ResponseDto freeBoardDetail(Long id, String memEmail);
 
-    ResponseDto freeBoardUpdate(Long id, FreeBoardDto.Request requestDto);
+    ResponseDto freeBoardUpdate(Long id, FreeBoardUpdateDto requestDto);
+
+    ResponseDto likePost(Long id, String memEmail);
+
+    ResponseDto deletePost(Long id);
 }

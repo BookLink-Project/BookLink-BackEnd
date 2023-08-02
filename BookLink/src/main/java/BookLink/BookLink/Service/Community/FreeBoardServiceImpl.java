@@ -1,10 +1,20 @@
 package BookLink.BookLink.Service.Community;
 
-import BookLink.BookLink.Domain.Community.FreeBoard.FreeBoard;
-import BookLink.BookLink.Domain.Community.FreeBoard.FreeBoardDto;
+import BookLink.BookLink.Domain.Community.BookReport.BookReport;
+import BookLink.BookLink.Domain.Community.BookReport.BookReportDetailDto;
+import BookLink.BookLink.Domain.Community.BookReport.BookReportLike;
+import BookLink.BookLink.Domain.Community.BookReport.BookReportLikeDto;
+import BookLink.BookLink.Domain.Community.FreeBoard.*;
+import BookLink.BookLink.Domain.CommunityReply.BookReportReply.BookReportRepliesDto;
+import BookLink.BookLink.Domain.CommunityReply.BookReportReply.BookReportReply;
+import BookLink.BookLink.Domain.CommunityReply.FreeBoardReply.FreeBoardRepliesDto;
+import BookLink.BookLink.Domain.CommunityReply.FreeBoardReply.FreeBoardReply;
 import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.ResponseDto;
+import BookLink.BookLink.Repository.Community.FreeBoardLikeRepository;
 import BookLink.BookLink.Repository.Community.FreeBoardRepository;
+import BookLink.BookLink.Repository.CommunityReply.FreeBoardReplyLikeRepository;
+import BookLink.BookLink.Repository.CommunityReply.FreeBoardReplyRepository;
 import BookLink.BookLink.Repository.Member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,8 +31,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class FreeBoardServiceImpl implements FreeBoardService {
 
-    private final FreeBoardRepository freeBoardRepository;
     private final MemberRepository memberRepository;
+    private final FreeBoardRepository freeBoardRepository;
+    private final FreeBoardLikeRepository freeBoardLikeRepository;
+    private final FreeBoardReplyRepository freeBoardReplyRepository;
+    private final FreeBoardReplyLikeRepository freeBoardReplyLikeRepository;
 
     @Override
     public ResponseDto writePost(String memEmail, FreeBoardDto.Request freeBoardDto) {
@@ -62,7 +75,7 @@ public class FreeBoardServiceImpl implements FreeBoardService {
 
         for (int i = 0; i < all_freeBoard.size(); i++) {
             FreeBoardDto.Response response = FreeBoardDto.Response.toDto(all_freeBoard.get(i));
-            free_response.add(i,response);
+            free_response.add(i, response);
         }
 
         responseDto.setStatus(HttpStatus.OK);
@@ -74,42 +87,170 @@ public class FreeBoardServiceImpl implements FreeBoardService {
     }
 
     @Override
-    public ResponseDto freeBoardDetail(Long id) {
-        Optional<FreeBoard> byId = freeBoardRepository.findById(id);
-
+    public ResponseDto freeBoardDetail(Long id, String memEmail) {
         ResponseDto responseDto = new ResponseDto();
 
-        if (byId.isEmpty()) {
-            // 에러처리
+        Member loginMember = memberRepository.findByEmail(memEmail).orElse(null);
+
+        FreeBoard post = freeBoardRepository.findById(id).orElse(null);
+
+        if (post == null) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("없는 글");
+            return responseDto;
         }
 
-        FreeBoard freeBoard = byId.get();
-        FreeBoardDto.Response response = FreeBoardDto.Response.toDto(freeBoard);
 
+        post.view_plus(); // 조회수 증가
 
-        responseDto.setData(response);
+        boolean isLiked = freeBoardLikeRepository.existsByMemberAndPost(loginMember, post);
+
+        // 댓글 조회
+        List<FreeBoardReply> replyList = freeBoardReplyRepository.findByPostOrderByParentDescIdDesc(post);
+
+        List<FreeBoardRepliesDto> replies = new ArrayList<>();
+
+        for (FreeBoardReply reply : replyList) {
+
+            Long parentId = reply.getParent().getId();
+            Long replyId = reply.getId();
+            Member writer = reply.getWriter();
+
+            Long sub_reply_cnt = parentId.equals(replyId) ? freeBoardReplyRepository.countByParentId(parentId) - 1 : 0; // 대댓글 수
+
+            // 좋아요 상태
+            boolean isLikedReply = freeBoardReplyLikeRepository.existsByMemberAndReply(loginMember, reply);
+
+            FreeBoardRepliesDto rv;
+
+            rv = new FreeBoardRepliesDto(
+                    replyId,
+                    parentId,
+                    writer.getNickname(),
+                    reply.getContent(),
+                    reply.getCreatedTime(),
+                    writer.getImage(),
+                    reply.getLike_cnt(),
+                    sub_reply_cnt,
+                    isLikedReply,
+                    reply.isUpdated()
+            );
+            replies.add(rv);
+        }
+
+        //
+        FreeBoardDetailDto result = new FreeBoardDetailDto(
+                post.getCategory(),
+                post.getTitle(),
+                post.getContent(),
+                post.getCreatedTime(),
+                post.getWriter().getNickname(),
+                post.getWriter().getImage(),
+                post.getView_cnt(),
+                post.getLike_cnt(),
+                post.getReply_cnt(),
+                isLiked,
+                post.isUpdated(),
+                replies
+
+        );
+        responseDto.setData(result);
 
         return responseDto;
     }
 
     @Override
     @Transactional
-    public ResponseDto freeBoardUpdate(Long id, FreeBoardDto.Request requestDto) {
-        Optional<FreeBoard> byId = freeBoardRepository.findById(id);
-
-        if (byId.isEmpty()) {
-            //예외처리
-        }
-
-
-        FreeBoard freeBoard = byId.get();
-        freeBoard.update(requestDto.getTitle(), requestDto.getContent());
-//        bookReportRepository.save(bookReport);
+    public ResponseDto freeBoardUpdate(Long id, FreeBoardUpdateDto freeBoardUpdateDto) {
 
         ResponseDto responseDto = new ResponseDto();
 
-        return responseDto;
+        FreeBoard updatePost = freeBoardRepository.findById(id).orElse(null);
 
+        if (updatePost == null) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("없는 글");
+            return responseDto;
+        }
+
+        String newTitle = freeBoardUpdateDto.getTitle();
+        String newContent = freeBoardUpdateDto.getContent();
+
+        updatePost.updatePost(newTitle, newContent);
+
+        responseDto.setStatus(HttpStatus.CREATED);
+
+        freeBoardUpdateDto.setTitle(newTitle);
+        freeBoardUpdateDto.setContent(newContent);
+        responseDto.setData(freeBoardUpdateDto);
+
+        return responseDto;
+    }
+
+    @Override
+    public ResponseDto deletePost(Long id) {
+
+        ResponseDto responseDto = new ResponseDto();
+
+        FreeBoard post = freeBoardRepository.findById(id).orElse(null);
+
+        if (post == null) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("없는 글");
+            return responseDto;
+        }
+
+        freeBoardRepository.deleteById(id);
+
+        responseDto.setStatus(HttpStatus.NO_CONTENT);
+
+        return responseDto;
+    }
+
+    @Override
+    @Transactional
+    public ResponseDto likePost(Long id, String memEmail) {
+        ResponseDto responseDto = new ResponseDto();
+
+        Member loginMember = memberRepository.findByEmail(memEmail).orElse(null);
+
+        if (loginMember == null) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("로그인 필요");
+            return responseDto;
+        }
+
+        FreeBoard post = freeBoardRepository.findById(id).orElse(null);
+
+        if (post == null) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("없는 글입니다");
+            return responseDto;
+        }
+
+        FreeBoardLike freeBoardLike = freeBoardLikeRepository.findByMemberAndPost(loginMember, post).orElse(null);
+
+        if (freeBoardLike != null) { // 좋아요 눌린 상태
+            freeBoardLikeRepository.delete(freeBoardLike);
+            post.like_minus();
+
+            responseDto.setMessage("좋아요 취소 성공");
+        } else { // 좋아요 안눌린 상태
+            freeBoardLike = FreeBoardLike.builder()
+                    .post(post)
+                    .member(loginMember)
+                    .build();
+
+            freeBoardLikeRepository.save(freeBoardLike);
+            post.like_plus();
+
+            responseDto.setMessage("좋아요 성공");
+        }
+
+        FreeBoardLikeDto freeBoardLikeDto = new FreeBoardLikeDto(post.getLike_cnt());
+        responseDto.setData(freeBoardLikeDto);
+
+        return responseDto;
     }
 
 }

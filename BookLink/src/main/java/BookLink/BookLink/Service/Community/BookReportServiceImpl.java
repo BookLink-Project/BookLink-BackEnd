@@ -1,7 +1,7 @@
 package BookLink.BookLink.Service.Community;
 
 import BookLink.BookLink.Domain.Community.BookReport.*;
-import BookLink.BookLink.Domain.CommunityReply.BookReportReply.BookReportDetailDto;
+import BookLink.BookLink.Domain.Community.BookReport.BookReportDetailDto;
 import BookLink.BookLink.Domain.CommunityReply.BookReportReply.BookReportRepliesDto;
 import BookLink.BookLink.Domain.CommunityReply.BookReportReply.BookReportReply;
 import BookLink.BookLink.Domain.Member.Member;
@@ -20,10 +20,10 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-public class BookReportServiceImpl implements BookReportService{
+public class BookReportServiceImpl implements BookReportService {
 
-    private final BookReportRepository bookReportRepository;
     private final MemberRepository memberRepository;
+    private final BookReportRepository bookReportRepository;
     private final BookReportLikeRepository bookReportLikeRepository;
     private final BookReportReplyRepository bookReportReplyRepository;
     private final BookReportReplyLikeRepository bookReportReplyLikeRepository;
@@ -55,7 +55,7 @@ public class BookReportServiceImpl implements BookReportService{
 
         for (int i = 0; i < all_report.size(); i++) {
             BookReportDto.Response response = BookReportDto.Response.toDto(all_report.get(i));
-            report_response.add(i,response);
+            report_response.add(i, response);
         }
 
         responseDto.setStatus(HttpStatus.OK);
