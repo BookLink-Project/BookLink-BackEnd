@@ -72,7 +72,6 @@ public class FreeBoardDto {
                     .localDateTime(freeBoard.getLastModifiedTime())
                     .build();
         }
-
     }
 
 
