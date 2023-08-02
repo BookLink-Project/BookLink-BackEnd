@@ -1,4 +1,4 @@
-package BookLink.BookLink.Service.Community;
+package BookLink.BookLink.Service.Community.BookClub;
 
 import BookLink.BookLink.Domain.Community.BookClub.BookClubDto;
 import BookLink.BookLink.Domain.Community.BookClub.BookClubUpdateDto;

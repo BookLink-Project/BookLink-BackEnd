@@ -1,4 +1,4 @@
-package BookLink.BookLink.Repository.Community;
+package BookLink.BookLink.Repository.Community.BookReport;
 
 import BookLink.BookLink.Domain.Community.BookReport.BookReport;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,14 +1,14 @@
-package BookLink.BookLink.Service.Community;
+package BookLink.BookLink.Service.Community.BookClub;
 
 import BookLink.BookLink.Domain.Community.BookClub.*;
 import BookLink.BookLink.Domain.CommunityReply.BookClubReply.BookClubReply;
 import BookLink.BookLink.Domain.CommunityReply.BookClubReply.BookClubRepliesDto;
 import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.ResponseDto;
-import BookLink.BookLink.Repository.Community.BookClubLikeRepository;
-import BookLink.BookLink.Repository.CommunityReply.BookClubReplyLikeRepository;
-import BookLink.BookLink.Repository.CommunityReply.BookClubReplyRepository;
-import BookLink.BookLink.Repository.Community.BookClubRepository;
+import BookLink.BookLink.Repository.Community.BookClub.BookClubLikeRepository;
+import BookLink.BookLink.Repository.CommunityReply.BookClub.BookClubReplyLikeRepository;
+import BookLink.BookLink.Repository.CommunityReply.BookClub.BookClubReplyRepository;
+import BookLink.BookLink.Repository.Community.BookClub.BookClubRepository;
 import BookLink.BookLink.Repository.Member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

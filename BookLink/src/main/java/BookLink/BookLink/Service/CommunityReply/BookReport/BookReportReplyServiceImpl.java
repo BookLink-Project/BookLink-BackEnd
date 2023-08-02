@@ -1,14 +1,12 @@
-package BookLink.BookLink.Service.CommunityReply;
+package BookLink.BookLink.Service.CommunityReply.BookReport;
 
 import BookLink.BookLink.Domain.Community.BookReport.BookReport;
-import BookLink.BookLink.Domain.Community.FreeBoard.FreeBoard;
 import BookLink.BookLink.Domain.CommunityReply.BookReportReply.*;
-import BookLink.BookLink.Domain.CommunityReply.FreeBoardReply.*;
 import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.ResponseDto;
-import BookLink.BookLink.Repository.Community.FreeBoardRepository;
-import BookLink.BookLink.Repository.CommunityReply.FreeBoardReplyLikeRepository;
-import BookLink.BookLink.Repository.CommunityReply.FreeBoardReplyRepository;
+import BookLink.BookLink.Repository.Community.BookReport.BookReportRepository;
+import BookLink.BookLink.Repository.CommunityReply.BookReport.BookReportReplyLikeRepository;
+import BookLink.BookLink.Repository.CommunityReply.BookReport.BookReportReplyRepository;
 import BookLink.BookLink.Repository.Member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,16 +15,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class FreeBoardReplyServiceImpl implements FreeBoardReplyService{
+public class BookReportReplyServiceImpl implements BookReportReplyService {
 
     private final MemberRepository memberRepository;
-    private final FreeBoardRepository freeBoardRepository;
-    private final FreeBoardReplyRepository freeBoardReplyRepository;
-    private final FreeBoardReplyLikeRepository freeBoardReplyLikeRepository;
+    private final BookReportRepository bookReportRepository;
+    private final BookReportReplyRepository bookReportReplyRepository;
+    private final BookReportReplyLikeRepository bookReportReplyLikeRepository;
 
     @Override
     @Transactional
-    public ResponseDto writeReply(String memEmail, Long postId, FreeBoardReplyDto.Request replyDto) {
+    public ResponseDto writeReply(String memEmail, Long postId, BookReportReplyDto.Request replyDto) {
 
         ResponseDto responseDto = new ResponseDto();
 
@@ -39,7 +37,7 @@ public class FreeBoardReplyServiceImpl implements FreeBoardReplyService{
             return responseDto;
         }
 
-        FreeBoard post = freeBoardRepository.findById(postId).orElse(null);
+        BookReport post = bookReportRepository.findById(postId).orElse(null);
 
         if (post == null) {
             responseDto.setStatus(HttpStatus.BAD_REQUEST);
@@ -48,11 +46,11 @@ public class FreeBoardReplyServiceImpl implements FreeBoardReplyService{
             return responseDto;
         }
 
-        FreeBoardReply savedReply;
+        BookReportReply savedReply;
 
         if (replyDto.getParentId() != 0) { //자식댓글의 경우
 
-            FreeBoardReply parent = freeBoardReplyRepository.findById(replyDto.getParentId()).orElse(null);
+            BookReportReply parent = bookReportReplyRepository.findById(replyDto.getParentId()).orElse(null);
 
             if (parent == null) {
                 responseDto.setMessage("존재하지 않는 부모 댓글");
@@ -60,21 +58,21 @@ public class FreeBoardReplyServiceImpl implements FreeBoardReplyService{
                 return responseDto;
             }
 
-            FreeBoardReply freeBoardReply = replyDto.toEntity(post, loginMember, parent);
-            savedReply = freeBoardReplyRepository.save(freeBoardReply);
+            BookReportReply bookReportReply = replyDto.toEntity(post, loginMember, parent);
+            savedReply = bookReportReplyRepository.save(bookReportReply);
         } else { // 부모댓글의 경우
 
-            FreeBoardReply freeBoardReply = replyDto.toEntity(post, loginMember, null);
-            savedReply = freeBoardReplyRepository.save(freeBoardReply);
+            BookReportReply bookReportReply = replyDto.toEntity(post, loginMember, null);
+            savedReply = bookReportReplyRepository.save(bookReportReply);
 
             //dirty checking
-            FreeBoardReply updateReply = freeBoardReplyRepository.findById(freeBoardReply.getId()).orElse(new FreeBoardReply());
+            BookReportReply updateReply = bookReportReplyRepository.findById(bookReportReply.getId()).orElse(new BookReportReply());
             updateReply.updateParent(savedReply);
         }
 
         post.replyCnt_plus();
 
-        FreeBoardReplyDto.Response responseData = new FreeBoardReplyDto.Response(
+        BookReportReplyDto.Response responseData = new BookReportReplyDto.Response(
                 savedReply.getId(),
                 savedReply.getCreatedTime(),
                 savedReply.getContent(),
@@ -88,11 +86,11 @@ public class FreeBoardReplyServiceImpl implements FreeBoardReplyService{
 
     @Override
     @Transactional
-    public ResponseDto updateReply(Long postId, Long replyId, FreeBoardReplyUpdateDto replyDto) {
+    public ResponseDto updateReply(Long postId, Long replyId, BookReportReplyUpdateDto replyDto) {
 
         ResponseDto responseDto = new ResponseDto();
 
-        FreeBoardReply updateReply = freeBoardReplyRepository.findByIdAndPostId(replyId, postId).orElse(null);
+        BookReportReply updateReply = bookReportReplyRepository.findByIdAndPostId(replyId, postId).orElse(null);
 
         if (updateReply == null) {
             responseDto.setStatus(HttpStatus.BAD_REQUEST);
@@ -116,7 +114,7 @@ public class FreeBoardReplyServiceImpl implements FreeBoardReplyService{
 
         ResponseDto responseDto = new ResponseDto();
 
-        FreeBoard post = freeBoardRepository.findById(postId).orElse(null);
+        BookReport post = bookReportRepository.findById(postId).orElse(null);
 
         if (post == null) {
             responseDto.setStatus(HttpStatus.BAD_REQUEST);
@@ -124,7 +122,7 @@ public class FreeBoardReplyServiceImpl implements FreeBoardReplyService{
             return responseDto;
         }
 
-        FreeBoardReply deleteReply = freeBoardReplyRepository.findByIdAndPostId(replyId, postId).orElse(null);
+        BookReportReply deleteReply = bookReportReplyRepository.findByIdAndPostId(replyId, postId).orElse(null);
 
         if (deleteReply == null) {
             responseDto.setStatus(HttpStatus.BAD_REQUEST);
@@ -135,12 +133,12 @@ public class FreeBoardReplyServiceImpl implements FreeBoardReplyService{
         Long parentId = deleteReply.getParent().getId();
 
         if (parentId.equals(replyId)) { // 부모 댓글의 경우
-            Long delete_cnt = freeBoardReplyRepository.countByParentId(replyId);
+            Long delete_cnt = bookReportReplyRepository.countByParentId(replyId);
             System.out.println(delete_cnt);
             post.replyCnt_minus(delete_cnt);
-            freeBoardReplyRepository.deleteById(replyId);
+            bookReportReplyRepository.deleteById(replyId);
         } else {
-            freeBoardReplyRepository.deleteById(replyId);
+            bookReportReplyRepository.deleteById(replyId);
 
             post.replyCnt_minus(1L);
         }
@@ -164,7 +162,7 @@ public class FreeBoardReplyServiceImpl implements FreeBoardReplyService{
             return responseDto;
         }
 
-        FreeBoard post = freeBoardRepository.findById(postId).orElse(null);
+        BookReport post = bookReportRepository.findById(postId).orElse(null);
 
         if (post == null) {
             responseDto.setStatus(HttpStatus.BAD_REQUEST);
@@ -174,7 +172,7 @@ public class FreeBoardReplyServiceImpl implements FreeBoardReplyService{
 
         // TODO 글-댓글 매칭 안 될 경우 예외 처리
 
-        FreeBoardReply reply = freeBoardReplyRepository.findById(replyId).orElse(null);
+        BookReportReply reply = bookReportReplyRepository.findById(replyId).orElse(null);
 
         if (reply == null) {
             responseDto.setStatus(HttpStatus.BAD_REQUEST);
@@ -182,29 +180,29 @@ public class FreeBoardReplyServiceImpl implements FreeBoardReplyService{
             return responseDto;
         }
 
-        FreeBoardReplyLike replyLike = freeBoardReplyLikeRepository.findByMemberAndReply(loginMember, reply).orElse(null);
+        BookReportReplyLike replyLike = bookReportReplyLikeRepository.findByMemberAndReply(loginMember, reply).orElse(null);
 
         if (replyLike == null) { // 좋아요 안 눌린 상태
 
-            replyLike = FreeBoardReplyLike.builder()
+            replyLike = BookReportReplyLike.builder()
                     .member(loginMember)
                     .reply(reply)
                     .build();
 
-            freeBoardReplyLikeRepository.save(replyLike);
+            bookReportReplyLikeRepository.save(replyLike);
             reply.increaseLikeCnt();
 
             responseDto.setMessage("좋아요 성공");
 
         } else { // 좋아요 눌린 상태
 
-            freeBoardReplyLikeRepository.delete(replyLike);
+            bookReportReplyLikeRepository.delete(replyLike);
             reply.decreaseLikeCnt();
 
             responseDto.setMessage("좋아요 취소 성공");
 
         }
-        FreeBoardReplyLikeDto likeDto = new FreeBoardReplyLikeDto(reply.getLike_cnt());
+        BookReportReplyLikeDto likeDto = new BookReportReplyLikeDto(reply.getLike_cnt());
         responseDto.setData(likeDto);
 
         return responseDto;

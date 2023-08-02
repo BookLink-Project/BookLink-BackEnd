@@ -1,4 +1,4 @@
-package BookLink.BookLink.Service.Community;
+package BookLink.BookLink.Service.Community.FreeBoard;
 
 import BookLink.BookLink.Domain.Community.FreeBoard.FreeBoardDto;
 import BookLink.BookLink.Domain.Community.FreeBoard.FreeBoardUpdateDto;

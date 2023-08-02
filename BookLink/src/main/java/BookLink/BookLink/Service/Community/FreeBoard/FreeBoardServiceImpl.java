@@ -1,20 +1,14 @@
-package BookLink.BookLink.Service.Community;
+package BookLink.BookLink.Service.Community.FreeBoard;
 
-import BookLink.BookLink.Domain.Community.BookReport.BookReport;
-import BookLink.BookLink.Domain.Community.BookReport.BookReportDetailDto;
-import BookLink.BookLink.Domain.Community.BookReport.BookReportLike;
-import BookLink.BookLink.Domain.Community.BookReport.BookReportLikeDto;
 import BookLink.BookLink.Domain.Community.FreeBoard.*;
-import BookLink.BookLink.Domain.CommunityReply.BookReportReply.BookReportRepliesDto;
-import BookLink.BookLink.Domain.CommunityReply.BookReportReply.BookReportReply;
 import BookLink.BookLink.Domain.CommunityReply.FreeBoardReply.FreeBoardRepliesDto;
 import BookLink.BookLink.Domain.CommunityReply.FreeBoardReply.FreeBoardReply;
 import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.ResponseDto;
-import BookLink.BookLink.Repository.Community.FreeBoardLikeRepository;
-import BookLink.BookLink.Repository.Community.FreeBoardRepository;
-import BookLink.BookLink.Repository.CommunityReply.FreeBoardReplyLikeRepository;
-import BookLink.BookLink.Repository.CommunityReply.FreeBoardReplyRepository;
+import BookLink.BookLink.Repository.Community.FreeBoard.FreeBoardLikeRepository;
+import BookLink.BookLink.Repository.Community.FreeBoard.FreeBoardRepository;
+import BookLink.BookLink.Repository.CommunityReply.FreeBoard.FreeBoardReplyLikeRepository;
+import BookLink.BookLink.Repository.CommunityReply.FreeBoard.FreeBoardReplyRepository;
 import BookLink.BookLink.Repository.Member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service

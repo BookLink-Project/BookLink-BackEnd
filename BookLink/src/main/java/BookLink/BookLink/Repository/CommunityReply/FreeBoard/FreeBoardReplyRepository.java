@@ -1,4 +1,4 @@
-package BookLink.BookLink.Repository.CommunityReply;
+package BookLink.BookLink.Repository.CommunityReply.FreeBoard;
 
 import BookLink.BookLink.Domain.Community.BookReport.BookReport;
 import BookLink.BookLink.Domain.Community.FreeBoard.FreeBoard;

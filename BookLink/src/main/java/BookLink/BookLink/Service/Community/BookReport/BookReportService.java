@@ -1,4 +1,4 @@
-package BookLink.BookLink.Service.Community;
+package BookLink.BookLink.Service.Community.BookReport;
 
 import BookLink.BookLink.Domain.Community.BookReport.BookReportDto;
 import BookLink.BookLink.Domain.Community.BookReport.BookReportUpdateDto;

@@ -1,15 +1,12 @@
-package BookLink.BookLink.Service.CommunityReply;
+package BookLink.BookLink.Service.CommunityReply.FreeBoard;
 
-import BookLink.BookLink.Domain.BookReply.BookReply;
-import BookLink.BookLink.Domain.BookReply.BookReplyLike;
-import BookLink.BookLink.Domain.BookReply.BookReplyLikeDto;
-import BookLink.BookLink.Domain.Community.BookClub.BookClub;
-import BookLink.BookLink.Domain.CommunityReply.BookClubReply.*;
+import BookLink.BookLink.Domain.Community.FreeBoard.FreeBoard;
+import BookLink.BookLink.Domain.CommunityReply.FreeBoardReply.*;
 import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.ResponseDto;
-import BookLink.BookLink.Repository.CommunityReply.BookClubReplyLikeRepository;
-import BookLink.BookLink.Repository.CommunityReply.BookClubReplyRepository;
-import BookLink.BookLink.Repository.Community.BookClubRepository;
+import BookLink.BookLink.Repository.Community.FreeBoard.FreeBoardRepository;
+import BookLink.BookLink.Repository.CommunityReply.FreeBoard.FreeBoardReplyLikeRepository;
+import BookLink.BookLink.Repository.CommunityReply.FreeBoard.FreeBoardReplyRepository;
 import BookLink.BookLink.Repository.Member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,17 +15,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class BookClubReplyServiceImpl implements BookClubReplyService{
+public class FreeBoardReplyServiceImpl implements FreeBoardReplyService{
 
     private final MemberRepository memberRepository;
-    private final BookClubRepository bookClubRepository;
-    private final BookClubReplyRepository bookClubReplyRepository;
-    private final BookClubReplyLikeRepository bookClubReplyLikeRepository;
-
+    private final FreeBoardRepository freeBoardRepository;
+    private final FreeBoardReplyRepository freeBoardReplyRepository;
+    private final FreeBoardReplyLikeRepository freeBoardReplyLikeRepository;
 
     @Override
     @Transactional
-    public ResponseDto writeReply(String memEmail, Long postId, BookClubReplyDto.Request replyDto) {
+    public ResponseDto writeReply(String memEmail, Long postId, FreeBoardReplyDto.Request replyDto) {
 
         ResponseDto responseDto = new ResponseDto();
 
@@ -41,20 +37,20 @@ public class BookClubReplyServiceImpl implements BookClubReplyService{
             return responseDto;
         }
 
-        BookClub post = bookClubRepository.findById(postId).orElse(null);
+        FreeBoard post = freeBoardRepository.findById(postId).orElse(null);
 
         if (post == null) {
             responseDto.setStatus(HttpStatus.BAD_REQUEST);
-            responseDto.setMessage("없는 글");
+            responseDto.setMessage("없는 글입니다.");
 
             return responseDto;
         }
 
-        BookClubReply savedReply;
+        FreeBoardReply savedReply;
 
-        if (replyDto.getParentId() != 0) { // 자식 댓글의 경우
+        if (replyDto.getParentId() != 0) { //자식댓글의 경우
 
-            BookClubReply parent = bookClubReplyRepository.findById(replyDto.getParentId()).orElse(null);
+            FreeBoardReply parent = freeBoardReplyRepository.findById(replyDto.getParentId()).orElse(null);
 
             if (parent == null) {
                 responseDto.setMessage("존재하지 않는 부모 댓글");
@@ -62,23 +58,21 @@ public class BookClubReplyServiceImpl implements BookClubReplyService{
                 return responseDto;
             }
 
-            BookClubReply bookClubReply = replyDto.toEntity(post, loginMember, parent);
-            savedReply = bookClubReplyRepository.save(bookClubReply);
+            FreeBoardReply freeBoardReply = replyDto.toEntity(post, loginMember, parent);
+            savedReply = freeBoardReplyRepository.save(freeBoardReply);
+        } else { // 부모댓글의 경우
 
-        } else { // 부모 댓글의 경우
+            FreeBoardReply freeBoardReply = replyDto.toEntity(post, loginMember, null);
+            savedReply = freeBoardReplyRepository.save(freeBoardReply);
 
-            BookClubReply bookClubReply = replyDto.toEntity(post, loginMember, null);
-            savedReply = bookClubReplyRepository.save(bookClubReply);
-
-            // dirty checking
-            BookClubReply updateReply = bookClubReplyRepository.findById(bookClubReply.getId()).orElse(new BookClubReply());
+            //dirty checking
+            FreeBoardReply updateReply = freeBoardReplyRepository.findById(freeBoardReply.getId()).orElse(new FreeBoardReply());
             updateReply.updateParent(savedReply);
-
         }
 
-        post.increaseReplyCnt();
+        post.replyCnt_plus();
 
-        BookClubReplyDto.Response responseData = new BookClubReplyDto.Response(
+        FreeBoardReplyDto.Response responseData = new FreeBoardReplyDto.Response(
                 savedReply.getId(),
                 savedReply.getCreatedTime(),
                 savedReply.getContent(),
@@ -88,16 +82,15 @@ public class BookClubReplyServiceImpl implements BookClubReplyService{
         responseDto.setData(responseData);
 
         return responseDto;
-
     }
 
     @Override
     @Transactional
-    public ResponseDto updateReply(Long postId, Long replyId, BookClubReplyUpdateDto replyDto) {
+    public ResponseDto updateReply(Long postId, Long replyId, FreeBoardReplyUpdateDto replyDto) {
 
         ResponseDto responseDto = new ResponseDto();
 
-        BookClubReply updateReply = bookClubReplyRepository.findByIdAndPostId(replyId, postId).orElse(null);
+        FreeBoardReply updateReply = freeBoardReplyRepository.findByIdAndPostId(replyId, postId).orElse(null);
 
         if (updateReply == null) {
             responseDto.setStatus(HttpStatus.BAD_REQUEST);
@@ -113,7 +106,6 @@ public class BookClubReplyServiceImpl implements BookClubReplyService{
         responseDto.setData(replyDto);
 
         return responseDto;
-
     }
 
     @Override
@@ -122,7 +114,7 @@ public class BookClubReplyServiceImpl implements BookClubReplyService{
 
         ResponseDto responseDto = new ResponseDto();
 
-        BookClub post = bookClubRepository.findById(postId).orElse(null);
+        FreeBoard post = freeBoardRepository.findById(postId).orElse(null);
 
         if (post == null) {
             responseDto.setStatus(HttpStatus.BAD_REQUEST);
@@ -130,7 +122,7 @@ public class BookClubReplyServiceImpl implements BookClubReplyService{
             return responseDto;
         }
 
-        BookClubReply deleteReply = bookClubReplyRepository.findByIdAndPostId(replyId, postId).orElse(null);
+        FreeBoardReply deleteReply = freeBoardReplyRepository.findByIdAndPostId(replyId, postId).orElse(null);
 
         if (deleteReply == null) {
             responseDto.setStatus(HttpStatus.BAD_REQUEST);
@@ -141,19 +133,14 @@ public class BookClubReplyServiceImpl implements BookClubReplyService{
         Long parentId = deleteReply.getParent().getId();
 
         if (parentId.equals(replyId)) { // 부모 댓글의 경우
-
-            Long delete_cnt = bookClubReplyRepository.countByParentId(replyId);
+            Long delete_cnt = freeBoardReplyRepository.countByParentId(replyId);
             System.out.println(delete_cnt);
-            post.decreaseReplyCnt(delete_cnt);
+            post.replyCnt_minus(delete_cnt);
+            freeBoardReplyRepository.deleteById(replyId);
+        } else {
+            freeBoardReplyRepository.deleteById(replyId);
 
-            bookClubReplyRepository.deleteById(replyId);
-
-        } else { // 자식 댓글의 경우
-
-            bookClubReplyRepository.deleteById(replyId);
-
-            post.decreaseReplyCnt(1L);
-
+            post.replyCnt_minus(1L);
         }
 
         responseDto.setStatus(HttpStatus.NO_CONTENT);
@@ -175,7 +162,9 @@ public class BookClubReplyServiceImpl implements BookClubReplyService{
             return responseDto;
         }
 
-        if (!bookClubRepository.existsById(postId)) {
+        FreeBoard post = freeBoardRepository.findById(postId).orElse(null);
+
+        if (post == null) {
             responseDto.setStatus(HttpStatus.BAD_REQUEST);
             responseDto.setMessage("없는 글");
             return responseDto;
@@ -183,7 +172,7 @@ public class BookClubReplyServiceImpl implements BookClubReplyService{
 
         // TODO 글-댓글 매칭 안 될 경우 예외 처리
 
-        BookClubReply reply = bookClubReplyRepository.findByIdAndPostId(replyId, postId).orElse(null);
+        FreeBoardReply reply = freeBoardReplyRepository.findById(replyId).orElse(null);
 
         if (reply == null) {
             responseDto.setStatus(HttpStatus.BAD_REQUEST);
@@ -191,30 +180,29 @@ public class BookClubReplyServiceImpl implements BookClubReplyService{
             return responseDto;
         }
 
-        BookClubReplyLike replyLike = bookClubReplyLikeRepository.findByMemberAndReply(loginMember, reply).orElse(null);
+        FreeBoardReplyLike replyLike = freeBoardReplyLikeRepository.findByMemberAndReply(loginMember, reply).orElse(null);
 
         if (replyLike == null) { // 좋아요 안 눌린 상태
 
-            replyLike = BookClubReplyLike.builder()
+            replyLike = FreeBoardReplyLike.builder()
                     .member(loginMember)
                     .reply(reply)
                     .build();
 
-            bookClubReplyLikeRepository.save(replyLike);
+            freeBoardReplyLikeRepository.save(replyLike);
             reply.increaseLikeCnt();
 
             responseDto.setMessage("좋아요 성공");
 
         } else { // 좋아요 눌린 상태
 
-            bookClubReplyLikeRepository.delete(replyLike);
+            freeBoardReplyLikeRepository.delete(replyLike);
             reply.decreaseLikeCnt();
 
             responseDto.setMessage("좋아요 취소 성공");
 
         }
-
-        BookClubReplyLikeDto likeDto = new BookClubReplyLikeDto(reply.getLike_cnt());
+        FreeBoardReplyLikeDto likeDto = new FreeBoardReplyLikeDto(reply.getLike_cnt());
         responseDto.setData(likeDto);
 
         return responseDto;

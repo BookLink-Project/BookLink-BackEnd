@@ -1,4 +1,4 @@
-package BookLink.BookLink.Service.CommunityReply;
+package BookLink.BookLink.Service.CommunityReply.BookClub;
 
 import BookLink.BookLink.Domain.CommunityReply.BookClubReply.BookClubReplyDto;
 import BookLink.BookLink.Domain.CommunityReply.BookClubReply.BookClubReplyUpdateDto;
