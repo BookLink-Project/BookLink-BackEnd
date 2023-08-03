@@ -1,15 +1,16 @@
-package BookLink.BookLink.Domain.CommunityReply.BookReportReply;
+package BookLink.BookLink.Domain.CommunityReply.FreeBoardReply;
 
 import BookLink.BookLink.Domain.Common.BaseTimeEntity;
 import BookLink.BookLink.Domain.Community.BookReport.BookReport;
+import BookLink.BookLink.Domain.Community.FreeBoard.FreeBoard;
 import BookLink.BookLink.Domain.Member.Member;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.*;
 
-import javax.persistence.*;
 import javax.persistence.Entity;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
@@ -17,7 +18,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @DynamicInsert // for default 적용
 @DynamicUpdate // 변경 필드만 update 반영
-public class BookReportReply extends BaseTimeEntity {
+public class FreeBoardReply extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +28,7 @@ public class BookReportReply extends BaseTimeEntity {
     @ManyToOne
     @JoinColumn(name = "post_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private BookReport post;
+    private FreeBoard post;
 
     @NotNull
     @ManyToOne
@@ -43,13 +44,13 @@ public class BookReportReply extends BaseTimeEntity {
     @ManyToOne
     @JoinColumn(name = "parent")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private BookReportReply parent;
+    private FreeBoardReply parent;
 
     @ColumnDefault("false")
     private boolean isUpdated;
 
     @Builder
-    public BookReportReply(BookReport post, Member writer, String content , BookReportReply parent) {
+    public FreeBoardReply(FreeBoard post, Member writer, String content , FreeBoardReply parent) {
         this.post = post;
         this.writer = writer;
         this.content = content;
@@ -59,7 +60,7 @@ public class BookReportReply extends BaseTimeEntity {
         this.isUpdated = false;
     }
 
-    public void updateParent(BookReportReply parent) {
+    public void updateParent(FreeBoardReply parent) {
         this.parent = parent;
     }
 

@@ -26,11 +26,6 @@ public class FreeBoard extends BaseTimeEntity {
     private Long id;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "writer")
-    private Member writer;
-
-    @NotNull
     private String category;
 
     @NotNull
@@ -38,6 +33,11 @@ public class FreeBoard extends BaseTimeEntity {
 
     @NotNull
     private String content;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "writer")
+    private Member writer;
 
     @ColumnDefault("0")
     private Long like_cnt;
@@ -48,6 +48,9 @@ public class FreeBoard extends BaseTimeEntity {
     @ColumnDefault("0")
     private Long reply_cnt;
 
+    @ColumnDefault("false")
+    private boolean isUpdated;
+
     @Builder
     public FreeBoard(Member writer, String category, String title, String content) {
         this.writer = writer;
@@ -56,8 +59,25 @@ public class FreeBoard extends BaseTimeEntity {
         this.content = content;
     }
 
-    public void update(String title, String content) {
+    public void updatePost(String title, String content) {
         this.title = title;
         this.content = content;
+        this.isUpdated = true;
+    }
+
+    public void view_plus() {
+        this.view_cnt += 1;
+    }
+
+    public void like_plus() { this.like_cnt += 1; }
+
+    public void like_minus() { this.like_cnt -= 1; }
+
+    public void replyCnt_plus() {
+        this.reply_cnt += 1;
+    }
+
+    public void replyCnt_minus(Long cnt) {
+        this.reply_cnt -= cnt;
     }
 }
