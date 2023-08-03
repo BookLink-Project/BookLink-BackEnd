@@ -113,8 +113,8 @@ public class JwtUtil {
         Cookie cookie = new Cookie("Access_Token", accessToken);
 
         cookie.setPath("/");
-        cookie.setHttpOnly(false);
-        cookie.setSecure(false);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
         cookie.setMaxAge(60 * 60 * 24 * 3); // 3 day
 
         response.addCookie(cookie);
@@ -125,8 +125,8 @@ public class JwtUtil {
         Cookie cookie = new Cookie("Refresh_Token", refreshToken);
 
         cookie.setPath("/");
-        cookie.setHttpOnly(false);
-        cookie.setSecure(false);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
         cookie.setMaxAge(60 * 60 * 24 * 15); // 15 day
 
         response.addCookie(cookie);
