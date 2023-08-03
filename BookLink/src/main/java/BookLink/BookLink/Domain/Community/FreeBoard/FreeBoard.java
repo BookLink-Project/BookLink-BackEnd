@@ -17,8 +17,8 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Getter
 @NoArgsConstructor
-@DynamicInsert
-@DynamicUpdate
+//@DynamicInsert
+//@DynamicUpdate
 public class FreeBoard extends BaseTimeEntity {
 
     @Id
@@ -57,6 +57,12 @@ public class FreeBoard extends BaseTimeEntity {
         this.category = category;
         this.title = title;
         this.content = content;
+
+        this.like_cnt = 0L;
+        this.view_cnt = 0L;
+        this.reply_cnt = 0L;
+
+        this.isUpdated = false;
     }
 
     public void updatePost(String title, String content) {
