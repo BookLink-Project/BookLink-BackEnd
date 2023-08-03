@@ -28,9 +28,9 @@ public class AuthConfig {
     private final RefreshTokenRepository refreshTokenRepository;
     private final MemberPrincipalService memberPrincipalService;
 
-    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
-    private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
-    private final CustomOAuth2MemberService customOAuth2MemberService;
+//    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+//    private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
+//    private final CustomOAuth2MemberService customOAuth2MemberService;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -52,13 +52,13 @@ public class AuthConfig {
                 .and()
 
                 .sessionManagement() // 세션을 사용하지 않기 때문에 STATELESS
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-
-                .oauth2Login()
-                .successHandler(oAuth2LoginSuccessHandler) // 동의하고 계속하기를 눌렀을 때 Handler 설정
-                .failureHandler(oAuth2LoginFailureHandler) // 소셜 로그인 실패 시 핸들러 설정
-                .userInfoEndpoint().userService(customOAuth2MemberService); // customUserService 설정
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+//                .and()
+//
+//                .oauth2Login()
+//                .successHandler(oAuth2LoginSuccessHandler) // 동의하고 계속하기를 눌렀을 때 Handler 설정
+//                .failureHandler(oAuth2LoginFailureHandler) // 소셜 로그인 실패 시 핸들러 설정
+//                .userInfoEndpoint().userService(customOAuth2MemberService); // customUserService 설정
 
         httpSecurity.addFilterBefore(new JwtFilter(jwtUtil, refreshTokenRepository, memberPrincipalService),
                 UsernamePasswordAuthenticationFilter.class);

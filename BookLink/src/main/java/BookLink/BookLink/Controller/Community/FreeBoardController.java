@@ -5,6 +5,7 @@ import BookLink.BookLink.Domain.Community.FreeBoard.FreeBoardUpdateDto;
 import BookLink.BookLink.Domain.CommunityReply.FreeBoardReply.FreeBoardReplyDto;
 import BookLink.BookLink.Domain.CommunityReply.FreeBoardReply.FreeBoardReplyUpdateDto;
 import BookLink.BookLink.Domain.Member.Member;
+import BookLink.BookLink.Domain.Member.MemberPrincipal;
 import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Service.Community.FreeBoard.FreeBoardService;
 import BookLink.BookLink.Service.CommunityReply.FreeBoard.FreeBoardReplyService;
@@ -35,9 +36,10 @@ public class FreeBoardController {
 
     @PostMapping("/board/free") // 자유글 작성
     public ResponseEntity<ResponseDto> writeFreeBoard (@RequestBody FreeBoardDto.Request freeBoardDto,
-                                       @AuthenticationPrincipal Member member) {
+                                                       @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
 
-        ResponseDto responseDto = freeBoardService.writePost(member.getEmail(), freeBoardDto);
+        Member member = memberPrincipal.getMember();
+        ResponseDto responseDto = freeBoardService.writePost(member, freeBoardDto);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);
@@ -54,8 +56,10 @@ public class FreeBoardController {
     }
 
     @GetMapping("/board/free/{id}")
-    public ResponseEntity<ResponseDto> freeBoardDetail(@PathVariable Long id, @AuthenticationPrincipal String memEmail) {
-        ResponseDto responseDto = freeBoardService.freeBoardDetail(id, memEmail);
+    public ResponseEntity<ResponseDto> freeBoardDetail(@PathVariable Long id, @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
+
+        Member member = memberPrincipal.getMember();
+        ResponseDto responseDto = freeBoardService.freeBoardDetail(id, member);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);
@@ -78,17 +82,21 @@ public class FreeBoardController {
     }
 
     @PostMapping("/board/free/{id}/like")
-    public ResponseEntity<ResponseDto> likePost(@PathVariable Long id, @AuthenticationPrincipal String memEmail) {
-        ResponseDto responseDto = freeBoardService.likePost(id, memEmail);
+    public ResponseEntity<ResponseDto> likePost(@PathVariable Long id, @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
+
+        Member member = memberPrincipal.getMember();
+        ResponseDto responseDto = freeBoardService.likePost(id, member);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);
     }
 
     @PostMapping("/board/free/{id}")
-    public ResponseEntity<ResponseDto> writeReply(@AuthenticationPrincipal String memEmail,
+    public ResponseEntity<ResponseDto> writeReply(@AuthenticationPrincipal MemberPrincipal memberPrincipal,
                                                   @PathVariable Long id, @RequestBody FreeBoardReplyDto.Request requestDto) {
-        ResponseDto responseDto = freeBoardReplyService.writeReply(memEmail, id, requestDto);
+
+        Member member = memberPrincipal.getMember();
+        ResponseDto responseDto = freeBoardReplyService.writeReply(member, id, requestDto);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);
@@ -113,10 +121,11 @@ public class FreeBoardController {
     }
 
     @PostMapping("/board/free/{id}/{replyId}/like")
-    public ResponseEntity<ResponseDto> likeReply(@AuthenticationPrincipal String memEmail, @PathVariable Long id,
+    public ResponseEntity<ResponseDto> likeReply(@AuthenticationPrincipal MemberPrincipal memberPrincipal, @PathVariable Long id,
                                                  @PathVariable Long replyId) {
 
-        ResponseDto responseDto = freeBoardReplyService.likeReply(memEmail, id, replyId);
+        Member member = memberPrincipal.getMember();
+        ResponseDto responseDto = freeBoardReplyService.likeReply(member, id, replyId);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);
