@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class BookClubReplyServiceImpl implements BookClubReplyService{
 
-    private final MemberRepository memberRepository;
     private final BookClubRepository bookClubRepository;
     private final BookClubReplyRepository bookClubReplyRepository;
     private final BookClubReplyLikeRepository bookClubReplyLikeRepository;
@@ -25,16 +24,13 @@ public class BookClubReplyServiceImpl implements BookClubReplyService{
 
     @Override
     @Transactional
-    public ResponseDto writeReply(String memEmail, Long postId, BookClubReplyDto.Request replyDto) {
+    public ResponseDto writeReply(Member loginMember, Long postId, BookClubReplyDto.Request replyDto) {
 
         ResponseDto responseDto = new ResponseDto();
-
-        Member loginMember = memberRepository.findByEmail(memEmail).orElse(null);
 
         if (loginMember == null) {
             responseDto.setStatus(HttpStatus.BAD_REQUEST);
             responseDto.setMessage("로그인 필요");
-
             return responseDto;
         }
 
@@ -43,7 +39,6 @@ public class BookClubReplyServiceImpl implements BookClubReplyService{
         if (post == null) {
             responseDto.setStatus(HttpStatus.BAD_REQUEST);
             responseDto.setMessage("없는 글");
-
             return responseDto;
         }
 
@@ -70,9 +65,7 @@ public class BookClubReplyServiceImpl implements BookClubReplyService{
             // dirty checking
             BookClubReply updateReply = bookClubReplyRepository.findById(bookClubReply.getId()).orElse(new BookClubReply());
             updateReply.updateParent(savedReply);
-
         }
-
         post.increaseReplyCnt();
 
         BookClubReplyDto.Response responseData = new BookClubReplyDto.Response(
@@ -85,7 +78,6 @@ public class BookClubReplyServiceImpl implements BookClubReplyService{
         responseDto.setData(responseData);
 
         return responseDto;
-
     }
 
     @Override
@@ -160,18 +152,15 @@ public class BookClubReplyServiceImpl implements BookClubReplyService{
 
     @Override
     @Transactional
-    public ResponseDto likeReply(String memEmail, Long postId, Long replyId) {
+    public ResponseDto likeReply(Member loginMember, Long postId, Long replyId) {
 
         ResponseDto responseDto = new ResponseDto();
-
-        Member loginMember = memberRepository.findByEmail(memEmail).orElse(null);
 
         if (loginMember == null) {
             responseDto.setStatus(HttpStatus.BAD_REQUEST);
             responseDto.setMessage("로그인 필요");
             return responseDto;
         }
-
         if (!bookClubRepository.existsById(postId)) {
             responseDto.setStatus(HttpStatus.BAD_REQUEST);
             responseDto.setMessage("없는 글");
@@ -208,7 +197,6 @@ public class BookClubReplyServiceImpl implements BookClubReplyService{
             reply.decreaseLikeCnt();
 
             responseDto.setMessage("좋아요 취소 성공");
-
         }
 
         BookClubReplyLikeDto likeDto = new BookClubReplyLikeDto(reply.getLike_cnt());

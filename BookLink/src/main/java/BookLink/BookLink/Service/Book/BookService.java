@@ -1,10 +1,8 @@
 package BookLink.BookLink.Service.Book;
 
 import BookLink.BookLink.Domain.Book.BookDto;
+import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.ResponseDto;
-
-import java.net.MalformedURLException;
-
 
 public interface BookService {
 
@@ -16,8 +14,8 @@ public interface BookService {
 
     ResponseDto searchBook(Integer category, String searchWord);
 
-    ResponseDto showBook(String memEmail, String isbn13);
+    ResponseDto showBook(Member member, String isbn13);
 
-    ResponseDto likeBook(String memEmail, String isbn);
+    ResponseDto likeBook(Member member, String isbn);
 
 }
