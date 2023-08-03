@@ -24,11 +24,9 @@ public class BookReportReplyServiceImpl implements BookReportReplyService {
 
     @Override
     @Transactional
-    public ResponseDto writeReply(String memEmail, Long postId, BookReportReplyDto.Request replyDto) {
+    public ResponseDto writeReply(Member loginMember, Long postId, BookReportReplyDto.Request replyDto) {
 
         ResponseDto responseDto = new ResponseDto();
-
-        Member loginMember = memberRepository.findByEmail(memEmail).orElse(null);
 
         if (loginMember == null) {
             responseDto.setStatus(HttpStatus.BAD_REQUEST);
@@ -150,11 +148,9 @@ public class BookReportReplyServiceImpl implements BookReportReplyService {
 
     @Override
     @Transactional
-    public ResponseDto likeReply(String memEmail, Long postId, Long replyId) {
+    public ResponseDto likeReply(Member loginMember, Long postId, Long replyId) {
 
         ResponseDto responseDto = new ResponseDto();
-
-        Member loginMember = memberRepository.findByEmail(memEmail).orElse(null);
 
         if (loginMember == null) {
             responseDto.setStatus(HttpStatus.BAD_REQUEST);

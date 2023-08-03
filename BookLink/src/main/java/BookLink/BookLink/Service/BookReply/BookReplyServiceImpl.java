@@ -3,7 +3,6 @@ package BookLink.BookLink.Service.BookReply;
 import BookLink.BookLink.Domain.BookReply.*;
 import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.ResponseDto;
-import BookLink.BookLink.Repository.Member.MemberRepository;
 import BookLink.BookLink.Repository.BookReply.BookReplyLikeRepository;
 import BookLink.BookLink.Repository.BookReply.BookReplyRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,28 +16,14 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class BookReplyServiceImpl implements BookReplyService {
 
-    private final MemberRepository memberRepository;
     private final BookReplyRepository bookReplyRepository;
     private final BookReplyLikeRepository replyLikeRepository;
 
     @Override
     @Transactional
-    public ResponseDto writeReply(String memEmail, String isbn, BookReplyDto.Request replyDto) {
+    public ResponseDto writeReply(Member loginMember, String isbn, BookReplyDto.Request replyDto) {
 
-        /*
-        Long bookId = bookRepository.findByIsbn(isbn);
-        System.out.println("bookId = " + bookId);
-         */
         ResponseDto responseDto = new ResponseDto();
-
-        Member loginMember = memberRepository.findByEmail(memEmail).orElse(null);
-
-        if (loginMember == null) {
-            responseDto.setStatus(HttpStatus.BAD_REQUEST);
-            responseDto.setMessage("로그인 필요");
-
-            return responseDto;
-        }
 
         BookReply savedReply;
 
@@ -55,7 +40,7 @@ public class BookReplyServiceImpl implements BookReplyService {
             BookReply bookReply = replyDto.toEntity(loginMember, isbn, parent);
             savedReply = bookReplyRepository.save(bookReply);
 
-        } else { // 부모 댓글의 경우 불필요한 쿼리 날리지 않기 위해 null TODO refactoring 가능하면 실시
+        } else { // 부모 댓글의 경우 불필요한 쿼리 날리지 않기 위해 null
 
             BookReply bookReply = replyDto.toEntity(loginMember, isbn, null);
             savedReply = bookReplyRepository.save(bookReply);
@@ -63,7 +48,6 @@ public class BookReplyServiceImpl implements BookReplyService {
             // dirty checking
             BookReply updateReply = bookReplyRepository.findById(bookReply.getId()).orElse(new BookReply());
             updateReply.updateParent(savedReply);
-
         }
 
         BookReplyDto.Response responseData = new BookReplyDto.Response(
@@ -71,7 +55,7 @@ public class BookReplyServiceImpl implements BookReplyService {
                 savedReply.getCreatedTime(),
                 savedReply.getContent(),
                 loginMember.getNickname(),
-                 loginMember.getImage()
+                loginMember.getImage()
         );
         responseDto.setData(responseData);
 
@@ -126,17 +110,9 @@ public class BookReplyServiceImpl implements BookReplyService {
 
     @Override
     @Transactional
-    public ResponseDto likeReply(String memEmail, Long replyId, String isbn) {
+    public ResponseDto likeReply(Member loginMember, Long replyId, String isbn) {
 
         ResponseDto responseDto = new ResponseDto();
-
-        Member loginMember = memberRepository.findByEmail(memEmail).orElse(null);
-
-        if (loginMember == null) {
-            responseDto.setStatus(HttpStatus.BAD_REQUEST);
-            responseDto.setMessage("로그인 필요");
-            return responseDto;
-        }
 
         BookReply bookReply = bookReplyRepository.findByIdAndIsbn(replyId, isbn).orElse(null);
 
@@ -166,7 +142,6 @@ public class BookReplyServiceImpl implements BookReplyService {
             bookReply.decreaseLikeCnt();
 
             responseDto.setMessage("좋아요 취소 성공");
-
         }
 
         BookReplyLikeDto bookReplyLikeDto = new BookReplyLikeDto(bookReply.getLike_cnt());
@@ -174,5 +149,4 @@ public class BookReplyServiceImpl implements BookReplyService {
 
         return responseDto;
     }
-
 }

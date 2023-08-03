@@ -29,9 +29,7 @@ public class BookReportServiceImpl implements BookReportService {
     private final BookReportReplyLikeRepository bookReportReplyLikeRepository;
 
     @Override
-    public ResponseDto writeReport(BookReportDto.Request requestDto, String memEmail) {
-
-        Member loginMember = memberRepository.findByEmail(memEmail).orElse(null);
+    public ResponseDto writeReport(BookReportDto.Request requestDto, Member loginMember) {
 
         BookReport bookReport = BookReportDto.Request.toEntity(requestDto, loginMember);
         bookReportRepository.save(bookReport);
@@ -68,11 +66,9 @@ public class BookReportServiceImpl implements BookReportService {
     //
     @Override
     @Transactional
-    public ResponseDto reportDetail(Long id, String memEmail) {
+    public ResponseDto reportDetail(Long id, Member loginMember) {
 
         ResponseDto responseDto = new ResponseDto();
-
-        Member loginMember = memberRepository.findByEmail(memEmail).orElse(null);
 
         BookReport post = bookReportRepository.findById(id).orElse(null);
 
@@ -176,10 +172,9 @@ public class BookReportServiceImpl implements BookReportService {
 
     @Override
     @Transactional
-    public ResponseDto likePost(Long id, String memEmail) {
-        ResponseDto responseDto = new ResponseDto();
+    public ResponseDto likePost(Long id, Member loginMember) {
 
-        Member loginMember = memberRepository.findByEmail(memEmail).orElse(null);
+        ResponseDto responseDto = new ResponseDto();
 
         if (loginMember == null) {
             responseDto.setStatus(HttpStatus.BAD_REQUEST);

@@ -2,10 +2,7 @@ package BookLink.BookLink.Config;
 
 
 import BookLink.BookLink.Repository.Token.RefreshTokenRepository;
-//import BookLink.BookLink.Service.OAuth.CustomOAuth2Member;
-//import BookLink.BookLink.Service.OAuth.Service.CustomOAuth2MemberService;
-//import BookLink.BookLink.Service.OAuth.handler.OAuth2LoginFailureHandler;
-//import BookLink.BookLink.Service.OAuth.handler.OAuth2LoginSuccessHandler;
+import BookLink.BookLink.Service.Member.MemberPrincipalService;
 import BookLink.BookLink.Service.OAuth.Service.CustomOAuth2MemberService;
 import BookLink.BookLink.Service.OAuth.handler.OAuth2LoginFailureHandler;
 import BookLink.BookLink.Service.OAuth.handler.OAuth2LoginSuccessHandler;
@@ -29,9 +26,11 @@ public class AuthConfig {
 
     private final JwtUtil jwtUtil;
     private final RefreshTokenRepository refreshTokenRepository;
-    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
-    private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
-    private final CustomOAuth2MemberService customOAuth2MemberService;
+    private final MemberPrincipalService memberPrincipalService;
+
+//    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+//    private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
+//    private final CustomOAuth2MemberService customOAuth2MemberService;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -54,39 +53,16 @@ public class AuthConfig {
 
                 .sessionManagement() // 세션을 사용하지 않기 때문에 STATELESS
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
+//                .and()
+//
 //                .oauth2Login()
 //                .successHandler(oAuth2LoginSuccessHandler) // 동의하고 계속하기를 눌렀을 때 Handler 설정
 //                .failureHandler(oAuth2LoginFailureHandler) // 소셜 로그인 실패 시 핸들러 설정
 //                .userInfoEndpoint().userService(customOAuth2MemberService); // customUserService 설정
 
-        httpSecurity.addFilterBefore(new JwtFilter(jwtUtil, refreshTokenRepository), UsernamePasswordAuthenticationFilter.class);
+        httpSecurity.addFilterBefore(new JwtFilter(jwtUtil, refreshTokenRepository, memberPrincipalService),
+                UsernamePasswordAuthenticationFilter.class);
 
         return httpSecurity.build();
     }
-
-//    @Bean
-//    public AuthenticationManager authenticationManager() {
-//        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-//        provider.setPasswordEncoder(passwordEncoder());
-//        provider.setUserDetailsService(loginService);
-//        return new ProviderManager(provider);
-//    }
-//
-//    /**
-//     * 로그인 성공 시 호출되는 LoginSuccessJWTProviderHandler 빈 등록
-//     */
-//    @Bean
-//    public LoginSuccessHandler loginSuccessHandler() {
-//        return new LoginSuccessHandler(jwtService, userRepository);
-//    }
-//
-//    /**
-//     * 로그인 실패 시 호출되는 LoginFailureHandler 빈 등록
-//     */
-//    @Bean
-//    public LoginFailureHandler loginFailureHandler() {
-//        return new LoginFailureHandler();
-//    }
-
 }

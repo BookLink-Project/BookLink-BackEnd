@@ -3,6 +3,7 @@ package BookLink.BookLink.Service.Member;
 import BookLink.BookLink.Domain.Member.LoginDto;
 import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.Member.MemberDto;
+import BookLink.BookLink.Domain.Member.MemberPrincipal;
 import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Domain.Token.RefreshToken;
 import BookLink.BookLink.Domain.Token.TokenDto;
@@ -14,10 +15,14 @@ import BookLink.BookLink.Repository.Token.RefreshTokenRepository;
 import BookLink.BookLink.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
@@ -94,7 +99,6 @@ public class MemberServiceImpl implements MemberService{
             responseDto.setMessage("없는 이메일");
             return responseDto;
         }
-
         if (!passwordEncoder.matches(loginDto.getPassword(), selectedMember.get().getPassword())) {
             responseDto.setStatus(HttpStatus.BAD_REQUEST);
             responseDto.setMessage("잘못된 비밀번호");
@@ -110,9 +114,7 @@ public class MemberServiceImpl implements MemberService{
         if (refreshToken.isPresent()) { // 존재 -> 토큰 업데이트
             refreshTokenRepository.save(refreshToken.get().updateToken(newTokenDto.getRefreshToken()));
         } else { // 부재 -> 토큰 생성 후 DB 저장
-            refreshTokenRepository.save(
-                    new RefreshToken(newTokenDto.getRefreshToken(), loginDto.getEmail())
-            );
+            refreshTokenRepository.save(new RefreshToken(newTokenDto.getRefreshToken(), loginDto.getEmail()));
         }
 
         jwtUtil.setCookieAccessToken(response, newTokenDto.getAccessToken());
@@ -128,6 +130,27 @@ public class MemberServiceImpl implements MemberService{
 
         return responseDto;
     }
-    
 
+    @Override
+    @Transactional
+    public ResponseDto logoutJwt(HttpServletResponse response, MemberPrincipal memberPrincipal) {
+
+        ResponseDto responseDto = new ResponseDto();
+
+        if (memberPrincipal == null) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("로그아웃 대상이 아님");
+            return responseDto;
+        }
+
+        SecurityContextHolder.clearContext();
+
+        jwtUtil.removeTokenCookie(response);
+
+        refreshTokenRepository.deleteByMemberEmail(memberPrincipal.getMember().getEmail());
+
+        responseDto.setMessage("로그아웃 성공");
+
+        return responseDto;
+    }
 }

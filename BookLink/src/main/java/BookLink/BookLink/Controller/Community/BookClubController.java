@@ -4,6 +4,8 @@ import BookLink.BookLink.Domain.Community.BookClub.BookClubDto;
 import BookLink.BookLink.Domain.Community.BookClub.BookClubUpdateDto;
 import BookLink.BookLink.Domain.CommunityReply.BookClubReply.BookClubReplyDto;
 import BookLink.BookLink.Domain.CommunityReply.BookClubReply.BookClubReplyUpdateDto;
+import BookLink.BookLink.Domain.Member.Member;
+import BookLink.BookLink.Domain.Member.MemberPrincipal;
 import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Service.Community.BookClub.BookClubService;
 import BookLink.BookLink.Service.CommunityReply.BookClub.BookClubReplyService;
@@ -26,9 +28,10 @@ public class BookClubController {
 
     @PostMapping("/book-club") // 독서모임 글 작성
     public ResponseEntity<ResponseDto> writeBookClub (@RequestBody BookClubDto.Request bookClubDto,
-                                                      @AuthenticationPrincipal String memEmail) {
+                                                      @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
 
-        ResponseDto responseDto = bookClubService.writePost(memEmail, bookClubDto);
+        Member member = memberPrincipal.getMember();
+        ResponseDto responseDto = bookClubService.writePost(member, bookClubDto);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);
@@ -47,9 +50,10 @@ public class BookClubController {
 
     @GetMapping("/book-club/{id}") // 독서모임 글 상세 조회
     public ResponseEntity<ResponseDto> showBookClub(@PathVariable Long id,
-                                                    @AuthenticationPrincipal String memEmail) {
+                                                    @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
 
-        ResponseDto responseDto = bookClubService.showPost(memEmail, id);
+        Member member = memberPrincipal.getMember();
+        ResponseDto responseDto = bookClubService.showPost(member, id);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);
@@ -79,9 +83,10 @@ public class BookClubController {
 
     @PostMapping("/book-club/{id}/like") // 독서모임 글 좋아요
     public ResponseEntity<ResponseDto> likeBookClub(@PathVariable Long id,
-                                                    @AuthenticationPrincipal String memEmail) {
+                                                    @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
 
-        ResponseDto responseDto = bookClubService.likePost(memEmail, id);
+        Member member = memberPrincipal.getMember();
+        ResponseDto responseDto = bookClubService.likePost(member, id);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);
@@ -91,9 +96,10 @@ public class BookClubController {
     @PostMapping("/book-club/{id}") // 독서모임 댓글 작성
     public ResponseEntity<ResponseDto> writeCookClubReply(@PathVariable Long id,
                                                           @RequestBody BookClubReplyDto.Request replyDto,
-                                                          @AuthenticationPrincipal String memEmail) throws MalformedURLException {
+                                                          @AuthenticationPrincipal MemberPrincipal memberPrincipal) throws MalformedURLException {
 
-        ResponseDto responseDto = bookClubReplyService.writeReply(memEmail, id, replyDto);
+        Member member = memberPrincipal.getMember();
+        ResponseDto responseDto = bookClubReplyService.writeReply(member, id, replyDto);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);
@@ -126,9 +132,10 @@ public class BookClubController {
     @PostMapping("/book-club/{id}/{replyId}/like") // 독서모임 댓글 좋아요
     public ResponseEntity<ResponseDto> likeBookClubReply(@PathVariable Long id,
                                                          @PathVariable Long replyId,
-                                                         @AuthenticationPrincipal String memEmail) {
+                                                         @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
 
-        ResponseDto responseDto = bookClubReplyService.likeReply(memEmail, id, replyId);
+        Member member = memberPrincipal.getMember();
+        ResponseDto responseDto = bookClubReplyService.likeReply(member, id, replyId);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);

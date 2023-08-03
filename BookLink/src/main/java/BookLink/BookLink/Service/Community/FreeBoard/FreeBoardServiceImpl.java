@@ -31,11 +31,9 @@ public class FreeBoardServiceImpl implements FreeBoardService {
     private final FreeBoardReplyLikeRepository freeBoardReplyLikeRepository;
 
     @Override
-    public ResponseDto writePost(String memEmail, FreeBoardDto.Request freeBoardDto) {
+    public ResponseDto writePost(Member loginMember, FreeBoardDto.Request freeBoardDto) {
 
         ResponseDto responseDto = new ResponseDto();
-
-        Member loginMember = memberRepository.findByEmail(memEmail).orElse(null);
 
         FreeBoard freeBoard = freeBoardDto.toEntity(loginMember);
 
@@ -80,10 +78,9 @@ public class FreeBoardServiceImpl implements FreeBoardService {
     }
 
     @Override
-    public ResponseDto freeBoardDetail(Long id, String memEmail) {
-        ResponseDto responseDto = new ResponseDto();
+    public ResponseDto freeBoardDetail(Long id, Member loginMember) {
 
-        Member loginMember = memberRepository.findByEmail(memEmail).orElse(null);
+        ResponseDto responseDto = new ResponseDto();
 
         FreeBoard post = freeBoardRepository.findById(id).orElse(null);
 
@@ -202,10 +199,9 @@ public class FreeBoardServiceImpl implements FreeBoardService {
 
     @Override
     @Transactional
-    public ResponseDto likePost(Long id, String memEmail) {
-        ResponseDto responseDto = new ResponseDto();
+    public ResponseDto likePost(Long id, Member loginMember) {
 
-        Member loginMember = memberRepository.findByEmail(memEmail).orElse(null);
+        ResponseDto responseDto = new ResponseDto();
 
         if (loginMember == null) {
             responseDto.setStatus(HttpStatus.BAD_REQUEST);

@@ -2,6 +2,8 @@ package BookLink.BookLink.Controller;
 
 import BookLink.BookLink.Domain.Book.BookDto;
 import BookLink.BookLink.Domain.BookReply.BookReplyUpdateDto;
+import BookLink.BookLink.Domain.Member.Member;
+import BookLink.BookLink.Domain.Member.MemberPrincipal;
 import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Domain.BookReply.BookReplyDto;
 import BookLink.BookLink.Service.Book.BookService;
@@ -12,20 +14,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.MalformedURLException;
-
 @Slf4j
 @RestController
-@RequiredArgsConstructor // 생성자 주입
+@RequiredArgsConstructor
 @RequestMapping("/api/v1/books")
 public class BookController {
 
     private final BookService bookService;
     private final BookReplyService bookReplyService;
 
-    // 책 검색
     @GetMapping("/aladdin/search")
-    public ResponseEntity<ResponseDto> callApi(@RequestParam String query) {
+    public ResponseEntity<ResponseDto> callApi(@RequestParam String query) { // 책 검색
 
         ResponseDto responseDto = bookService.callApi(query);
 
@@ -44,9 +43,7 @@ public class BookController {
 
     @GetMapping(value = {"/main/{category}", "/main"}) // 카테고리 분류 및 검색
     public ResponseEntity<ResponseDto> searchAndListBook(@PathVariable(required = false) Integer category,
-                                                @RequestParam(required = false) String search) {
-
-        // TODO refactoring
+                                                         @RequestParam(required = false) String search) {
 
         ResponseDto responseDto;
 
@@ -62,9 +59,10 @@ public class BookController {
 
     @GetMapping("/{isbn}") // 상세 조회
     public ResponseEntity<ResponseDto> showDetail(@PathVariable String isbn,
-                                                  @AuthenticationPrincipal String memEmail) {
+                                                  @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
 
-        ResponseDto responseDto = bookService.showBook(memEmail, isbn);
+        Member member = memberPrincipal.getMember();
+        ResponseDto responseDto = bookService.showBook(member, isbn);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);
@@ -73,9 +71,10 @@ public class BookController {
     @PostMapping("/{isbn}") // 후기(댓글) 작성
     public ResponseEntity<ResponseDto> writeReply(@PathVariable String isbn,
                                                   @RequestBody BookReplyDto.Request replyDto,
-                                                  @AuthenticationPrincipal String memEmail) throws MalformedURLException {
+                                                  @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
 
-        ResponseDto responseDto = bookReplyService.writeReply(memEmail, isbn, replyDto);
+        Member member = memberPrincipal.getMember();
+        ResponseDto responseDto = bookReplyService.writeReply(member, isbn, replyDto);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);
@@ -104,9 +103,10 @@ public class BookController {
 
     @PostMapping("/{isbn}/like") // 도서 좋아요 클릭
     public ResponseEntity<ResponseDto> clickBookLike (@PathVariable String isbn,
-                                                      @AuthenticationPrincipal String memEmail) {
+                                                      @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
 
-        ResponseDto responseDto = bookService.likeBook(memEmail, isbn);
+        Member member = memberPrincipal.getMember();
+        ResponseDto responseDto = bookService.likeBook(member, isbn);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);
@@ -114,14 +114,13 @@ public class BookController {
 
     @PostMapping("/{isbn}/{replyId}/like") // 후기 좋아요 클릭
     public ResponseEntity<ResponseDto> clickReplyLike (@PathVariable String isbn,
-                                                      @PathVariable Long replyId,
-                                                      @AuthenticationPrincipal String memEmail) {
+                                                       @PathVariable Long replyId,
+                                                       @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
 
-        ResponseDto responseDto = bookReplyService.likeReply(memEmail, replyId, isbn);
+        Member member = memberPrincipal.getMember();
+        ResponseDto responseDto = bookReplyService.likeReply(member, replyId, isbn);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);
     }
-
-
 }

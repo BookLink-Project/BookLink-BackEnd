@@ -4,6 +4,8 @@ import BookLink.BookLink.Domain.Community.BookReport.BookReportDto;
 import BookLink.BookLink.Domain.Community.BookReport.BookReportUpdateDto;
 import BookLink.BookLink.Domain.CommunityReply.BookReportReply.BookReportReplyDto;
 import BookLink.BookLink.Domain.CommunityReply.BookReportReply.BookReportReplyUpdateDto;
+import BookLink.BookLink.Domain.Member.Member;
+import BookLink.BookLink.Domain.Member.MemberPrincipal;
 import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Service.Community.BookReport.BookReportService;
 import BookLink.BookLink.Service.CommunityReply.BookReport.BookReportReplyService;
@@ -24,9 +26,10 @@ public class BookReportController {
 
     @PostMapping("/board/report")
     public ResponseEntity<ResponseDto> writeReport(@RequestBody BookReportDto.Request requestDto,
-                                                   @AuthenticationPrincipal String memEmail) {
+                                                   @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
 
-        ResponseDto responseDto = bookReportService.writeReport(requestDto, memEmail);
+        Member member = memberPrincipal.getMember();
+        ResponseDto responseDto = bookReportService.writeReport(requestDto, member);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);
@@ -43,8 +46,10 @@ public class BookReportController {
     }
 
     @GetMapping("/board/report/{id}")
-    public ResponseEntity<ResponseDto> reportDetail(@PathVariable Long id, @AuthenticationPrincipal String memEmail) {
-        ResponseDto responseDto = bookReportService.reportDetail(id, memEmail);
+    public ResponseEntity<ResponseDto> reportDetail(@PathVariable Long id, @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
+
+        Member member = memberPrincipal.getMember();
+        ResponseDto responseDto = bookReportService.reportDetail(id, member);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);
@@ -59,8 +64,10 @@ public class BookReportController {
     }
 
     @PostMapping("/board/report/{id}/like")
-    public ResponseEntity<ResponseDto> likePost(@PathVariable Long id, @AuthenticationPrincipal String memEmail) {
-        ResponseDto responseDto = bookReportService.likePost(id, memEmail);
+    public ResponseEntity<ResponseDto> likePost(@PathVariable Long id, @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
+
+        Member member = memberPrincipal.getMember();
+        ResponseDto responseDto = bookReportService.likePost(id, member);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);
@@ -76,9 +83,11 @@ public class BookReportController {
 
     // 댓글 작성
     @PostMapping("/board/report/{id}")
-    public ResponseEntity<ResponseDto> writeReply(@AuthenticationPrincipal String memEmail,
+    public ResponseEntity<ResponseDto> writeReply(@AuthenticationPrincipal MemberPrincipal memberPrincipal,
                                                   @PathVariable Long id, @RequestBody BookReportReplyDto.Request requestDto) {
-        ResponseDto responseDto = bookReportReplyService.writeReply(memEmail, id, requestDto);
+
+        Member member = memberPrincipal.getMember();
+        ResponseDto responseDto = bookReportReplyService.writeReply(member, id, requestDto);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);
@@ -103,10 +112,11 @@ public class BookReportController {
     }
 
     @PostMapping("/board/report/{id}/{replyId}/like")
-    public ResponseEntity<ResponseDto> likeReply(@AuthenticationPrincipal String memEmail, @PathVariable Long id,
+    public ResponseEntity<ResponseDto> likeReply(@AuthenticationPrincipal MemberPrincipal memberPrincipal, @PathVariable Long id,
                                                  @PathVariable Long replyId) {
 
-        ResponseDto responseDto = bookReportReplyService.likeReply(memEmail, id, replyId);
+        Member member = memberPrincipal.getMember();
+        ResponseDto responseDto = bookReportReplyService.likeReply(member, id, replyId);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);
