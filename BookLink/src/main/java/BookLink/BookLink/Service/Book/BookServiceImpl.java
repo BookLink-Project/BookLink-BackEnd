@@ -26,6 +26,7 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -135,12 +136,15 @@ public class BookServiceImpl implements BookService {
             return responseDto;
         }
 
-        List<BookListDto.Item> items = result.getItem();
+        List<BookListDto.Item> items = result.getItem()
+                                        .stream()
+                                        .filter(item -> !item.getIsbn13().isEmpty())
+                                        .collect(Collectors.toList()); // isbn 필터링
 
         for (BookListDto.Item item : items) {
 
             String isbn = item.getIsbn13();
-//            if (isbn == null) {} // TODO filtering
+
             Long like_cnt = bookLikeRepository.countByIsbn(isbn);
             Long reply_cnt = bookReplyRepository.countByIsbn(isbn);
 
@@ -150,7 +154,7 @@ public class BookServiceImpl implements BookService {
             item.setReply_cnt(reply_cnt);
             item.setOwner_cnt(0L); // TODO dummy
         }
-
+        result.setItem(items);
         responseDto.setData(result);
 
         return responseDto;
