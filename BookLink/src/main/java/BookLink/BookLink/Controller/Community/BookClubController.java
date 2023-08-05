@@ -52,8 +52,7 @@ public class BookClubController {
     public ResponseEntity<ResponseDto> showBookClub(@PathVariable Long id,
                                                     @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
 
-        Member member = memberPrincipal.getMember();
-        ResponseDto responseDto = bookClubService.showPost(member, id);
+        ResponseDto responseDto = bookClubService.showPost(memberPrincipal, id);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);

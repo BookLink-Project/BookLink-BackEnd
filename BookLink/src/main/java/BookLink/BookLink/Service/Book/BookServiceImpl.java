@@ -3,6 +3,7 @@ package BookLink.BookLink.Service.Book;
 import BookLink.BookLink.Domain.Book.*;
 import BookLink.BookLink.Domain.Community.BookReport.BookReport;
 import BookLink.BookLink.Domain.Member.Member;
+import BookLink.BookLink.Domain.Member.MemberPrincipal;
 import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Domain.BookReply.BookReply;
 import BookLink.BookLink.Domain.BookReply.BookRepliesDto;
@@ -153,7 +154,9 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public ResponseDto showBook(Member loginMember, String isbn13) {
+    public ResponseDto showBook(MemberPrincipal memberPrincipal, String isbn13) {
+
+        Member loginMember = (memberPrincipal == null) ? null : memberPrincipal.getMember();
 
         ResponseDto responseDto = new ResponseDto();
 
@@ -185,7 +188,8 @@ public class BookServiceImpl implements BookService {
         Long like_cnt = bookLikeRepository.countByIsbn(isbn);
         Long reply_cnt = bookReplyRepository.countByIsbn(isbn);
 
-        boolean isLikedBook = bookLikeRepository.existsByMemberAndIsbn(loginMember, isbn);
+        boolean isLikedBook = (loginMember != null)
+                && (bookLikeRepository.existsByMemberAndIsbn(loginMember, isbn));
 
         item.setCategoryName(item.getCategoryName().split(">")[1]);
 
@@ -208,7 +212,8 @@ public class BookServiceImpl implements BookService {
             // 대댓글 수 (부모 : 자식)
             Long sub_reply_cnt = parentId.equals(replyId) ? bookReplyRepository.countByParentId(parentId) - 1 : 0;
 
-            boolean isLikedReply = bookReplyLikeRepository.existsByMemberAndReply(loginMember, reply);
+            boolean isLikedReply = (loginMember != null)
+                    && (bookReplyLikeRepository.existsByMemberAndReply(loginMember, reply));
 
             BookRepliesDto rv;
 

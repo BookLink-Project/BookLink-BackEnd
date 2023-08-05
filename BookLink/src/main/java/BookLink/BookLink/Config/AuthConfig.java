@@ -49,6 +49,9 @@ public class AuthConfig {
                 .antMatchers("/api/v1/members/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/login/oauth2/code/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/**").authenticated()
+                .antMatchers(HttpMethod.PATCH, "/api/**").authenticated()
+                .antMatchers(HttpMethod.DELETE, "/api/**").authenticated()
+                .antMatchers( "/api/v1/mypage/**").authenticated()
                 .and()
 
                 .sessionManagement() // 세션을 사용하지 않기 때문에 STATELESS
