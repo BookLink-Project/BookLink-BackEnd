@@ -138,10 +138,13 @@ public class BookServiceImpl implements BookService {
         List<BookListDto.Item> items = result.getItem();
 
         for (BookListDto.Item item : items) {
+
             String isbn = item.getIsbn13();
 //            if (isbn == null) {} // TODO filtering
             Long like_cnt = bookLikeRepository.countByIsbn(isbn);
             Long reply_cnt = bookReplyRepository.countByIsbn(isbn);
+
+            item.setCategoryName(item.getCategoryName().split(">")[1]);
 
             item.setLike_cnt(like_cnt);
             item.setReply_cnt(reply_cnt);

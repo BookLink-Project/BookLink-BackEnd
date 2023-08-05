@@ -60,10 +60,6 @@ public class MyPageServiceImpl implements MyPageService {
 
         Member selectedMember = memberRepository.findById(loginMember.getId()).orElse(null);
 
-        if (selectedMember == null) {
-            return responseDto; // TODO 로그인 안 됐을 때 예외 처리
-        }
-
         selectedMember.updateAccount(
                 accountDto.getImage(),
                 accountDto.getName(),
