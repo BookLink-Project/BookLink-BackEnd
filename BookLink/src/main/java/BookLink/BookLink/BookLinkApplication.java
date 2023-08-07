@@ -17,7 +17,6 @@ public class BookLinkApplication {
 	@PostConstruct
 	public void started() {
 		TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
-		log.info("현재 시각 : " + new Date());
 	}
 
 	public static void main(String[] args) {
