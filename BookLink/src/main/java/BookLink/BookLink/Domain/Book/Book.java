@@ -2,6 +2,7 @@ package BookLink.BookLink.Domain.Book;
 
 import BookLink.BookLink.Domain.Common.BaseTimeEntity;
 import BookLink.BookLink.Domain.Common.RentalEnum;
+import BookLink.BookLink.Domain.Member.Member;
 import lombok.*;
 
 import javax.persistence.*;
@@ -27,8 +28,7 @@ public class Book extends BaseTimeEntity {
     @NotNull
     private String authors;
 
-    @NotNull
-    private String description; // 책 소개 요약
+    private String recommendation; // 추천사
 
     @NotNull
     private String isbn; // 책 고유번호 13자리
@@ -51,18 +51,22 @@ public class Book extends BaseTimeEntity {
     @NotNull
     private Boolean rent_signal; // 대여 신청 가능 여부
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
+
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "rent_id")
     private BookRent bookRent;
 
 
     @Builder
-    public Book(Long id, String title, String authors, String description, String isbn, Integer price_sales
-            , String cover, String category_name, String publisher, LocalDate pud_date, Boolean rent_signal, BookRent bookRent) {
+    public Book(Long id, String title, String authors, String recommendation, String isbn, Integer price_sales
+            , String cover, String category_name, String publisher, LocalDate pud_date, Boolean rent_signal, Member member, BookRent bookRent) {
         this.id = id;
         this.title = title;
         this.authors = authors;
-        this.description = description;
+        this.recommendation = recommendation;
         this.isbn = isbn;
         this.price_sales = price_sales;
         this.cover = cover;
@@ -70,6 +74,7 @@ public class Book extends BaseTimeEntity {
         this.publisher = publisher;
         this.pud_date = pud_date;
         this.rent_signal = rent_signal;
+        this.member = member;
         this.bookRent = bookRent;
     }
 }

@@ -9,7 +9,7 @@ public interface BookService {
 
     ResponseDto callApi(String query);
 
-    ResponseDto joinMyBook(BookDto.Request bookDto);
+    ResponseDto joinMyBook(BookDto.Request bookDto, Member loginMember);
 
     ResponseDto listAllBook(Integer category);
 
@@ -18,5 +18,7 @@ public interface BookService {
     ResponseDto showBook(MemberPrincipal memberPrincipal, String isbn13);
 
     ResponseDto likeBook(Member member, String isbn);
+
+    ResponseDto rentBookList();
 
 }
