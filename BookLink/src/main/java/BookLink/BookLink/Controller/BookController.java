@@ -65,8 +65,7 @@ public class BookController {
     public ResponseEntity<ResponseDto> showDetail(@PathVariable String isbn,
                                                   @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
 
-        Member member = memberPrincipal.getMember();
-        ResponseDto responseDto = bookService.showBook(member, isbn);
+        ResponseDto responseDto = bookService.showBook(memberPrincipal, isbn);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);

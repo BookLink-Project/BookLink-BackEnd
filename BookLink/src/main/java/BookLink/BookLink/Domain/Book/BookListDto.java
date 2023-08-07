@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class BookListDto {
@@ -20,6 +21,7 @@ public class BookListDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Item {
+
         private String isbn13;
         private String title;
         private String author;
@@ -27,9 +29,12 @@ public class BookListDto {
         private Integer priceStandard;
         private String cover;
 
+        private String description;
+        private String categoryName;
+
         private Long like_cnt;
         private Long reply_cnt;
         private Long owner_cnt;
-    }
 
+    }
 }

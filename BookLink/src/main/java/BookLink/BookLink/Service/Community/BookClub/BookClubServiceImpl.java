@@ -4,6 +4,7 @@ import BookLink.BookLink.Domain.Community.BookClub.*;
 import BookLink.BookLink.Domain.CommunityReply.BookClubReply.BookClubReply;
 import BookLink.BookLink.Domain.CommunityReply.BookClubReply.BookClubRepliesDto;
 import BookLink.BookLink.Domain.Member.Member;
+import BookLink.BookLink.Domain.Member.MemberPrincipal;
 import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Repository.Community.BookClub.BookClubLikeRepository;
 import BookLink.BookLink.Repository.CommunityReply.BookClub.BookClubReplyLikeRepository;
@@ -85,15 +86,11 @@ public class BookClubServiceImpl implements BookClubService {
 
     @Override
     @Transactional
-    public ResponseDto showPost(Member loginMember, Long id) {
+    public ResponseDto showPost(MemberPrincipal memberPrincipal, Long id) {
+
+        Member loginMember = (memberPrincipal == null) ? null : memberPrincipal.getMember();
 
         ResponseDto responseDto = new ResponseDto();
-
-        if (loginMember == null) {
-            responseDto.setStatus(HttpStatus.BAD_REQUEST);
-            responseDto.setMessage("로그인 필요");
-            return responseDto;
-        }
 
         BookClub post = bookClubRepository.findById(id).orElse(null);
 
@@ -103,9 +100,10 @@ public class BookClubServiceImpl implements BookClubService {
             return responseDto;
         }
 
-        post.increaseViewCnt(); // 조회수 증가
+        post.increaseViewCnt();
 
-        boolean isLiked = bookClubLikeRepository.existsByMemberAndPost(loginMember, post);
+        boolean isLiked = (loginMember != null)
+                && (bookClubLikeRepository.existsByMemberAndPost(loginMember, post));
 
         // START 댓글 조회
         List<BookClubReply> replyList = bookClubReplyRepository.findByPostOrderByParentDescIdDesc(post);
@@ -122,7 +120,8 @@ public class BookClubServiceImpl implements BookClubService {
             Long sub_reply_cnt = parentId.equals(replyId) ? bookClubReplyRepository.countByParentId(parentId) - 1 : 0;
 
             // 좋아요 상태
-            boolean isLikedReply = bookClubReplyLikeRepository.existsByMemberAndReply(loginMember, reply);
+            boolean isLikedReply = (loginMember != null)
+                    && (bookClubReplyLikeRepository.existsByMemberAndReply(loginMember, reply));
 
             BookClubRepliesDto rv;
 

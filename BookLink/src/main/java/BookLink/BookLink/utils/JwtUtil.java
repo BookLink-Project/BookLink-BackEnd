@@ -102,19 +102,13 @@ public class JwtUtil {
                 .orElse(null);
     }
 
-    public Authentication getAuthentication(String token) { // 토큰에서 인증 정보 조회 ???
-        UserDetails userDetails = memberPrincipalService.loadUserByUsername(this.getEmailFromToken(token));
-        return new UsernamePasswordAuthenticationToken(userDetails, null,
-                List.of(new SimpleGrantedAuthority("USER")));
-    }
-
     public void setCookieAccessToken(HttpServletResponse response, String accessToken) {
 
         Cookie cookie = new Cookie("Access_Token", accessToken);
 
         cookie.setPath("/");
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true);
+        cookie.setHttpOnly(false);
+        cookie.setSecure(false);
         cookie.setMaxAge(60 * 60 * 24 * 3); // 3 day
 
         response.addCookie(cookie);
@@ -125,8 +119,8 @@ public class JwtUtil {
         Cookie cookie = new Cookie("Refresh_Token", refreshToken);
 
         cookie.setPath("/");
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true);
+        cookie.setHttpOnly(false);
+        cookie.setSecure(false);
         cookie.setMaxAge(60 * 60 * 24 * 15); // 15 day
 
         response.addCookie(cookie);

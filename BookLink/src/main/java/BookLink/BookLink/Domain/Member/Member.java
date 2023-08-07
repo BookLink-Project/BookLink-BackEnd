@@ -10,22 +10,21 @@ import BookLink.BookLink.Domain.Common.SocialType;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.ColumnDefault;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicInsert
+@DynamicUpdate
 public class Member extends BaseTimeEntity {
 
     @Id
@@ -68,6 +67,18 @@ public class Member extends BaseTimeEntity {
 //    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
 //    @JoinColumn(name = "rent_id")
 //    private List<BookRent> bookRent;
+
+    public void updateAccount(URL image, String name, String nickname, String email, String password,
+                                LocalDate birth, String address) {
+        this.image = image;
+        this.name = name;
+        this.nickname = nickname;
+        this.email = email;
+        this.password = password;
+        this.birth = birth;
+        this.address = address;
+//        this.card = card;
+    }
 
     @Builder
     public Member(String email, String social_id, String password, String nickname, String name,

@@ -17,7 +17,7 @@ public interface MemberService {
 
     ResponseDto nicknameDoubleCheck(String nickname);
 
-    ResponseDto loginJwt(LoginDto.Request loginDto, HttpServletResponse response) throws Exception;
+    ResponseDto loginJwt(LoginDto.Request loginDto, HttpServletResponse response);
 
     ResponseDto logoutJwt(HttpServletResponse response, MemberPrincipal memberPrincipal);
 

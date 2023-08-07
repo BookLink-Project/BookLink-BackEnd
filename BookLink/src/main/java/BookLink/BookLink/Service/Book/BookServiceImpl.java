@@ -3,6 +3,7 @@ package BookLink.BookLink.Service.Book;
 import BookLink.BookLink.Domain.Book.*;
 import BookLink.BookLink.Domain.Community.BookReport.BookReport;
 import BookLink.BookLink.Domain.Member.Member;
+import BookLink.BookLink.Domain.Member.MemberPrincipal;
 import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Domain.BookReply.BookReply;
 import BookLink.BookLink.Domain.BookReply.BookRepliesDto;
@@ -13,7 +14,6 @@ import BookLink.BookLink.Repository.Book.BookRentRepository;
 import BookLink.BookLink.Repository.Book.BookRepository;
 import BookLink.BookLink.Repository.BookReply.BookReplyLikeRepository;
 import BookLink.BookLink.Repository.Community.BookReport.BookReportRepository;
-import BookLink.BookLink.Repository.Member.MemberRepository;
 import BookLink.BookLink.Repository.BookReply.BookReplyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +26,7 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -43,8 +44,8 @@ public class BookServiceImpl implements BookService {
     private final BookReplyLikeRepository bookReplyLikeRepository;
     private final BookReportRepository bookReportRepository;
 
-    private String search_url = "http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=ttbelwlahstmxjf2304001&QueryType=Title&MaxResults=30&start=1&SearchTarget=Book&Cover=Big&output=js&InputEncoding=utf-8&Version=20131101";
-    private String list_url = "http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=ttbelwlahstmxjf2304001&QueryType=Bestseller&MaxResults=30&start=1&SearchTarget=Book&Cover=Big&output=js&Version=20131101";
+    private String search_url = "http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=ttbelwlahstmxjf2304001&QueryType=Title&MaxResults=32&start=1&SearchTarget=Book&Cover=Big&output=js&InputEncoding=utf-8&Version=20131101";
+    private String list_url = "http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=ttbelwlahstmxjf2304001&QueryType=Bestseller&MaxResults=32&start=1&SearchTarget=Book&Cover=Big&output=js&Version=20131101";
     private String detail_url = "http://www.aladin.co.kr/ttb/api/ItemLookUp.aspx?ttbkey=ttbelwlahstmxjf2304001&itemIdType=ISBN13&Cover=Big&output=js&Version=20131101";
     private String key = "ttbelwlahstmxjf2057001";
 
@@ -135,26 +136,34 @@ public class BookServiceImpl implements BookService {
             return responseDto;
         }
 
-        List<BookListDto.Item> items = result.getItem();
+        List<BookListDto.Item> items = result.getItem()
+                                        .stream()
+                                        .filter(item -> !item.getIsbn13().isEmpty())
+                                        .collect(Collectors.toList()); // isbn 필터링
 
         for (BookListDto.Item item : items) {
+
             String isbn = item.getIsbn13();
-//            if (isbn == null) {} // TODO filtering
+
             Long like_cnt = bookLikeRepository.countByIsbn(isbn);
             Long reply_cnt = bookReplyRepository.countByIsbn(isbn);
+
+            item.setCategoryName(item.getCategoryName().split(">")[1]);
 
             item.setLike_cnt(like_cnt);
             item.setReply_cnt(reply_cnt);
             item.setOwner_cnt(0L); // TODO dummy
         }
-
+        result.setItem(items);
         responseDto.setData(result);
 
         return responseDto;
     }
 
     @Override
-    public ResponseDto showBook(Member loginMember, String isbn13) {
+    public ResponseDto showBook(MemberPrincipal memberPrincipal, String isbn13) {
+
+        Member loginMember = (memberPrincipal == null) ? null : memberPrincipal.getMember();
 
         ResponseDto responseDto = new ResponseDto();
 
@@ -186,7 +195,8 @@ public class BookServiceImpl implements BookService {
         Long like_cnt = bookLikeRepository.countByIsbn(isbn);
         Long reply_cnt = bookReplyRepository.countByIsbn(isbn);
 
-        boolean isLikedBook = bookLikeRepository.existsByMemberAndIsbn(loginMember, isbn);
+        boolean isLikedBook = (loginMember != null)
+                && (bookLikeRepository.existsByMemberAndIsbn(loginMember, isbn));
 
         item.setCategoryName(item.getCategoryName().split(">")[1]);
 
@@ -209,7 +219,8 @@ public class BookServiceImpl implements BookService {
             // 대댓글 수 (부모 : 자식)
             Long sub_reply_cnt = parentId.equals(replyId) ? bookReplyRepository.countByParentId(parentId) - 1 : 0;
 
-            boolean isLikedReply = bookReplyLikeRepository.existsByMemberAndReply(loginMember, reply);
+            boolean isLikedReply = (loginMember != null)
+                    && (bookReplyLikeRepository.existsByMemberAndReply(loginMember, reply));
 
             BookRepliesDto rv;
 

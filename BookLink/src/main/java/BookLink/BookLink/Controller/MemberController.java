@@ -71,7 +71,7 @@ public class MemberController {
 
     @PostMapping("/login")
     public ResponseEntity<ResponseDto> loginMember(@RequestBody LoginDto.Request loginDto,
-                                                   HttpServletResponse response) throws Exception {
+                                                   HttpServletResponse response) {
 
         ResponseDto responseDto = memberService.loginJwt(loginDto, response);
 
