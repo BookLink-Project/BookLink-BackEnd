@@ -51,4 +51,15 @@ public class MyPageController {
                 .body(responseDto);
     }
 
+    @GetMapping("") // 나의 활동
+    public ResponseEntity<ResponseDto> showMyHistory(@RequestParam(required = false, defaultValue = "payment") String rent,
+                                                     @RequestParam(required = false, defaultValue = "review") String community,
+                                                     @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
+
+        Member member = memberPrincipal.getMember();
+        ResponseDto responseDto = myPageService.showHistory(member, rent, community);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+    }
 }

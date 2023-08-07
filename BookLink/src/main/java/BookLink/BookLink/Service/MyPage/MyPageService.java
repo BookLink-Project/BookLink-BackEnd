@@ -7,6 +7,8 @@ import BookLink.BookLink.Domain.ResponseDto;
 
 public interface MyPageService {
 
+    ResponseDto showHistory(Member member, String rentType, String communityType);
+
     ResponseDto showAccount(Member member);
 
     ResponseDto verifyAccount(VerifyDto verifyDto, Member member);
