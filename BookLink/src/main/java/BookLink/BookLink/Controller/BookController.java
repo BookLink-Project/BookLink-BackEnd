@@ -32,10 +32,14 @@ public class BookController {
                 .body(responseDto);
     }
 
+    // 소장도서 등록 및 대여 등록
     @PostMapping("/register")
-    public ResponseEntity<ResponseDto> registerMyBook(@RequestBody BookDto.Request bookDto) {
+    public ResponseEntity<ResponseDto> registerMyBook(@RequestBody BookDto.Request bookDto,
+                                                      @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
 
-        ResponseDto responseDto = bookService.joinMyBook(bookDto);
+        Member member = memberPrincipal.getMember();
+
+        ResponseDto responseDto = bookService.joinMyBook(bookDto, member);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);
@@ -119,6 +123,16 @@ public class BookController {
 
         Member member = memberPrincipal.getMember();
         ResponseDto responseDto = bookReplyService.likeReply(member, replyId, isbn);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+    }
+
+    // 대여 가능 책 리스트뷰
+    @GetMapping("/rent")
+    public ResponseEntity<ResponseDto> rentBookList() {
+
+        ResponseDto responseDto = bookService.rentBookList();
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);

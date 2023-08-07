@@ -1,10 +1,8 @@
 package BookLink.BookLink.Controller;
 
-import BookLink.BookLink.Domain.Member.MemberPrincipal;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -14,13 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/auth-test")
+@RequestMapping("/login/oauth2")
 public class AuthTestController {
 
-    @PostMapping
-    public ResponseEntity<String> authTest(@AuthenticationPrincipal MemberPrincipal memberPrincipal) {
-
-        return ResponseEntity.ok().body("접근 성공");
-
-    }
 }
