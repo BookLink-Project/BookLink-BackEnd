@@ -60,12 +60,19 @@ public class MyPageServiceImpl implements MyPageService {
 
         Member selectedMember = memberRepository.findById(loginMember.getId()).orElse(null);
 
+        String encodedPassword;
+        if (accountDto.getPassword() != null) {
+            encodedPassword = passwordEncoder.encode(accountDto.getPassword());
+        } else {
+            encodedPassword = null;
+        }
+
         selectedMember.updateAccount(
                 accountDto.getImage(),
                 accountDto.getName(),
                 accountDto.getNickname(),
                 accountDto.getEmail(),
-                passwordEncoder.encode(accountDto.getPassword()),
+                encodedPassword,
                 accountDto.getBirth(),
                 accountDto.getAddress()
 //                accountDto.getCard()
