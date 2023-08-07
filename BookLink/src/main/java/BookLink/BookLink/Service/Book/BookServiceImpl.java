@@ -328,43 +328,81 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public ResponseDto joinMyBook(BookDto.Request bookDto) {
+    public ResponseDto joinMyBook(BookDto.Request bookDto, Member loginMember) {
 
-        boolean is_exist = bookRepository.existsByIsbn(bookDto.getIsbn13());
+        ResponseDto responseDto = new ResponseDto();
+
+        boolean is_exist = bookRepository.existsByIsbnAndMember(bookDto.getIsbn13(), loginMember);
 
         if(is_exist) {
             throw new RestApiException(BookErrorCode.ALREADY_SAVED_BOOK);
         }
 
-        ResponseDto responseDto = new ResponseDto();
-
         if(bookDto.getRent_signal()) {
             BookRent bookRent = BookDto.Request.toRentEntity(bookDto);
-            bookRentRepository.save(bookRent);
+//            bookRentRepository.save(bookRent);
 
-            Book book = Book.builder()
-                    .title(bookDto.getTitle())
-                    .authors(bookDto.getAuthor())
-                    .description(bookDto.getDescription())
-                    .isbn(bookDto.getIsbn13())
-                    .price_sales(bookDto.getPrice_sales())
-                    .cover(bookDto.getCover())
-                    .category_name(bookDto.getCategory_name())
-                    .publisher(bookDto.getPublisher())
-                    .pud_date(bookDto.getPud_date())
-                    .rent_signal(bookDto.getRent_signal())
-                    .bookRent(bookRent)
-                    .build();
-
+            Book book = BookDto.Request.toBookEntity(bookDto, bookRent, loginMember);
             bookRepository.save(book);
         }
         else{
-            Book book = BookDto.Request.toBookEntity(bookDto);
+            Book book = BookDto.Request.toBookEntity(bookDto, loginMember);
             bookRepository.save(book);
         }
 
         responseDto.setStatus(HttpStatus.OK);
         responseDto.setMessage("DB 저장 완료");
+        return responseDto;
+    }
+
+    @Override
+    public ResponseDto rentBookList() {
+
+        ResponseDto responseDto = new ResponseDto();
+
+        List<String> distinctTitles = bookRepository.findDistinctTitles();
+
+        List<BookRentListDto> bookRentList = new ArrayList<>();
+
+        for (String title : distinctTitles) {
+
+            int avg_fee = 0;
+            int total_fee = 0;
+            int count = 0;
+            int max_period = 0;
+
+            List<Book> books = bookRepository.findByTitle(title);
+            count = books.size();
+
+            for (Book book : books) {
+                BookRent bookRent = book.getBookRent();
+                Integer rental_fee = bookRent.getRental_fee();
+                Integer max_date = bookRent.getMax_date();
+
+                if (max_date > max_period) {
+                    max_period = max_date;
+                }
+
+                total_fee += rental_fee;
+            }
+
+            avg_fee = total_fee / count;
+
+            Book book = books.get(0);
+
+            BookRentListDto bookRentListDto = BookRentListDto.builder()
+                    .title(book.getTitle())
+                    .authors(book.getAuthors())
+                    .cover(book.getCover())
+                    .publisher(book.getPublisher())
+                    .avg_rental_fee(avg_fee)
+                    .rent_period(max_period)
+                    .build();
+
+            bookRentList.add(bookRentListDto);
+        }
+
+        responseDto.setData(bookRentList);
         return responseDto;
     }
 }

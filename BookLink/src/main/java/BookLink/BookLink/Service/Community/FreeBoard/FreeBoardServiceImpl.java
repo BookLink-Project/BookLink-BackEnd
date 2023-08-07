@@ -78,6 +78,7 @@ public class FreeBoardServiceImpl implements FreeBoardService {
     }
 
     @Override
+    @Transactional
     public ResponseDto freeBoardDetail(Long id, Member loginMember) {
 
         ResponseDto responseDto = new ResponseDto();
