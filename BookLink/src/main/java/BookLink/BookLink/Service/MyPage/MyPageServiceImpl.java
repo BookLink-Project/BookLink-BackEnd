@@ -382,11 +382,11 @@ public class MyPageServiceImpl implements MyPageService {
 
         Member selectedMember = memberRepository.findById(loginMember.getId()).orElse(null);
 
-        String encodedPassword; // TODO 빈문자열로 예외 처리
-        if (accountDto.getPassword() != null) {
+        String encodedPassword;
+        if (!accountDto.getPassword().equals("")) {
             encodedPassword = passwordEncoder.encode(accountDto.getPassword());
         } else {
-            encodedPassword = null;
+            encodedPassword = "";
         }
 
         URL imageUrl = s3Service.uploadImage(image);
