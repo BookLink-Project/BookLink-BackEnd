@@ -286,7 +286,7 @@ public class MyPageServiceImpl implements MyPageService {
             Long parentId = reply.getParent().getId();
 
             HistoryDto.CommunityHistory community = HistoryDto.CommunityHistory.builder()
-                    .type("후기") // TODO ???
+                    .type(parentId.equals(reply.getId()) ? "후기" : "답글")
                     .postId(Long.valueOf(book.getIsbn13()))
                     .title(book.getTitle())
                     .content(reply.getContent())
@@ -306,42 +306,44 @@ public class MyPageServiceImpl implements MyPageService {
         List<HistoryDto.RentHistory> rentHistoryDto = new ArrayList<>();
 
         // TODO for 문 반복문
-        HistoryDto.RentHistory rent = HistoryDto.RentHistory.builder()
-                .date(LocalDate.now()) // TODO dummy
+        HistoryDto.RentHistory payment = HistoryDto.RentHistory.builder()
+                .date(LocalDateTime.of(2023, 7, 26, 16, 42, 0)) // TODO dummy
                 .type("결제")
-                .content("대여료")
+                .content("대여료 결제")
                 .price(3000)
                 .info_title("피프티 피플")
                 .info_author("정세랑")
                 .info_publisher("창비")
-                .info_whose("길동아")
+                .info_owner("길동아")
                 .info_rent_from(LocalDate.of(2023, 7, 26))
                 .info_rent_to(LocalDate.of(2023, 8, 25))
-                .info_pay_date(LocalDateTime.of(2023, 7, 26, 16, 42, 0))
+                .info_card_name("초록현대카드")
+                .return_location(null)
                 .build();
-        rentHistoryDto.add(rent);
+        rentHistoryDto.add(payment);
         return rentHistoryDto;
     }
 
-    private List<HistoryDto.RentHistory> getOverdueList() { // TODO FIX
+    private List<HistoryDto.RentHistory> getOverdueList() {
 
         List<HistoryDto.RentHistory> rentHistoryDto = new ArrayList<>();
 
         // TODO for 문 반복문
-        HistoryDto.RentHistory rent = HistoryDto.RentHistory.builder()
-                .date(LocalDate.now()) // TODO dummy
-                .type("결제")
-                .content("대여료")
-                .price(3000)
-                .info_title("피프티 피플")
-                .info_author("정세랑")
-                .info_publisher("창비")
-                .info_whose("길동아")
-                .info_rent_from(LocalDate.of(2023, 7, 26))
-                .info_rent_to(LocalDate.of(2023, 8, 25))
-                .info_pay_date(LocalDateTime.of(2023, 7, 26, 16, 42, 0))
+        HistoryDto.RentHistory over = HistoryDto.RentHistory.builder()
+                .date(LocalDateTime.of(2023, 7, 26, 0, 0, 0)) // TODO dummy
+                .type("연체중")
+                .content(null)
+                .price(1000)
+                .info_title("세이노의 가르침")
+                .info_author(null)
+                .info_publisher(null)
+                .info_owner("가나다라마바사사")
+                .info_rent_from(null)
+                .info_rent_to(null)
+                .info_card_name(null)
+                .return_location("캐치카페 화장실 하수구 1동 A 상가 앞")
                 .build();
-        rentHistoryDto.add(rent);
+        rentHistoryDto.add(over);
         return rentHistoryDto;
     }
 

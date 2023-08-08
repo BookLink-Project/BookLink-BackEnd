@@ -45,18 +45,18 @@ public class HistoryDto {
     @AllArgsConstructor
     public static class RentHistory {
 
-        private LocalDate date;
+        private LocalDateTime date;
         private String type;
         private String content;
         private Integer price;
         private String info_title;
         private String info_author;
         private String info_publisher;
-        private String info_whose;
+        private String info_owner;
         private LocalDate info_rent_from;
         private LocalDate info_rent_to;
-        private LocalDateTime info_pay_date;
-        // private Card card;
+        private String info_card_name;
+        private String return_location;
 
     }
 
