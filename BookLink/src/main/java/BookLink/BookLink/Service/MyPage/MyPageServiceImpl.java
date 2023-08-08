@@ -24,6 +24,7 @@ import BookLink.BookLink.Repository.CommunityReply.BookReport.BookReportReplyRep
 import BookLink.BookLink.Repository.CommunityReply.FreeBoard.FreeBoardReplyRepository;
 import BookLink.BookLink.Repository.Member.MemberRepository;
 import BookLink.BookLink.Service.Book.BookServiceImpl;
+import BookLink.BookLink.Service.S3.S3Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -31,7 +32,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -46,6 +50,7 @@ public class MyPageServiceImpl implements MyPageService {
 
     private final PasswordEncoder passwordEncoder;
     private final BookServiceImpl bookServiceImpl;
+    private final S3Service s3Service;
 
     private final MemberRepository memberRepository;
     private final BookRepository bookRepository;
@@ -371,7 +376,7 @@ public class MyPageServiceImpl implements MyPageService {
 
     @Override
     @Transactional
-    public ResponseDto updateAccount(AccountDto.Request accountDto, Member loginMember) {
+    public ResponseDto updateAccount(MultipartFile image, AccountDto.Request accountDto, Member loginMember) throws IOException {
 
         ResponseDto responseDto = new ResponseDto();
 
@@ -384,8 +389,10 @@ public class MyPageServiceImpl implements MyPageService {
             encodedPassword = null;
         }
 
+        URL imageUrl = s3Service.uploadImage(image);
+
         selectedMember.updateAccount(
-                accountDto.getImage(),
+                imageUrl,
                 accountDto.getName(),
                 accountDto.getNickname(),
                 accountDto.getEmail(),

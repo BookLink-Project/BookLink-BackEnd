@@ -4,6 +4,9 @@ import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.MyPage.AccountDto;
 import BookLink.BookLink.Domain.MyPage.VerifyDto;
 import BookLink.BookLink.Domain.ResponseDto;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 public interface MyPageService {
 
@@ -13,6 +16,6 @@ public interface MyPageService {
 
     ResponseDto verifyAccount(VerifyDto verifyDto, Member member);
 
-    ResponseDto updateAccount(AccountDto.Request accountDto, Member member);
+    ResponseDto updateAccount(MultipartFile image, AccountDto.Request accountDto, Member member) throws IOException;
 
 }

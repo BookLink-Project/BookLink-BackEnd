@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.URL;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +22,7 @@ public class S3Service {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public String uploadImage(MultipartFile multipartFile) throws IOException { // 이미지 저장
+    public URL uploadImage(MultipartFile multipartFile) throws IOException { // 이미지 저장
         String originalFilename = multipartFile.getOriginalFilename();
 
         ObjectMetadata metadata = new ObjectMetadata();
@@ -29,7 +30,7 @@ public class S3Service {
         metadata.setContentType(multipartFile.getContentType());
 
         amazonS3.putObject(bucket, originalFilename, multipartFile.getInputStream(), metadata);
-        return amazonS3.getUrl(bucket, originalFilename).toString();
+        return amazonS3.getUrl(bucket, originalFilename);
     }
 
     public ResponseEntity<UrlResource> downloadImage(String originalFilename) { // 이미지 다운로드

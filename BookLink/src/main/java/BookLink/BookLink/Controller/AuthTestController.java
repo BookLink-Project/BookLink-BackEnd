@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.URL;
 
 
 /**
@@ -31,7 +32,7 @@ public class AuthTestController {
     }
 
     @PostMapping("/upload")
-    public String uploadFile(@RequestPart(value = "file") MultipartFile multipartFile) throws IOException {
+    public URL uploadFile(@RequestPart(value = "file") MultipartFile multipartFile) throws IOException {
 
         return s3Service.uploadImage(multipartFile);
     }
