@@ -7,10 +7,14 @@ import BookLink.BookLink.Domain.MyPage.VerifyDto;
 import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Service.MyPage.MyPageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @Controller
 @RequiredArgsConstructor
@@ -40,15 +44,29 @@ public class MyPageController {
                 .body(responseDto);
     }
 
-    @PatchMapping("/account") // 계정 정보 수정
-    public ResponseEntity<ResponseDto> updateAccount(@RequestBody AccountDto.Request accountDto,
-                                                     @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
+    @PatchMapping(value = "/account",
+                  consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE}) // 계정 정보 수정
+    public ResponseEntity<ResponseDto> updateAccount(@RequestPart MultipartFile image,
+                                                     @RequestPart AccountDto.Request data,
+                                                     @AuthenticationPrincipal MemberPrincipal memberPrincipal)
+                                                                                                throws IOException {
 
         Member member = memberPrincipal.getMember();
-        ResponseDto responseDto = myPageService.updateAccount(accountDto, member);
+        ResponseDto responseDto = myPageService.updateAccount(image, data, member);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);
     }
 
+    @GetMapping("") // 나의 활동
+    public ResponseEntity<ResponseDto> showMyHistory(@RequestParam(required = false, defaultValue = "payment") String rent,
+                                                     @RequestParam(required = false, defaultValue = "review") String community,
+                                                     @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
+
+        Member member = memberPrincipal.getMember();
+        ResponseDto responseDto = myPageService.showHistory(member, rent, community);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+    }
 }

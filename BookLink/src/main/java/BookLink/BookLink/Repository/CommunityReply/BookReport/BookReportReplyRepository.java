@@ -18,4 +18,6 @@ public interface BookReportReplyRepository extends JpaRepository<BookReportReply
 
     Long countByParentId(Long parentId);
 
+    List<BookReportReply> findByWriterOrderByCreatedTimeDesc(Member member);
+
 }

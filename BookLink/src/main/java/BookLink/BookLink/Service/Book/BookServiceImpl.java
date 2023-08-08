@@ -169,14 +169,7 @@ public class BookServiceImpl implements BookService {
 
         RestTemplate restTemplate = new RestTemplate();
 
-        URI bookUri = UriComponentsBuilder
-                .fromUriString(detail_url)
-                .queryParam("ItemId", isbn13)
-                .build().encode(StandardCharsets.UTF_8).toUri();
-
-        ResponseEntity<BookDetailDto> resultResponse = restTemplate.exchange(bookUri, HttpMethod.GET, null, BookDetailDto.class);
-
-        BookDetailDto result = resultResponse.getBody(); // not return null
+        BookDetailDto result = showBookApi(isbn13, restTemplate);
 
         if (result == null) {
             return responseDto; // all null
@@ -294,6 +287,18 @@ public class BookServiceImpl implements BookService {
         responseDto.setData(result);
 
         return responseDto;
+    }
+
+    public BookDetailDto showBookApi(String isbn13, RestTemplate restTemplate) {
+
+        URI bookUri = UriComponentsBuilder
+                .fromUriString(detail_url)
+                .queryParam("ItemId", isbn13)
+                .build().encode(StandardCharsets.UTF_8).toUri();
+
+        ResponseEntity<BookDetailDto> resultResponse = restTemplate.exchange(bookUri, HttpMethod.GET, null, BookDetailDto.class);
+
+        return resultResponse.getBody(); // not return null
     }
 
     @Override
