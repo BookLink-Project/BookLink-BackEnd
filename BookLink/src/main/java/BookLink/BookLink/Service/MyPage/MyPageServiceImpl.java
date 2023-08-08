@@ -13,6 +13,8 @@ import BookLink.BookLink.Domain.MyPage.AccountDto;
 import BookLink.BookLink.Domain.MyPage.HistoryDto;
 import BookLink.BookLink.Domain.MyPage.VerifyDto;
 import BookLink.BookLink.Domain.ResponseDto;
+import BookLink.BookLink.Exception.Enum.CommonErrorCode;
+import BookLink.BookLink.Exception.RestApiException;
 import BookLink.BookLink.Repository.Book.BookLikeRepository;
 import BookLink.BookLink.Repository.Book.BookRepository;
 import BookLink.BookLink.Repository.BookReply.BookReplyRepository;
@@ -41,6 +43,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -381,6 +384,19 @@ public class MyPageServiceImpl implements MyPageService {
         ResponseDto responseDto = new ResponseDto();
 
         Member selectedMember = memberRepository.findById(loginMember.getId()).orElse(null);
+
+        Member findWithEmail = memberRepository.findByEmail(accountDto.getEmail()).orElse(null);
+        Member findWithNickname = memberRepository.findByNickname(accountDto.getNickname()).orElse(null);
+        if ( findWithEmail!=null && findWithEmail!=selectedMember ) {
+            responseDto.setStatus(HttpStatus.CONFLICT);
+            responseDto.setMessage("이메일 중복");
+            return responseDto;
+        }
+        if (findWithNickname!=null && findWithNickname!=selectedMember) {
+            responseDto.setStatus(HttpStatus.CONFLICT);
+            responseDto.setMessage("닉네임 중복");
+            return responseDto;
+        }
 
         String encodedPassword;
         if (!accountDto.getPassword().equals("")) {
