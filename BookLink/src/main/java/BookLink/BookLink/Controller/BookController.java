@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -127,7 +128,7 @@ public class BookController {
                 .body(responseDto);
     }
 
-    // 대여 가능 책 리스트뷰
+    // 대여 가능 책 리스트뷰(업데이트순 - 디폴트)
     @GetMapping("/rent")
     public ResponseEntity<ResponseDto> rentBookList() {
 
@@ -136,4 +137,46 @@ public class BookController {
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);
     }
+
+    // 대여 가능 책 리스트뷰(책 등록 건수 순서)
+    @GetMapping("/rent/desc")
+    public ResponseEntity<ResponseDto> rentBookDescList() {
+
+        ResponseDto responseDto = bookService.rentBookDescList();
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+    }
+
+    // 대여 책 카테고리
+    @GetMapping("/rent/{category}")
+    public ResponseEntity<ResponseDto> rentBookCategoryList(@PathVariable String category) {
+
+        ResponseDto responseDto = bookService.rentBookCategoryList(category);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+    }
+
+    // 대여 책 카테고리(책 등록 건수 순서)
+    @GetMapping("/rent/desc/{category}")
+    public ResponseEntity<ResponseDto> rentBookCategoryDescList(@PathVariable String category) {
+
+        ResponseDto responseDto = bookService.rentBookCategoryDescList(category);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+    }
+
+    // 대여 책 제목 검색
+    @GetMapping("/rent/{title}")
+    public ResponseEntity<ResponseDto> rentBookSearch(@PathVariable String title) {
+
+        ResponseDto responseDto = bookService.rentBookSearch(title);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+    }
+
+
 }

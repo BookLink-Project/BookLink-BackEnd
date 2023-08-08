@@ -355,16 +355,24 @@ public class BookServiceImpl implements BookService {
         return responseDto;
     }
 
-    @Override
-    public ResponseDto rentBookList() {
+    private void paging(List<String> titles, List<BookRentListDto> bookRentList) {
+        int chunkSize = 16;
+        int totalSize = titles.size();
 
-        ResponseDto responseDto = new ResponseDto();
+        for (int i = 0; i < totalSize; i += chunkSize) {
+            int endIdx = Math.min(i + chunkSize, totalSize);
+            List<String> chunkDistinctTitles = titles.subList(i, endIdx);
 
-        List<String> distinctTitles = bookRepository.findDistinctTitles();
+            List<BookRentListDto> chunkBookRentList = processChunkTitles(chunkDistinctTitles);
+            bookRentList.addAll(chunkBookRentList);
+        }
+    }
 
-        List<BookRentListDto> bookRentList = new ArrayList<>();
+    private List<BookRentListDto> processChunkTitles(List<String> titles) {
 
-        for (String title : distinctTitles) {
+        List<BookRentListDto> chunkBookRentList = new ArrayList<>();
+
+        for (String title : titles) {
 
             int avg_fee = 0;
             int total_fee = 0;
@@ -399,10 +407,113 @@ public class BookServiceImpl implements BookService {
                     .rent_period(max_period)
                     .build();
 
-            bookRentList.add(bookRentListDto);
+            chunkBookRentList.add(bookRentListDto);
         }
+
+        return chunkBookRentList;
+    }
+
+    @Override
+    public ResponseDto rentBookList() {
+
+        ResponseDto responseDto = new ResponseDto();
+
+        List<String> titles = bookRepository.findDistinctTitles();
+        List<BookRentListDto> bookRentList = new ArrayList<>();
+
+        paging(titles, bookRentList);
 
         responseDto.setData(bookRentList);
         return responseDto;
     }
+
+    @Override
+    public ResponseDto rentBookDescList() {
+
+        ResponseDto responseDto = new ResponseDto();
+        List<BookRentListDto> bookRentList = new ArrayList<>();
+
+        List<String> titles = bookRepository.findTitlesOrderByTitleCountDesc();
+
+        paging(titles, bookRentList);
+
+        responseDto.setData(bookRentList);
+        return responseDto;
+
+    }
+
+    @Override
+    public ResponseDto rentBookCategoryList(String category) {
+
+        ResponseDto responseDto = new ResponseDto();
+        List<BookRentListDto> bookRentList = new ArrayList<>();
+
+        List<String> titles = bookRepository.findTitlesByCategory_name(category);
+
+        paging(titles, bookRentList);
+
+        responseDto.setData(bookRentList);
+        return responseDto;
+    }
+
+    @Override
+    public ResponseDto rentBookCategoryDescList(String category) {
+
+        ResponseDto responseDto = new ResponseDto();
+        List<BookRentListDto> bookRentList = new ArrayList<>();
+
+        List<String> titles = bookRepository.findTitlesByCategory_nameCountDesc(category);
+
+        paging(titles, bookRentList);
+
+        responseDto.setData(bookRentList);
+        return responseDto;
+    }
+
+    @Override
+    public ResponseDto rentBookSearch(String title) {
+
+        ResponseDto responseDto = new ResponseDto();
+
+        int avg_fee = 0;
+        int total_fee = 0;
+        int count = 0;
+        int max_period = 0;
+
+        List<Book> books = bookRepository.findByTitle(title);
+        count = books.size();
+
+        for (Book book : books) {
+            BookRent bookRent = book.getBookRent();
+            Integer rental_fee = bookRent.getRental_fee();
+            Integer max_date = bookRent.getMax_date();
+
+            if (max_date > max_period) {
+                max_period = max_date;
+            }
+
+            total_fee += rental_fee;
+        }
+
+        avg_fee = total_fee / count;
+
+        Book book = books.get(0);
+
+        BookRentListDto bookRentListDto = BookRentListDto.builder()
+                .title(book.getTitle())
+                .authors(book.getAuthors())
+                .cover(book.getCover())
+                .publisher(book.getPublisher())
+                .avg_rental_fee(avg_fee)
+                .rent_period(max_period)
+                .build();
+
+        responseDto.setData(bookRentListDto);
+
+        return responseDto;
+    }
 }
+
+
+
+

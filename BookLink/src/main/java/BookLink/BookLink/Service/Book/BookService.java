@@ -21,4 +21,12 @@ public interface BookService {
 
     ResponseDto rentBookList();
 
+    ResponseDto rentBookDescList();
+
+    ResponseDto rentBookCategoryList(String category);
+
+    ResponseDto rentBookCategoryDescList(String category);
+
+    ResponseDto rentBookSearch(String title);
+
 }
