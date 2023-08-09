@@ -356,24 +356,16 @@ public class BookServiceImpl implements BookService {
         return responseDto;
     }
 
-    private void paging(List<String> titles, List<BookRentDto> bookRentList) {
+    private List<BookRentDto> processChunkTitles(List<String> titles, Integer page) {
+
         int chunkSize = 16;
         int totalSize = titles.size();
 
-        for (int i = 0; i < totalSize; i += chunkSize) {
-            int endIdx = Math.min(i + chunkSize, totalSize);
-            List<String> chunkDistinctTitles = titles.subList(i, endIdx);
-
-            List<BookRentDto> chunkBookRentList = processChunkTitles(chunkDistinctTitles);
-            bookRentList.addAll(chunkBookRentList);
-        }
-    }
-
-    private List<BookRentDto> processChunkTitles(List<String> titles) {
+        List<String> chunkDistinctTitles = titles.subList((page) * chunkSize, (page + 1) * chunkSize);
 
         List<BookRentDto> chunkBookRentList = new ArrayList<>();
 
-        for (String title : titles) {
+        for (String title : chunkDistinctTitles) {
 
             int avg_fee = 0;
             int total_fee = 0;
@@ -415,59 +407,55 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public ResponseDto rentBookList() {
+    public ResponseDto rentBookList(Integer page) {
 
         ResponseDto responseDto = new ResponseDto();
 
         List<String> titles = bookRepository.findDistinctTitles();
-        List<BookRentDto> bookRentList = new ArrayList<>();
 
-        paging(titles, bookRentList);
+        List<BookRentDto> bookRentDtoList = processChunkTitles(titles, page);
 
-        responseDto.setData(bookRentList);
+        responseDto.setData(bookRentDtoList);
         return responseDto;
     }
 
     @Override
-    public ResponseDto rentBookDescList() {
+    public ResponseDto rentBookDescList(Integer page) {
 
         ResponseDto responseDto = new ResponseDto();
-        List<BookRentDto> bookRentList = new ArrayList<>();
 
         List<String> titles = bookRepository.findTitlesOrderByTitleCountDesc();
 
-        paging(titles, bookRentList);
+        List<BookRentDto> bookRentDtoList = processChunkTitles(titles, page);
 
-        responseDto.setData(bookRentList);
+        responseDto.setData(bookRentDtoList);
         return responseDto;
 
     }
 
     @Override
-    public ResponseDto rentBookCategoryList(String category) {
+    public ResponseDto rentBookCategoryList(String category, Integer page) {
 
         ResponseDto responseDto = new ResponseDto();
-        List<BookRentDto> bookRentList = new ArrayList<>();
 
         List<String> titles = bookRepository.findTitlesByCategory_name(category);
 
-        paging(titles, bookRentList);
+        List<BookRentDto> bookRentDtoList = processChunkTitles(titles, page);
 
-        responseDto.setData(bookRentList);
+        responseDto.setData(bookRentDtoList);
         return responseDto;
     }
 
     @Override
-    public ResponseDto rentBookCategoryDescList(String category) {
+    public ResponseDto rentBookCategoryDescList(String category, Integer page) {
 
         ResponseDto responseDto = new ResponseDto();
-        List<BookRentDto> bookRentList = new ArrayList<>();
 
         List<String> titles = bookRepository.findTitlesByCategory_nameCountDesc(category);
 
-        paging(titles, bookRentList);
+        List<BookRentDto> bookRentDtoList = processChunkTitles(titles, page);
 
-        responseDto.setData(bookRentList);
+        responseDto.setData(bookRentDtoList);
         return responseDto;
     }
 

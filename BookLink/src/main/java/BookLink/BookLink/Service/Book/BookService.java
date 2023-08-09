@@ -19,13 +19,13 @@ public interface BookService {
 
     ResponseDto likeBook(Member member, String isbn);
 
-    ResponseDto rentBookList();
+    ResponseDto rentBookList(Integer page);
 
-    ResponseDto rentBookDescList();
+    ResponseDto rentBookDescList(Integer page);
 
-    ResponseDto rentBookCategoryList(String category);
+    ResponseDto rentBookCategoryList(String category, Integer page);
 
-    ResponseDto rentBookCategoryDescList(String category);
+    ResponseDto rentBookCategoryDescList(String category, Integer page);
 
     ResponseDto rentBookSearch(String title);
 

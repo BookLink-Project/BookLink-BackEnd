@@ -129,47 +129,47 @@ public class BookController {
     }
 
     // 대여 가능 책 리스트뷰(업데이트순 - 디폴트)
-    @GetMapping("/rent")
-    public ResponseEntity<ResponseDto> rentBookList() {
+    @GetMapping("/rent/{page}")
+    public ResponseEntity<ResponseDto> rentBookList(@PathVariable Integer page) {
 
-        ResponseDto responseDto = bookService.rentBookList();
+        ResponseDto responseDto = bookService.rentBookList(page);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);
     }
 
     // 대여 가능 책 리스트뷰(책 등록 건수 순서)
-    @GetMapping("/rent/desc")
-    public ResponseEntity<ResponseDto> rentBookDescList() {
+    @GetMapping("/rent/desc/{page}")
+    public ResponseEntity<ResponseDto> rentBookDescList(@PathVariable Integer page) {
 
-        ResponseDto responseDto = bookService.rentBookDescList();
+        ResponseDto responseDto = bookService.rentBookDescList(page);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);
     }
 
     // 대여 책 카테고리
-    @GetMapping("/rent/{category}")
-    public ResponseEntity<ResponseDto> rentBookCategoryList(@PathVariable String category) {
+    @GetMapping("/rent/{category}/{page}")
+    public ResponseEntity<ResponseDto> rentBookCategoryList(@PathVariable String category, @PathVariable Integer page) {
 
-        ResponseDto responseDto = bookService.rentBookCategoryList(category);
+        ResponseDto responseDto = bookService.rentBookCategoryList(category, page);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);
     }
 
     // 대여 책 카테고리(책 등록 건수 순서)
-    @GetMapping("/rent/desc/{category}")
-    public ResponseEntity<ResponseDto> rentBookCategoryDescList(@PathVariable String category) {
+    @GetMapping("/rent/desc/{category}/{page}")
+    public ResponseEntity<ResponseDto> rentBookCategoryDescList(@PathVariable String category, @PathVariable Integer page) {
 
-        ResponseDto responseDto = bookService.rentBookCategoryDescList(category);
+        ResponseDto responseDto = bookService.rentBookCategoryDescList(category, page);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);
     }
 
     // 대여 책 제목 검색
-    @GetMapping("/rent/search/{title}")
+    @GetMapping("/rent/search/{title}/{page}")
     public ResponseEntity<ResponseDto> rentBookSearch(@PathVariable String title) {
 
         ResponseDto responseDto = bookService.rentBookSearch(title);
