@@ -1,6 +1,7 @@
 package BookLink.BookLink.Controller;
 
 import BookLink.BookLink.Domain.Book.BookDto;
+import BookLink.BookLink.Domain.Book.RentDto;
 import BookLink.BookLink.Domain.BookReply.BookReplyUpdateDto;
 import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.Member.MemberPrincipal;
@@ -169,7 +170,7 @@ public class BookController {
     }
 
     // 대여 책 제목 검색
-    @GetMapping("/rent/search/{title}/{page}")
+    @GetMapping("/rent/search/{title}")
     public ResponseEntity<ResponseDto> rentBookSearch(@PathVariable String title) {
 
         ResponseDto responseDto = bookService.rentBookSearch(title);
@@ -196,4 +197,17 @@ public class BookController {
                 .body(responseDto);
     }
 
+    // 수락은 대여를 해주는 사람이..
+    @PostMapping("/rent/register/{id}")
+    public ResponseEntity<ResponseDto> rentRegister(@PathVariable Long id, @RequestBody RentDto rentDto,
+                                                    @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
+
+        Member lender = memberPrincipal.getMember();
+
+        ResponseDto responseDto = bookService.rentSuccess(id, rentDto, lender);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+
+    }
 }

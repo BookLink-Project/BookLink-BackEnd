@@ -74,4 +74,14 @@ public class MyPageServiceImpl implements MyPageService {
         responseDto.setStatus(HttpStatus.CREATED);
         return responseDto;
     }
+
+
+
+    @Override
+    public ResponseDto myRentBook(Integer page) {
+
+        ResponseDto responseDto = new ResponseDto();
+
+        return null;
+    }
 }

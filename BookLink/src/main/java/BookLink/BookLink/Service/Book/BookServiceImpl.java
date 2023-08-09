@@ -13,9 +13,11 @@ import BookLink.BookLink.Exception.RestApiException;
 import BookLink.BookLink.Repository.Book.BookLikeRepository;
 import BookLink.BookLink.Repository.Book.BookRentRepository;
 import BookLink.BookLink.Repository.Book.BookRepository;
+import BookLink.BookLink.Repository.Book.RentRepository;
 import BookLink.BookLink.Repository.BookReply.BookReplyLikeRepository;
 import BookLink.BookLink.Repository.Community.BookReport.BookReportRepository;
 import BookLink.BookLink.Repository.BookReply.BookReplyRepository;
+import BookLink.BookLink.Repository.Member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
@@ -44,6 +46,8 @@ public class BookServiceImpl implements BookService {
     private final BookReplyRepository bookReplyRepository;
     private final BookReplyLikeRepository bookReplyLikeRepository;
     private final BookReportRepository bookReportRepository;
+    private final RentRepository rentRepository;
+    private final MemberRepository memberRepository;
 
     private String search_url = "http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=ttbelwlahstmxjf2304001&QueryType=Title&MaxResults=32&start=1&SearchTarget=Book&Cover=Big&output=js&InputEncoding=utf-8&Version=20131101";
     private String list_url = "http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=ttbelwlahstmxjf2304001&QueryType=Bestseller&MaxResults=32&start=1&SearchTarget=Book&Cover=Big&output=js&Version=20131101";
@@ -620,6 +624,39 @@ public class BookServiceImpl implements BookService {
         responseDto.setData(bookRentDetailDto);
         return responseDto;
 
+    }
+
+    @Override
+    public ResponseDto rentSuccess(Long id, RentDto rentDto, Member lender) {
+
+        ResponseDto responseDto = new ResponseDto();
+
+        Book book = bookRepository.findById(id).orElse(null);
+
+        if (book == null) {
+            responseDto.setMessage("없는 책 입니다.");
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            return responseDto;
+        }
+
+        Member renter = memberRepository.findByNickname(rentDto.getNickname()).orElse(null);
+
+        if (renter == null) {
+            responseDto.setMessage("없는 회원입니다.");
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            return responseDto;
+        }
+
+        Rent rent = Rent.builder()
+                .book(book)
+                .lender(lender)
+                .renter(renter)
+                .rent_date(rentDto.getPeriod())
+                .build();
+
+        rentRepository.save(rent);
+
+        return responseDto;
     }
 }
 

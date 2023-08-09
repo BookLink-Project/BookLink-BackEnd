@@ -51,4 +51,10 @@ public class MyPageController {
                 .body(responseDto);
     }
 
+    @GetMapping("/my-book/rent/{page}")
+    public ResponseEntity<ResponseDto> myRentBook(@PathVariable Integer page) {
+
+
+    }
+
 }

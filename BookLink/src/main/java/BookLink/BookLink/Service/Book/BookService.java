@@ -1,6 +1,7 @@
 package BookLink.BookLink.Service.Book;
 
 import BookLink.BookLink.Domain.Book.BookDto;
+import BookLink.BookLink.Domain.Book.RentDto;
 import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.Member.MemberPrincipal;
 import BookLink.BookLink.Domain.ResponseDto;
@@ -32,4 +33,6 @@ public interface BookService {
     ResponseDto rentBooks(String title);
 
     ResponseDto rentBookDetail(Long id);
+
+    ResponseDto rentSuccess(Long id, RentDto rentDto, Member lender);
 }
