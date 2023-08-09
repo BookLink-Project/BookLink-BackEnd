@@ -31,4 +31,5 @@ public interface BookService {
 
     ResponseDto rentBooks(String title);
 
+    ResponseDto rentBookDetail(Long id);
 }

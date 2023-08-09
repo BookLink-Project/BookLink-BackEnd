@@ -1,7 +1,9 @@
 package BookLink.BookLink.Domain.Book;
 
 import BookLink.BookLink.Domain.Common.BaseTimeEntity;
+import BookLink.BookLink.Domain.Common.RentStatus;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -15,6 +17,9 @@ public class BookRent extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ColumnDefault("WAITING")
+    private RentStatus rent_status; // renting/waiting
 
     private String book_rating; // 책 상태 등급
 
@@ -37,7 +42,8 @@ public class BookRent extends BaseTimeEntity {
 //    private Book book
 
     @Builder
-    public BookRent(String book_rating, String book_status, Integer rental_fee, Integer min_date, Integer max_date, String rent_location, String rent_method) {
+    public BookRent(String book_rating, String book_status, Integer rental_fee, Integer min_date, Integer max_date,
+                    String rent_location, String rent_method) {
         this.book_rating = book_rating;
         this.book_status = book_status;
         this.rental_fee = rental_fee;
@@ -45,6 +51,14 @@ public class BookRent extends BaseTimeEntity {
         this.max_date = max_date;
         this.rent_location = rent_location;
         this.rent_method = rent_method;
+    }
+
+    public void toRent() {
+        this.rent_status = RentStatus.RENTING;
+    }
+
+    public void toWait() {
+        this.rent_status = RentStatus.WAITING;
     }
 
 }

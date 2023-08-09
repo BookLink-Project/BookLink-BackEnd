@@ -1,6 +1,7 @@
 package BookLink.BookLink.Service.Book;
 
 import BookLink.BookLink.Domain.Book.*;
+import BookLink.BookLink.Domain.Common.RentStatus;
 import BookLink.BookLink.Domain.Community.BookReport.BookReport;
 import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.Member.MemberPrincipal;
@@ -540,6 +541,97 @@ public class BookServiceImpl implements BookService {
         responseDto.setData(bookRentInfoDtoList);
 
         return responseDto;
+    }
+
+    @Override
+    public ResponseDto rentBookDetail(Long id) {
+
+        ResponseDto responseDto = new ResponseDto();
+
+        List<BookRecordDto> bookRecordDtoList = new ArrayList<>();
+        List<BookRentInfoDto> bookRentInfoDtoList = new ArrayList<>();
+
+        int rent_available_cnt = 0;
+        int renting_cnt = 0;
+
+        Book book_byId = bookRepository.findById(id).orElse(null);
+
+        if (book_byId == null) {
+            responseDto.setMessage("기록되지 않은 책입니다.");
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            return responseDto;
+        }
+
+        BookRent bookRent_byId = book_byId.getBookRent();
+
+        Member member = book_byId.getMember();
+        List<Book> books = member.getBooks(); // 해당 회원이 기록한 책들
+
+        for (Book book : books) {
+            BookRent bookRent = book.getBookRent();
+
+            RentStatus rent_status = bookRent.getRent_status();
+
+            if (rent_status == RentStatus.RENTING) {
+                renting_cnt += 1;
+            } else {
+                rent_available_cnt += 1;
+            }
+
+            BookRecordDto bookRecordDto = BookRecordDto.builder()
+                    .rent_status(rent_status)
+                    .title(book.getTitle())
+                    .authors(book.getAuthors())
+                    .cover(book.getCover())
+                    .created_time(book.getCreatedTime())
+                    .publisher(book.getPublisher())
+                    .rental_fee(bookRent.getRental_fee())
+                    .build();
+
+            bookRecordDtoList.add(bookRecordDto);
+        }
+
+        List<Book> another_books = bookRepository.findByTitle(book_byId.getTitle());
+
+        for (Book another_book : another_books) {
+            BookRent bookRent = another_book.getBookRent();
+
+            BookRentInfoDto bookRentInfoDto = BookRentInfoDto.builder()
+                    .writer(another_book.getMember().getNickname())
+                    .created_time(bookRent.getCreatedTime())
+                    .book_rating(bookRent.getBook_rating())
+                    .rental_fee(bookRent.getRental_fee())
+                    .max_date(bookRent.getMax_date())
+                    .rent_location(bookRent.getRent_location())
+                    .build();
+
+            bookRentInfoDtoList.add(bookRentInfoDto);
+        }
+
+        BookRentDetailDto bookRentDetailDto = BookRentDetailDto.builder()
+                .record_cnt(books.size())
+                .rent_available_cnt(rent_available_cnt)
+                .renting_cnt(renting_cnt)
+                .bookRecordDtoList(bookRecordDtoList)
+                .title(book_byId.getTitle())
+                .authors(book_byId.getAuthors())
+                .recommendation(book_byId.getRecommendation())
+                .isbn(book_byId.getIsbn())
+                .cover(book_byId.getCover())
+                .publisher(book_byId.getPublisher())
+                .book_rating(bookRent_byId.getBook_rating())
+                .rent_location(bookRent_byId.getRent_location())
+                .rent_method(bookRent_byId.getRent_method())
+                .min_date(bookRent_byId.getMin_date())
+                .max_date(bookRent_byId.getMax_date())
+                .rental_fee(bookRent_byId.getRental_fee())
+                .book_status(bookRent_byId.getBook_status())
+                .bookRentInfoDtoList(bookRentInfoDtoList)
+                .build();
+
+        responseDto.setData(bookRentDetailDto);
+        return responseDto;
+
     }
 }
 

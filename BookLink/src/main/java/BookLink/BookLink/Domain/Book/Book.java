@@ -52,7 +52,7 @@ public class Book extends BaseTimeEntity {
     private Boolean rent_signal; // 대여 신청 가능 여부
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "writer")
     private Member member;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)

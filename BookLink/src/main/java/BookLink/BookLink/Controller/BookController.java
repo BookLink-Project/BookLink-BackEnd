@@ -190,8 +190,10 @@ public class BookController {
     @GetMapping("/rent/detail/{id}")
     public ResponseEntity<ResponseDto> rentDetail(@PathVariable Long id) {
 
+        ResponseDto responseDto = bookService.rentBookDetail(id);
 
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
     }
-
 
 }
