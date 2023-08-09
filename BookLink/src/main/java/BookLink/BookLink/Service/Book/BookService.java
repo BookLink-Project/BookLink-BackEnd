@@ -29,4 +29,6 @@ public interface BookService {
 
     ResponseDto rentBookSearch(String title);
 
+    ResponseDto rentBooks(String title);
+
 }

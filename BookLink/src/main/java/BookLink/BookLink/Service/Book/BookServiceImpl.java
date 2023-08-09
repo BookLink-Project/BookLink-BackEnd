@@ -355,7 +355,7 @@ public class BookServiceImpl implements BookService {
         return responseDto;
     }
 
-    private void paging(List<String> titles, List<BookRentListDto> bookRentList) {
+    private void paging(List<String> titles, List<BookRentDto> bookRentList) {
         int chunkSize = 16;
         int totalSize = titles.size();
 
@@ -363,14 +363,14 @@ public class BookServiceImpl implements BookService {
             int endIdx = Math.min(i + chunkSize, totalSize);
             List<String> chunkDistinctTitles = titles.subList(i, endIdx);
 
-            List<BookRentListDto> chunkBookRentList = processChunkTitles(chunkDistinctTitles);
+            List<BookRentDto> chunkBookRentList = processChunkTitles(chunkDistinctTitles);
             bookRentList.addAll(chunkBookRentList);
         }
     }
 
-    private List<BookRentListDto> processChunkTitles(List<String> titles) {
+    private List<BookRentDto> processChunkTitles(List<String> titles) {
 
-        List<BookRentListDto> chunkBookRentList = new ArrayList<>();
+        List<BookRentDto> chunkBookRentList = new ArrayList<>();
 
         for (String title : titles) {
 
@@ -398,7 +398,7 @@ public class BookServiceImpl implements BookService {
 
             Book book = books.get(0);
 
-            BookRentListDto bookRentListDto = BookRentListDto.builder()
+            BookRentDto bookRentListDto = BookRentDto.builder()
                     .title(book.getTitle())
                     .authors(book.getAuthors())
                     .cover(book.getCover())
@@ -419,7 +419,7 @@ public class BookServiceImpl implements BookService {
         ResponseDto responseDto = new ResponseDto();
 
         List<String> titles = bookRepository.findDistinctTitles();
-        List<BookRentListDto> bookRentList = new ArrayList<>();
+        List<BookRentDto> bookRentList = new ArrayList<>();
 
         paging(titles, bookRentList);
 
@@ -431,7 +431,7 @@ public class BookServiceImpl implements BookService {
     public ResponseDto rentBookDescList() {
 
         ResponseDto responseDto = new ResponseDto();
-        List<BookRentListDto> bookRentList = new ArrayList<>();
+        List<BookRentDto> bookRentList = new ArrayList<>();
 
         List<String> titles = bookRepository.findTitlesOrderByTitleCountDesc();
 
@@ -446,7 +446,7 @@ public class BookServiceImpl implements BookService {
     public ResponseDto rentBookCategoryList(String category) {
 
         ResponseDto responseDto = new ResponseDto();
-        List<BookRentListDto> bookRentList = new ArrayList<>();
+        List<BookRentDto> bookRentList = new ArrayList<>();
 
         List<String> titles = bookRepository.findTitlesByCategory_name(category);
 
@@ -460,7 +460,7 @@ public class BookServiceImpl implements BookService {
     public ResponseDto rentBookCategoryDescList(String category) {
 
         ResponseDto responseDto = new ResponseDto();
-        List<BookRentListDto> bookRentList = new ArrayList<>();
+        List<BookRentDto> bookRentList = new ArrayList<>();
 
         List<String> titles = bookRepository.findTitlesByCategory_nameCountDesc(category);
 
@@ -499,7 +499,7 @@ public class BookServiceImpl implements BookService {
 
         Book book = books.get(0);
 
-        BookRentListDto bookRentListDto = BookRentListDto.builder()
+        BookRentDto bookRentDto = BookRentDto.builder()
                 .title(book.getTitle())
                 .authors(book.getAuthors())
                 .cover(book.getCover())
@@ -508,7 +508,36 @@ public class BookServiceImpl implements BookService {
                 .rent_period(max_period)
                 .build();
 
-        responseDto.setData(bookRentListDto);
+        responseDto.setData(bookRentDto);
+
+        return responseDto;
+    }
+
+    @Override
+    public ResponseDto rentBooks(String title) {
+
+        ResponseDto responseDto = new ResponseDto();
+        List<BookRentInfoDto> bookRentInfoDtoList = new ArrayList<>();
+
+        List<Book> books = bookRepository.findByTitle(title);
+
+        for (Book book : books) {
+
+            BookRent bookRent = book.getBookRent();
+
+            BookRentInfoDto bookRentInfoDto = BookRentInfoDto.builder()
+                    .writer(book.getMember().getNickname())
+                    .created_time(bookRent.getCreatedTime())
+                    .book_rating(bookRent.getBook_rating())
+                    .rental_fee(bookRent.getRental_fee())
+                    .max_date(bookRent.getMax_date())
+                    .rent_location(bookRent.getRent_location())
+                    .build();
+
+            bookRentInfoDtoList.add(bookRentInfoDto);
+        }
+
+        responseDto.setData(bookRentInfoDtoList);
 
         return responseDto;
     }

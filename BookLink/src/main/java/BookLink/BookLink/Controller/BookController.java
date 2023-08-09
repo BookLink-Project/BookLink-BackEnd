@@ -169,13 +169,28 @@ public class BookController {
     }
 
     // 대여 책 제목 검색
-    @GetMapping("/rent/{title}")
+    @GetMapping("/rent/search/{title}")
     public ResponseEntity<ResponseDto> rentBookSearch(@PathVariable String title) {
 
         ResponseDto responseDto = bookService.rentBookSearch(title);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);
+    }
+
+    @GetMapping("/rent/books/{title}")
+    public ResponseEntity<ResponseDto> rentBooks(@PathVariable String title) {
+
+        ResponseDto responseDto = bookService.rentBooks(title);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+    }
+
+    @GetMapping("/rent/detail/{id}")
+    public ResponseEntity<ResponseDto> rentDetail(@PathVariable Long id) {
+
+
     }
 
 
