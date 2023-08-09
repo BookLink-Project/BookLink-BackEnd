@@ -2,8 +2,8 @@ package BookLink.BookLink.Domain.MyPage;
 
 import BookLink.BookLink.Domain.Card.Card;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -21,8 +21,15 @@ public class HistoryDto {
 
     @Getter
     @Setter
-    @SuperBuilder
-    public static class MyInfo extends AccountDto.Response {
+    @Builder
+    public static class MyInfo {
+
+        private URL image;
+        private String name;
+        private String nickname;
+        private String email;
+        private LocalDate birth;
+        private String address;
 
         private Long canRent; // 대여 가능한 도서
 
