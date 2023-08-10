@@ -210,17 +210,20 @@ public class MyPageServiceImpl implements MyPageService {
 
         for (BookClubReply reply : bookClubReplies) {
 
+            BookClub post = reply.getPost();
             Long parentId = reply.getParent().getId();
+            Long sub_reply_cnt = parentId.equals(reply.getId()) ?
+                    bookClubReplyRepository.countByParentId(parentId) - 1 : 0;
 
             HistoryDto.CommunityHistory community = HistoryDto.CommunityHistory.builder()
                     .type("독서 모임")
-                    .postId(reply.getPost().getId())
-                    .title(reply.getPost().getTitle())
+                    .postId(post.getId())
+                    .title(post.getTitle())
                     .content(reply.getContent())
                     .date(reply.getCreatedTime())
                     .location(null)
                     .like_cnt(reply.getLike_cnt())
-                    .reply_cnt(parentId.equals(reply.getId()) ? bookClubReplyRepository.countByParentId(parentId) - 1 : 0)
+                    .reply_cnt(sub_reply_cnt)
                     .view_cnt(null)
                     .build();
             communityHistoryDto.add(community);
@@ -231,17 +234,20 @@ public class MyPageServiceImpl implements MyPageService {
 
         for (BookReportReply reply : bookReportReplies) {
 
+            BookReport post = reply.getPost();
             Long parentId = reply.getParent().getId();
+            Long sub_reply_cnt = parentId.equals(reply.getId()) ?
+                    bookReportReplyRepository.countByParentId(parentId) - 1 : 0;
 
             HistoryDto.CommunityHistory community = HistoryDto.CommunityHistory.builder()
                     .type("독후감")
-                    .postId(reply.getPost().getId())
-                    .title(reply.getPost().getTitle())
+                    .postId(post.getId())
+                    .title(post.getTitle())
                     .content(reply.getContent())
                     .date(reply.getCreatedTime())
                     .location(null)
                     .like_cnt(reply.getLike_cnt())
-                    .reply_cnt(parentId.equals(reply.getId()) ? bookReportReplyRepository.countByParentId(parentId) - 1 : 0)
+                    .reply_cnt(sub_reply_cnt)
                     .view_cnt(null)
                     .build();
             communityHistoryDto.add(community);
@@ -252,17 +258,20 @@ public class MyPageServiceImpl implements MyPageService {
 
         for (FreeBoardReply reply : freeBoardReplies) {
 
+            FreeBoard post = reply.getPost();
             Long parentId = reply.getParent().getId();
+            Long sub_reply_cnt = parentId.equals(reply.getId()) ?
+                    freeBoardReplyRepository.countByParentId(parentId) - 1 : 0;
 
             HistoryDto.CommunityHistory community = HistoryDto.CommunityHistory.builder()
                     .type("자유글")
-                    .postId(reply.getPost().getId())
-                    .title(reply.getPost().getTitle())
+                    .postId(post.getId())
+                    .title(post.getTitle())
                     .content(reply.getContent())
                     .date(reply.getCreatedTime())
                     .location(null)
                     .like_cnt(reply.getLike_cnt())
-                    .reply_cnt(parentId.equals(reply.getId()) ? freeBoardReplyRepository.countByParentId(parentId) - 1 : 0)
+                    .reply_cnt(sub_reply_cnt)
                     .view_cnt(null)
                     .build();
             communityHistoryDto.add(community);
@@ -284,16 +293,19 @@ public class MyPageServiceImpl implements MyPageService {
             BookDetailDto.Item book = bookServiceImpl.showBookApi(reply.getIsbn(), new RestTemplate()).getItem().get(0);
 
             Long parentId = reply.getParent().getId();
+            String type = parentId.equals(reply.getId()) ? "후기" : "답글";
+            Long sub_reply_cnt = parentId.equals(reply.getId()) ?
+                    bookReplyRepository.countByParentId(parentId) - 1 : 0;
 
             HistoryDto.CommunityHistory community = HistoryDto.CommunityHistory.builder()
-                    .type(parentId.equals(reply.getId()) ? "후기" : "답글")
+                    .type(type)
                     .postId(Long.valueOf(book.getIsbn13()))
                     .title(book.getTitle())
                     .content(reply.getContent())
                     .date(reply.getCreatedTime())
                     .location(null)
                     .like_cnt(reply.getLike_cnt())
-                    .reply_cnt(parentId.equals(reply.getId()) ? bookReplyRepository.countByParentId(parentId) - 1 : 0)
+                    .reply_cnt(sub_reply_cnt)
                     .view_cnt(null)
                     .build();
             communityHistoryDto.add(community);
@@ -305,7 +317,6 @@ public class MyPageServiceImpl implements MyPageService {
 
         List<HistoryDto.RentHistory> rentHistoryDto = new ArrayList<>();
 
-        // TODO for 문 반복문
         HistoryDto.RentHistory payment = HistoryDto.RentHistory.builder()
                 .date(LocalDateTime.of(2023, 7, 26, 16, 42, 0)) // TODO dummy
                 .type("결제")
@@ -328,7 +339,6 @@ public class MyPageServiceImpl implements MyPageService {
 
         List<HistoryDto.RentHistory> rentHistoryDto = new ArrayList<>();
 
-        // TODO for 문 반복문
         HistoryDto.RentHistory over = HistoryDto.RentHistory.builder()
                 .date(LocalDateTime.of(2023, 7, 26, 0, 0, 0)) // TODO dummy
                 .type("연체중")
@@ -373,7 +383,6 @@ public class MyPageServiceImpl implements MyPageService {
                         loginMember.getEmail(),
                         loginMember.getBirth(),
                         loginMember.getAddress()
-                        // loginMember.getCard()
                 )
         );
         return responseDto;
@@ -417,7 +426,6 @@ public class MyPageServiceImpl implements MyPageService {
                 encodedPassword,
                 accountDto.getBirth(),
                 accountDto.getAddress()
-//                accountDto.getCard()
         );
 
         responseDto.setStatus(HttpStatus.CREATED);
