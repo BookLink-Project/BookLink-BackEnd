@@ -11,10 +11,15 @@ import BookLink.BookLink.Service.Book.BookService;
 import BookLink.BookLink.Service.BookReply.BookReplyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -35,13 +40,15 @@ public class BookController {
     }
 
     // 소장도서 등록 및 대여 등록
-    @PostMapping("/register")
-    public ResponseEntity<ResponseDto> registerMyBook(@RequestBody BookDto.Request bookDto,
-                                                      @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
+    @PostMapping(value = "/register",
+            consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<ResponseDto> registerMyBook(@RequestPart List<MultipartFile> image,
+                                                      @RequestBody BookDto.Request bookDto,
+                                                      @AuthenticationPrincipal MemberPrincipal memberPrincipal) throws IOException {
 
         Member member = memberPrincipal.getMember();
 
-        ResponseDto responseDto = bookService.joinMyBook(bookDto, member);
+        ResponseDto responseDto = bookService.joinMyBook(bookDto, member, image);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);

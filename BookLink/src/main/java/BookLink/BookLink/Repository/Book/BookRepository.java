@@ -11,7 +11,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     int findByIsbn(String isbn);
 
-    boolean existsByIsbnAndMember (String isbn, Member member);
+    boolean existsByIsbnAndWriter (String isbn, Member writer);
 
     @Query("SELECT DISTINCT title FROM Book")
     List<String> findDistinctTitles();
@@ -27,11 +27,11 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     @Query("SELECT DISTINCT b.title FROM Book b WHERE b.category_name = :category GROUP BY b.title ORDER BY COUNT(b.title) DESC")
     List<String> findTitlesByCategory_nameCountDesc(String category);
   
-    Long countByMember(Member member);
+    Long countByWriter(Member member);
 
 //    @Query("SELECT COUNT(b) FROM Book b WHERE b.rent_signal = :rent_signal AND b.member_id = :member_id")
 //    long countByRentSignalAndMemberId(@Param("rent_signal") boolean rentSignal, @Param("member_id") Long memberId);
 
-    Long countByRentSignalAndMember(boolean rentSignal, Member member);
+    Long countByRentSignalAndWriter(boolean rentSignal, Member member);
 
 }

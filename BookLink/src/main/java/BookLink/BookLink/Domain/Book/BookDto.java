@@ -1,12 +1,11 @@
 package BookLink.BookLink.Domain.Book;
 
 import BookLink.BookLink.Domain.Member.Member;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+import java.net.URL;
 import java.time.LocalDate;
+import java.util.List;
 
 public class BookDto {
 
@@ -29,7 +28,6 @@ public class BookDto {
         private Boolean rent_signal; // 대여 신청 가능 여부
 
         private String book_rating; // 책 상태 표현
-        // 도서 참고사진 등록
         private String book_status; // 도서 판매 상태 설명
         private Integer rental_fee; // 대여료
         private Integer min_date; // 대여 최소기간
@@ -49,7 +47,7 @@ public class BookDto {
                     .publisher(dto.getPublisher())
                     .pud_date(dto.getPud_date())
                     .rent_signal(dto.getRent_signal())
-                    .member(loginMember)
+                    .writer(loginMember)
                     .build();
 
         }
@@ -66,21 +64,11 @@ public class BookDto {
                     .publisher(dto.getPublisher())
                     .pud_date(dto.getPud_date())
                     .rent_signal(dto.getRent_signal())
-                    .member(member)
+                    .writer(member)
                     .bookRent(bookRent)
                     .build();
         }
 
-        public static BookRent toRentEntity(BookDto.Request dto) {
-            return BookRent.builder()
-                    .book_rating(dto.getBook_rating())
-                    .book_status(dto.getBook_status())
-                    .rental_fee(dto.getRental_fee())
-                    .min_date(dto.getMin_date())
-                    .max_date(dto.getMax_date())
-                    .rent_location(dto.getRent_location())
-                    .rent_method(dto.getRent_method())
-                    .build();
-        }
+
     }
 }

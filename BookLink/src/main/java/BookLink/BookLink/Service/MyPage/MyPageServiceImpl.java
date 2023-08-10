@@ -95,9 +95,9 @@ public class MyPageServiceImpl implements MyPageService {
                 .email(member.getEmail())
                 .birth(member.getBirth())
                 .address(member.getAddress())
-                .canRent(bookRepository.countByRentSignalAndMember(true, member))
+                .canRent(bookRepository.countByRentSignalAndWriter(true, member))
                 .blocked(0L) // TODO dummy
-                .myBooks(bookRepository.countByMember(member))
+                .myBooks(bookRepository.countByWriter(member))
                 .likedBooks(bookLikeRepository.countByMember(member))
                 .rentTo(0L)
                 .rentFrom(0L)

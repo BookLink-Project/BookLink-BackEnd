@@ -18,14 +18,19 @@ import BookLink.BookLink.Repository.BookReply.BookReplyLikeRepository;
 import BookLink.BookLink.Repository.Community.BookReport.BookReportRepository;
 import BookLink.BookLink.Repository.BookReply.BookReplyRepository;
 import BookLink.BookLink.Repository.Member.MemberRepository;
+import BookLink.BookLink.Service.S3.S3Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.mail.Multipart;
+import java.io.IOException;
 import java.net.URI;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +53,7 @@ public class BookServiceImpl implements BookService {
     private final BookReportRepository bookReportRepository;
     private final RentRepository rentRepository;
     private final MemberRepository memberRepository;
+    private final S3Service s3Service;
 
     private String search_url = "http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=ttbelwlahstmxjf2304001&QueryType=Title&MaxResults=32&start=1&SearchTarget=Book&Cover=Big&output=js&InputEncoding=utf-8&Version=20131101";
     private String list_url = "http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=ttbelwlahstmxjf2304001&QueryType=Bestseller&MaxResults=32&start=1&SearchTarget=Book&Cover=Big&output=js&Version=20131101";
@@ -338,18 +344,35 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public ResponseDto joinMyBook(BookDto.Request bookDto, Member loginMember) {
+    public ResponseDto joinMyBook(BookDto.Request bookDto, Member loginMember, List<MultipartFile> image) throws IOException {
 
         ResponseDto responseDto = new ResponseDto();
+        List<URL> urlList = new ArrayList<>();
 
-        boolean is_exist = bookRepository.existsByIsbnAndMember(bookDto.getIsbn13(), loginMember);
+        boolean is_exist = bookRepository.existsByIsbnAndWriter(bookDto.getIsbn13(), loginMember);
 
         if(is_exist) {
             throw new RestApiException(BookErrorCode.ALREADY_SAVED_BOOK);
         }
 
         if(bookDto.getRent_signal()) {
-            BookRent bookRent = BookDto.Request.toRentEntity(bookDto);
+
+            for (MultipartFile multipartFile : image) {
+                URL imageUrl = s3Service.uploadImage(multipartFile);
+                urlList.add(imageUrl);
+            }
+
+            BookRent bookRent = BookRent.builder()
+                    .rent_status(RentStatus.WAITING)
+                    .book_rating(bookDto.getBook_rating())
+                    .image(urlList)
+                    .book_status(bookDto.getBook_status())
+                    .rental_fee(bookDto.getRental_fee())
+                    .min_date(bookDto.getMin_date())
+                    .max_date(bookDto.getMax_date())
+                    .rent_location(bookDto.getRent_location())
+                    .rent_method(bookDto.getRent_method())
+                    .build();
 //            bookRentRepository.save(bookRent);
 
             Book book = BookDto.Request.toBookEntity(bookDto, bookRent, loginMember);
@@ -524,7 +547,7 @@ public class BookServiceImpl implements BookService {
             BookRent bookRent = book.getBookRent();
 
             BookRentInfoDto bookRentInfoDto = BookRentInfoDto.builder()
-                    .writer(book.getMember().getNickname())
+                    .writer(book.getWriter().getNickname())
                     .created_time(bookRent.getCreatedTime())
                     .book_rating(bookRent.getBook_rating())
                     .rental_fee(bookRent.getRental_fee())
@@ -561,7 +584,7 @@ public class BookServiceImpl implements BookService {
 
         BookRent bookRent_byId = book_byId.getBookRent();
 
-        Member member = book_byId.getMember();
+        Member member = book_byId.getWriter();
         List<Book> books = member.getBooks(); // 해당 회원이 기록한 책들
 
         for (Book book : books) {
@@ -594,7 +617,7 @@ public class BookServiceImpl implements BookService {
             BookRent bookRent = another_book.getBookRent();
 
             BookRentInfoDto bookRentInfoDto = BookRentInfoDto.builder()
-                    .writer(another_book.getMember().getNickname())
+                    .writer(another_book.getWriter().getNickname())
                     .created_time(bookRent.getCreatedTime())
                     .book_rating(bookRent.getBook_rating())
                     .rental_fee(bookRent.getRental_fee())
