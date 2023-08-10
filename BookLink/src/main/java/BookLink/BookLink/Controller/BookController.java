@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -43,7 +42,7 @@ public class BookController {
     @PostMapping(value = "/register",
             consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ResponseDto> registerMyBook(@RequestPart List<MultipartFile> image,
-                                                      @RequestBody BookDto.Request bookDto,
+                                                      @RequestPart BookDto.Request bookDto,
                                                       @AuthenticationPrincipal MemberPrincipal memberPrincipal) throws IOException {
 
         Member member = memberPrincipal.getMember();

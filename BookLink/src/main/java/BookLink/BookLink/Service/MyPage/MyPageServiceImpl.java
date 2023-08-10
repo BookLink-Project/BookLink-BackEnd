@@ -90,7 +90,7 @@ public class MyPageServiceImpl implements MyPageService {
         // 1. 내 정보
         Long canRent_cnt = bookRepository.countByRentSignalAndWriter(true, member);
         Long myBooks_cnt = bookRepository.countByWriter(member);
-        Long likedBooks_cnt = bookLikeRepository.countByWriter(member);
+        Long likedBooks_cnt = bookLikeRepository.countByMember(member);
 
         HistoryDto.MyInfo myInfoDto = HistoryDto.MyInfo.builder()
                 .image(member.getImage())

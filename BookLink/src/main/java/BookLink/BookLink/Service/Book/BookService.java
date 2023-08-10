@@ -40,4 +40,7 @@ public interface BookService {
     ResponseDto rentBookDetail(Long id);
 
     ResponseDto rentSuccess(Long id, RentDto rentDto, Member lender);
+
+    ResponseDto searchHeaderBook(String search, Integer page);
+
 }

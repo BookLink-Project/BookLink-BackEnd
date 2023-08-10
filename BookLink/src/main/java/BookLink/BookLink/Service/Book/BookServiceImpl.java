@@ -55,7 +55,7 @@ public class BookServiceImpl implements BookService {
     private final MemberRepository memberRepository;
     private final S3Service s3Service;
 
-    private String search_url = "http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=ttbelwlahstmxjf2304001&QueryType=Title&MaxResults=32&SearchTarget=Book&Cover=Big&output=js&InputEncoding=utf-8&Version=20131101";
+    private String search_url = "http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=ttbelwlahstmxjf2304001&QueryType=Title&SearchTarget=Book&Cover=Big&output=js&InputEncoding=utf-8&Version=20131101";
     private String list_url = "http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=ttbelwlahstmxjf2304001&QueryType=Bestseller&MaxResults=32&SearchTarget=Book&Cover=Big&output=js&Version=20131101";
     private String detail_url = "http://www.aladin.co.kr/ttb/api/ItemLookUp.aspx?ttbkey=ttbelwlahstmxjf2304001&itemIdType=ISBN13&Cover=Big&output=js&Version=20131101";
     private String key = "ttbelwlahstmxjf2057001";
@@ -71,7 +71,8 @@ public class BookServiceImpl implements BookService {
 //        HttpEntity<String> httpEntity = new HttpEntity<>(httpHeaders); //엔티티로 만들기
         URI targetUrl = UriComponentsBuilder
                 .fromUriString(search_url) //기본 url
-                .queryParam("query", query) //인자
+                .queryParam("Query", query) //인자
+                .queryParam("MaxResults", 32)
                 .build()
                 .encode(StandardCharsets.UTF_8) //인코딩
                 .toUri();
@@ -140,6 +141,7 @@ public class BookServiceImpl implements BookService {
                 .fromUriString(search_url)
                 .queryParam("CategoryId", category != null ? category : 0)
                 .queryParam("Query", searchWord)
+                .queryParam("MaxResults", 32)
                 .queryParam("outofStockfilter", 1)
                 .queryParam("Start", page)
                 .build().encode(StandardCharsets.UTF_8).toUri();
@@ -690,6 +692,53 @@ public class BookServiceImpl implements BookService {
                 .build();
 
         rentRepository.save(rent);
+
+        return responseDto;
+    }
+
+    @Override
+    public ResponseDto searchHeaderBook(String searchWord, Integer page) {
+
+        ResponseDto responseDto = new ResponseDto();
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        URI targetUri = UriComponentsBuilder
+                .fromUriString(search_url)
+                .queryParam("Query", searchWord)
+                .queryParam("MaxResults", 8)
+                .queryParam("outofStockfilter", 1)
+                .queryParam("Start", page)
+                .build().encode(StandardCharsets.UTF_8).toUri();
+
+        ResponseEntity<BookListDto> resultResponse = restTemplate.exchange(targetUri, HttpMethod.GET, null, BookListDto.class);
+
+        BookListDto result = resultResponse.getBody();
+
+        if (result == null) {
+            return responseDto;
+        }
+        List<BookListDto.Item> items = result.getItem()
+                .stream()
+                .filter(item -> !item.getIsbn13().isEmpty())
+                .collect(Collectors.toList()); // isbn 필터링
+
+        for (BookListDto.Item item : items) {
+
+            String isbn = item.getIsbn13();
+
+            Long like_cnt = bookLikeRepository.countByIsbn(isbn);
+            Long reply_cnt = bookReplyRepository.countByIsbn(isbn);
+            Long owner_cnt = bookRepository.countByIsbn(isbn);
+
+            item.setCategoryName(item.getCategoryName().split(">")[1]);
+
+            item.setLike_cnt(like_cnt);
+            item.setReply_cnt(reply_cnt);
+            item.setOwner_cnt(owner_cnt);
+        }
+        result.setItem(items);
+        responseDto.setData(result);
 
         return responseDto;
     }
