@@ -1,6 +1,7 @@
 package BookLink.BookLink.Service.Book;
 
 import BookLink.BookLink.Domain.Book.*;
+import BookLink.BookLink.Domain.Common.RentStatus;
 import BookLink.BookLink.Domain.Community.BookReport.BookReport;
 import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.Member.MemberPrincipal;
@@ -12,17 +13,24 @@ import BookLink.BookLink.Exception.RestApiException;
 import BookLink.BookLink.Repository.Book.BookLikeRepository;
 import BookLink.BookLink.Repository.Book.BookRentRepository;
 import BookLink.BookLink.Repository.Book.BookRepository;
+import BookLink.BookLink.Repository.Book.RentRepository;
 import BookLink.BookLink.Repository.BookReply.BookReplyLikeRepository;
 import BookLink.BookLink.Repository.Community.BookReport.BookReportRepository;
 import BookLink.BookLink.Repository.BookReply.BookReplyRepository;
+import BookLink.BookLink.Repository.Member.MemberRepository;
+import BookLink.BookLink.Service.S3.S3Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.mail.Multipart;
+import java.io.IOException;
 import java.net.URI;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +51,9 @@ public class BookServiceImpl implements BookService {
     private final BookReplyRepository bookReplyRepository;
     private final BookReplyLikeRepository bookReplyLikeRepository;
     private final BookReportRepository bookReportRepository;
+    private final RentRepository rentRepository;
+    private final MemberRepository memberRepository;
+    private final S3Service s3Service;
 
     private String search_url = "http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=ttbelwlahstmxjf2304001&QueryType=Title&MaxResults=32&SearchTarget=Book&Cover=Big&output=js&InputEncoding=utf-8&Version=20131101";
     private String list_url = "http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=ttbelwlahstmxjf2304001&QueryType=Bestseller&MaxResults=32&SearchTarget=Book&Cover=Big&output=js&Version=20131101";
@@ -338,18 +349,35 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public ResponseDto joinMyBook(BookDto.Request bookDto, Member loginMember) {
+    public ResponseDto joinMyBook(BookDto.Request bookDto, Member loginMember, List<MultipartFile> image) throws IOException {
 
         ResponseDto responseDto = new ResponseDto();
+        List<URL> urlList = new ArrayList<>();
 
-        boolean is_exist = bookRepository.existsByIsbnAndMember(bookDto.getIsbn13(), loginMember);
+        boolean is_exist = bookRepository.existsByIsbnAndWriter(bookDto.getIsbn13(), loginMember);
 
         if(is_exist) {
             throw new RestApiException(BookErrorCode.ALREADY_SAVED_BOOK);
         }
 
         if(bookDto.getRent_signal()) {
-            BookRent bookRent = BookDto.Request.toRentEntity(bookDto);
+
+            for (MultipartFile multipartFile : image) {
+                URL imageUrl = s3Service.uploadImage(multipartFile);
+                urlList.add(imageUrl);
+            }
+
+            BookRent bookRent = BookRent.builder()
+                    .rent_status(RentStatus.WAITING)
+                    .book_rating(bookDto.getBook_rating())
+                    .image(urlList)
+                    .book_status(bookDto.getBook_status())
+                    .rental_fee(bookDto.getRental_fee())
+                    .min_date(bookDto.getMin_date())
+                    .max_date(bookDto.getMax_date())
+                    .rent_location(bookDto.getRent_location())
+                    .rent_method(bookDto.getRent_method())
+                    .build();
 //            bookRentRepository.save(bookRent);
 
             Book book = BookDto.Request.toBookEntity(bookDto, bookRent, loginMember);
@@ -365,24 +393,16 @@ public class BookServiceImpl implements BookService {
         return responseDto;
     }
 
-    private void paging(List<String> titles, List<BookRentListDto> bookRentList) {
+    private List<BookRentDto> processChunkTitles(List<String> titles, Integer page) {
+
         int chunkSize = 16;
         int totalSize = titles.size();
 
-        for (int i = 0; i < totalSize; i += chunkSize) {
-            int endIdx = Math.min(i + chunkSize, totalSize);
-            List<String> chunkDistinctTitles = titles.subList(i, endIdx);
+        List<String> chunkDistinctTitles = titles.subList((page) * chunkSize, (page + 1) * chunkSize);
 
-            List<BookRentListDto> chunkBookRentList = processChunkTitles(chunkDistinctTitles);
-            bookRentList.addAll(chunkBookRentList);
-        }
-    }
+        List<BookRentDto> chunkBookRentList = new ArrayList<>();
 
-    private List<BookRentListDto> processChunkTitles(List<String> titles) {
-
-        List<BookRentListDto> chunkBookRentList = new ArrayList<>();
-
-        for (String title : titles) {
+        for (String title : chunkDistinctTitles) {
 
             int avg_fee = 0;
             int total_fee = 0;
@@ -408,7 +428,7 @@ public class BookServiceImpl implements BookService {
 
             Book book = books.get(0);
 
-            BookRentListDto bookRentListDto = BookRentListDto.builder()
+            BookRentDto bookRentListDto = BookRentDto.builder()
                     .title(book.getTitle())
                     .authors(book.getAuthors())
                     .cover(book.getCover())
@@ -424,59 +444,55 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public ResponseDto rentBookList() {
+    public ResponseDto rentBookList(Integer page) {
 
         ResponseDto responseDto = new ResponseDto();
 
         List<String> titles = bookRepository.findDistinctTitles();
-        List<BookRentListDto> bookRentList = new ArrayList<>();
 
-        paging(titles, bookRentList);
+        List<BookRentDto> bookRentDtoList = processChunkTitles(titles, page);
 
-        responseDto.setData(bookRentList);
+        responseDto.setData(bookRentDtoList);
         return responseDto;
     }
 
     @Override
-    public ResponseDto rentBookDescList() {
+    public ResponseDto rentBookDescList(Integer page) {
 
         ResponseDto responseDto = new ResponseDto();
-        List<BookRentListDto> bookRentList = new ArrayList<>();
 
         List<String> titles = bookRepository.findTitlesOrderByTitleCountDesc();
 
-        paging(titles, bookRentList);
+        List<BookRentDto> bookRentDtoList = processChunkTitles(titles, page);
 
-        responseDto.setData(bookRentList);
+        responseDto.setData(bookRentDtoList);
         return responseDto;
 
     }
 
     @Override
-    public ResponseDto rentBookCategoryList(String category) {
+    public ResponseDto rentBookCategoryList(String category, Integer page) {
 
         ResponseDto responseDto = new ResponseDto();
-        List<BookRentListDto> bookRentList = new ArrayList<>();
 
         List<String> titles = bookRepository.findTitlesByCategory_name(category);
 
-        paging(titles, bookRentList);
+        List<BookRentDto> bookRentDtoList = processChunkTitles(titles, page);
 
-        responseDto.setData(bookRentList);
+        responseDto.setData(bookRentDtoList);
         return responseDto;
     }
 
     @Override
-    public ResponseDto rentBookCategoryDescList(String category) {
+    public ResponseDto rentBookCategoryDescList(String category, Integer page) {
 
         ResponseDto responseDto = new ResponseDto();
-        List<BookRentListDto> bookRentList = new ArrayList<>();
 
         List<String> titles = bookRepository.findTitlesByCategory_nameCountDesc(category);
 
-        paging(titles, bookRentList);
+        List<BookRentDto> bookRentDtoList = processChunkTitles(titles, page);
 
-        responseDto.setData(bookRentList);
+        responseDto.setData(bookRentDtoList);
         return responseDto;
     }
 
@@ -509,7 +525,7 @@ public class BookServiceImpl implements BookService {
 
         Book book = books.get(0);
 
-        BookRentListDto bookRentListDto = BookRentListDto.builder()
+        BookRentDto bookRentDto = BookRentDto.builder()
                 .title(book.getTitle())
                 .authors(book.getAuthors())
                 .cover(book.getCover())
@@ -518,7 +534,162 @@ public class BookServiceImpl implements BookService {
                 .rent_period(max_period)
                 .build();
 
-        responseDto.setData(bookRentListDto);
+        responseDto.setData(bookRentDto);
+
+        return responseDto;
+    }
+
+    @Override
+    public ResponseDto rentBooks(String title) {
+
+        ResponseDto responseDto = new ResponseDto();
+        List<BookRentInfoDto> bookRentInfoDtoList = new ArrayList<>();
+
+        List<Book> books = bookRepository.findByTitle(title);
+
+        for (Book book : books) {
+
+            BookRent bookRent = book.getBookRent();
+
+            BookRentInfoDto bookRentInfoDto = BookRentInfoDto.builder()
+                    .writer(book.getWriter().getNickname())
+                    .created_time(bookRent.getCreatedTime())
+                    .book_rating(bookRent.getBook_rating())
+                    .rental_fee(bookRent.getRental_fee())
+                    .max_date(bookRent.getMax_date())
+                    .rent_location(bookRent.getRent_location())
+                    .build();
+
+            bookRentInfoDtoList.add(bookRentInfoDto);
+        }
+
+        responseDto.setData(bookRentInfoDtoList);
+
+        return responseDto;
+    }
+
+    @Override
+    public ResponseDto rentBookDetail(Long id) {
+
+        ResponseDto responseDto = new ResponseDto();
+
+        List<BookRecordDto> bookRecordDtoList = new ArrayList<>();
+        List<BookRentInfoDto> bookRentInfoDtoList = new ArrayList<>();
+
+        int rent_available_cnt = 0;
+        int renting_cnt = 0;
+
+        Book book_byId = bookRepository.findById(id).orElse(null);
+
+        if (book_byId == null) {
+            responseDto.setMessage("기록되지 않은 책입니다.");
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            return responseDto;
+        }
+
+        BookRent bookRent_byId = book_byId.getBookRent();
+
+        Member member = book_byId.getWriter();
+        List<Book> books = member.getBooks(); // 해당 회원이 기록한 책들
+
+        for (Book book : books) {
+            BookRent bookRent = book.getBookRent();
+
+            RentStatus rent_status = bookRent.getRent_status();
+
+            if (rent_status == RentStatus.RENTING) {
+                renting_cnt += 1;
+            } else {
+                rent_available_cnt += 1;
+            }
+
+            BookRecordDto bookRecordDto = BookRecordDto.builder()
+                    .rent_status(rent_status)
+                    .title(book.getTitle())
+                    .authors(book.getAuthors())
+                    .cover(book.getCover())
+                    .created_time(book.getCreatedTime())
+                    .publisher(book.getPublisher())
+                    .rental_fee(bookRent.getRental_fee())
+                    .build();
+
+            bookRecordDtoList.add(bookRecordDto);
+        }
+
+        List<Book> another_books = bookRepository.findByTitle(book_byId.getTitle());
+
+        for (Book another_book : another_books) {
+            BookRent bookRent = another_book.getBookRent();
+
+            BookRentInfoDto bookRentInfoDto = BookRentInfoDto.builder()
+                    .writer(another_book.getWriter().getNickname())
+                    .created_time(bookRent.getCreatedTime())
+                    .book_rating(bookRent.getBook_rating())
+                    .rental_fee(bookRent.getRental_fee())
+                    .max_date(bookRent.getMax_date())
+                    .rent_location(bookRent.getRent_location())
+                    .build();
+
+            bookRentInfoDtoList.add(bookRentInfoDto);
+        }
+
+        BookRentDetailDto bookRentDetailDto = BookRentDetailDto.builder()
+                .record_cnt(books.size())
+                .rent_available_cnt(rent_available_cnt)
+                .renting_cnt(renting_cnt)
+                .bookRecordDtoList(bookRecordDtoList)
+                .title(book_byId.getTitle())
+                .authors(book_byId.getAuthors())
+                .recommendation(book_byId.getRecommendation())
+                .isbn(book_byId.getIsbn())
+                .cover(book_byId.getCover())
+                .publisher(book_byId.getPublisher())
+                .book_rating(bookRent_byId.getBook_rating())
+                .rent_location(bookRent_byId.getRent_location())
+                .rent_method(bookRent_byId.getRent_method())
+                .min_date(bookRent_byId.getMin_date())
+                .max_date(bookRent_byId.getMax_date())
+                .rental_fee(bookRent_byId.getRental_fee())
+                .book_status(bookRent_byId.getBook_status())
+                .bookRentInfoDtoList(bookRentInfoDtoList)
+                .build();
+
+        responseDto.setData(bookRentDetailDto);
+        return responseDto;
+
+    }
+
+    @Override
+    public ResponseDto rentSuccess(Long id, RentDto rentDto, Member lender) {
+
+        ResponseDto responseDto = new ResponseDto();
+
+        Book book = bookRepository.findById(id).orElse(null);
+
+        if (book == null) {
+            responseDto.setMessage("없는 책 입니다.");
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            return responseDto;
+        }
+
+        Member renter = memberRepository.findByNickname(rentDto.getNickname()).orElse(null);
+
+        if (renter == null) {
+            responseDto.setMessage("없는 회원입니다.");
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            return responseDto;
+        }
+
+        Rent rent = Rent.builder()
+                .book(book)
+                .lender(lender)
+                .renter(renter)
+                .rent_date(rentDto.getRent_date())
+                .return_date(rentDto.getReturn_date())
+                .return_location(rentDto.getReturn_location())
+                .build();
+
+        rentRepository.save(rent);
 
         return responseDto;
     }

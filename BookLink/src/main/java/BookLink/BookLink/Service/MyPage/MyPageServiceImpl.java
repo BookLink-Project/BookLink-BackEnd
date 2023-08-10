@@ -1,5 +1,10 @@
 package BookLink.BookLink.Service.MyPage;
 
+import BookLink.BookLink.Domain.Book.Book;
+import BookLink.BookLink.Domain.Book.BookRecordDto;
+import BookLink.BookLink.Domain.Book.BookRent;
+import BookLink.BookLink.Domain.Book.Rent;
+import BookLink.BookLink.Domain.Common.RentStatus;
 import BookLink.BookLink.Domain.Book.BookDetailDto;
 import BookLink.BookLink.Domain.BookReply.BookReply;
 import BookLink.BookLink.Domain.Community.BookClub.BookClub;
@@ -9,10 +14,14 @@ import BookLink.BookLink.Domain.CommunityReply.BookClubReply.BookClubReply;
 import BookLink.BookLink.Domain.CommunityReply.BookReportReply.BookReportReply;
 import BookLink.BookLink.Domain.CommunityReply.FreeBoardReply.FreeBoardReply;
 import BookLink.BookLink.Domain.Member.Member;
+import BookLink.BookLink.Domain.MyPage.*;
 import BookLink.BookLink.Domain.MyPage.AccountDto;
 import BookLink.BookLink.Domain.MyPage.HistoryDto;
 import BookLink.BookLink.Domain.MyPage.VerifyDto;
 import BookLink.BookLink.Domain.ResponseDto;
+import BookLink.BookLink.Repository.Book.BookRentRepository;
+import BookLink.BookLink.Repository.Book.BookRepository;
+import BookLink.BookLink.Repository.Book.RentRepository;
 import BookLink.BookLink.Exception.Enum.CommonErrorCode;
 import BookLink.BookLink.Exception.RestApiException;
 import BookLink.BookLink.Repository.Book.BookLikeRepository;
@@ -46,6 +55,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -57,6 +69,8 @@ public class MyPageServiceImpl implements MyPageService {
 
     private final MemberRepository memberRepository;
     private final BookRepository bookRepository;
+    private final BookRentRepository bookRentRepository;
+    private final RentRepository rentRepository;
     private final BookLikeRepository bookLikeRepository;
     private final BookReplyRepository bookReplyRepository;
     private final BookClubRepository bookClubRepository;
@@ -74,9 +88,9 @@ public class MyPageServiceImpl implements MyPageService {
         HistoryDto dataDto = new HistoryDto();
 
         // 1. 내 정보
-        Long canRent_cnt = bookRepository.countByRentSignalAndMember(true, member);
-        Long myBooks_cnt = bookRepository.countByMember(member);
-        Long likedBooks_cnt = bookLikeRepository.countByMember(member);
+        Long canRent_cnt = bookRepository.countByRentSignalAndWriter(true, member);
+        Long myBooks_cnt = bookRepository.countByWriter(member);
+        Long likedBooks_cnt = bookLikeRepository.countByWriter(member);
 
         HistoryDto.MyInfo myInfoDto = HistoryDto.MyInfo.builder()
                 .image(member.getImage())
@@ -435,4 +449,154 @@ public class MyPageServiceImpl implements MyPageService {
         responseDto.setStatus(HttpStatus.CREATED);
         return responseDto;
     }
+
+    @Override
+    public ResponseDto myBook(Member member) {
+
+        ResponseDto responseDto = new ResponseDto();
+
+        List<Rent> rents = rentRepository.findByRenter(member);
+        List<Rent> byLender = rentRepository.findByLender(member);
+        List<Book> books = member.getBooks();
+
+        List<MyBookRentDto> myBookRentDtoList = new ArrayList<>();
+        List<MyRecordBookDto> myRecordBookDtoList = new ArrayList<>();
+
+        int record_cnt = books.size();
+        int rent_available_cnt = 0;
+        int lend_cnt = 0;
+        int rent_cnt = byLender.size();
+
+        for (Rent rent : rents) {
+
+            Book book = rent.getBook();
+            BookRent bookRent = book.getBookRent();
+            Member lender = rent.getLender();
+
+            MyBookRentDto myBookRentDto = MyBookRentDto.builder()
+                    .title(book.getTitle())
+                    .authors(book.getAuthors())
+                    .publisher(book.getPublisher())
+                    .lender(lender.getNickname())
+                    .rent_location(bookRent.getRent_location())
+                    .rent_date(rent.getRent_date())
+                    .return_location(rent.getReturn_location())
+                    .return_date(rent.getRent_date())
+                    .rental_fee(bookRent.getRental_fee())
+                    .build();
+
+            myBookRentDtoList.add(myBookRentDto);
+        }
+
+        for (Book book : books) {
+            BookRent bookRent = book.getBookRent();
+
+            RentStatus rent_status = bookRent.getRent_status();
+
+            if (rent_status == RentStatus.RENTING) {
+                rent_cnt += 1;
+            } else {
+                rent_available_cnt += 1;
+            }
+
+            MyRecordBookDto myRecordBookDto = MyRecordBookDto.builder()
+                    .cover(book.getCover())
+                    .title(book.getTitle())
+                    .authors(book.getAuthors())
+                    .publisher(book.getPublisher())
+                    .rental_fee(bookRent.getRental_fee())
+                    .max_date(bookRent.getMax_date())
+                    .build();
+
+            myRecordBookDtoList.add(myRecordBookDto);
+        }
+
+        MyBookDto myBookDto = MyBookDto.builder()
+                .record_cnt(record_cnt)
+                .rent_available_cnt(rent_available_cnt)
+                .lend_cnt(lend_cnt)
+                .rent_cnt(rent_cnt)
+                .myBookRentDtoList(myBookRentDtoList)
+                .myRecordBookDtoList(myRecordBookDtoList)
+                .build();
+
+        responseDto.setData(myBookDto);
+        return responseDto;
+    }
+
+    @Override
+    public ResponseDto myRentBook(Integer page, Member member) {
+
+        ResponseDto responseDto = new ResponseDto();
+
+        List<MyBookRentDto> myBookRentDtoList = new ArrayList<>();
+        List<Rent> rents = rentRepository.findByRenter(member);
+
+        int chunkSize = 8;
+
+        List<Rent> chunkRent = rents.subList((page) * chunkSize, (page + 1) * chunkSize);
+
+        for (Rent rent : chunkRent) {
+
+            Book book = rent.getBook();
+            BookRent bookRent = book.getBookRent();
+            Member lender = rent.getLender();
+
+            MyBookRentDto myBookRentDto = MyBookRentDto.builder()
+                    .title(book.getTitle())
+                    .authors(book.getAuthors())
+                    .publisher(book.getPublisher())
+                    .lender(lender.getNickname())
+                    .rent_location(bookRent.getRent_location())
+                    .rent_date(rent.getRent_date())
+                    .return_location(rent.getReturn_location())
+                    .return_date(rent.getRent_date())
+                    .rental_fee(bookRent.getRental_fee())
+                    .build();
+
+            myBookRentDtoList.add(myBookRentDto);
+        }
+
+        responseDto.setData(myBookRentDtoList);
+        return responseDto;
+    }
+
+    @Override
+    public ResponseDto myLendBook(Integer page, Member member) {
+
+        ResponseDto responseDto = new ResponseDto();
+
+        List<MyBookLendDto> myBookRentDtoList = new ArrayList<>();
+        List<Rent> rents = rentRepository.findByLender(member);
+
+        int chunkSize = 8;
+
+        List<Rent> chunkRent = rents.subList((page) * chunkSize, (page + 1) * chunkSize);
+
+        for (Rent rent : chunkRent) {
+
+            Book book = rent.getBook();
+            BookRent bookRent = book.getBookRent();
+            Member renter = rent.getRenter();
+
+            MyBookLendDto myBookLendDto = MyBookLendDto.builder()
+                    .title(book.getTitle())
+                    .authors(book.getAuthors())
+                    .publisher(book.getPublisher())
+                    .renter(renter.getNickname())
+                    .rent_location(bookRent.getRent_location())
+                    .rent_date(rent.getRent_date())
+                    .return_location(rent.getReturn_location())
+                    .return_date(rent.getRent_date())
+                    .rental_fee(bookRent.getRental_fee())
+                    .build();
+
+            myBookRentDtoList.add(myBookLendDto);
+        }
+
+        responseDto.setData(myBookRentDtoList);
+        return responseDto;
+
+    }
+
 }

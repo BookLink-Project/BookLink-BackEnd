@@ -1,13 +1,12 @@
 package BookLink.BookLink.Domain.Book;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class BookRentListDto {
+public class BookRentDto {
 
     private String title;
     private String authors;
@@ -17,7 +16,7 @@ public class BookRentListDto {
     private Integer rent_period;
 
     @Builder
-    public BookRentListDto(String title, String authors, String cover, String publisher, Integer avg_rental_fee, Integer rent_period) {
+    public BookRentDto(String title, String authors, String cover, String publisher, Integer avg_rental_fee, Integer rent_period) {
         this.title = title;
         this.authors = authors;
         this.cover = cover;

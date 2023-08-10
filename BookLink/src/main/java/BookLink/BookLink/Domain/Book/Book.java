@@ -49,8 +49,8 @@ public class Book extends BaseTimeEntity {
     private Boolean rentSignal; // 대여 신청 가능 여부
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+    @JoinColumn(name = "writer")
+    private Member writer;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "rent_id")
@@ -59,7 +59,7 @@ public class Book extends BaseTimeEntity {
 
     @Builder
     public Book(Long id, String title, String authors, String recommendation, String isbn, Integer price_sales
-            , String cover, String category_name, String publisher, LocalDate pud_date, Boolean rent_signal, Member member, BookRent bookRent) {
+            , String cover, String category_name, String publisher, LocalDate pud_date, Boolean rent_signal, Member writer, BookRent bookRent) {
         this.id = id;
         this.title = title;
         this.authors = authors;
@@ -71,7 +71,7 @@ public class Book extends BaseTimeEntity {
         this.publisher = publisher;
         this.pud_date = pud_date;
         this.rentSignal = rent_signal;
-        this.member = member;
+        this.writer = writer;
         this.bookRent = bookRent;
     }
 }

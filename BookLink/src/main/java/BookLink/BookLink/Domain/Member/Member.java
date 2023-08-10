@@ -1,5 +1,6 @@
 package BookLink.BookLink.Domain.Member;
 
+import BookLink.BookLink.Domain.Book.Book;
 import BookLink.BookLink.Domain.Card.Card;
 import BookLink.BookLink.Domain.Common.BaseTimeEntity;
 import BookLink.BookLink.Domain.Community.BookReport.BookReport;
@@ -63,6 +64,9 @@ public class Member extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "writer")
     private List<BookReport> reports = new ArrayList<>();
+
+    @OneToMany(mappedBy = "writer")
+    private List<Book> books = new ArrayList<>();
 
 //    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
 //    @JoinColumn(name = "rent_id")

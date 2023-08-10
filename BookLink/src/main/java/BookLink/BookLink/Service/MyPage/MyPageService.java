@@ -18,4 +18,10 @@ public interface MyPageService {
 
     ResponseDto updateAccount(MultipartFile image, AccountDto.Request accountDto, Member member) throws IOException;
 
+    ResponseDto myBook(Member member);
+
+    ResponseDto myRentBook(Integer page, Member member);
+
+    ResponseDto myLendBook(Integer page, Member member);
+
 }
