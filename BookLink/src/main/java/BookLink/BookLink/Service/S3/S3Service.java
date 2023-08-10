@@ -23,6 +23,7 @@ public class S3Service {
     private String bucket;
 
     public URL uploadImage(MultipartFile multipartFile) throws IOException { // 이미지 저장
+
         String originalFilename = multipartFile.getOriginalFilename();
 
         ObjectMetadata metadata = new ObjectMetadata();
@@ -30,6 +31,7 @@ public class S3Service {
         metadata.setContentType(multipartFile.getContentType());
 
         amazonS3.putObject(bucket, originalFilename, multipartFile.getInputStream(), metadata);
+
         return amazonS3.getUrl(bucket, originalFilename);
     }
 

@@ -1,6 +1,5 @@
 package BookLink.BookLink.Domain.MyPage;
 
-import BookLink.BookLink.Domain.Card.Card;
 import lombok.*;
 
 import java.net.URL;
@@ -62,7 +61,7 @@ public class HistoryDto {
         private String info_owner;
         private LocalDate info_rent_from;
         private LocalDate info_rent_to;
-        private String info_card_name;
+        private String info_card_name; //
         private String return_location;
 
     }
