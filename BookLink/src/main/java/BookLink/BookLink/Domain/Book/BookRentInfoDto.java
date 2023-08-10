@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class BookRentInfoDto {
 
+    private String isbn;
     private String writer;
     private LocalDateTime created_time;
     private String book_rating;
@@ -18,7 +19,9 @@ public class BookRentInfoDto {
     private String rent_location;
 
     @Builder
-    public BookRentInfoDto(String writer, LocalDateTime created_time, String book_rating, Integer rental_fee, Integer max_date, String rent_location) {
+    public BookRentInfoDto(String isbn, String writer, LocalDateTime created_time, String book_rating,
+                           Integer rental_fee, Integer max_date, String rent_location) {
+        this.isbn = isbn;
         this.writer = writer;
         this.created_time = created_time;
         this.book_rating = book_rating;

@@ -9,11 +9,12 @@ import javax.persistence.*;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class BookRent extends BaseTimeEntity {
 
     @Id
@@ -24,8 +25,8 @@ public class BookRent extends BaseTimeEntity {
 
     private String book_rating; // 책 상태 등급
 
-    @ElementCollection
-    private List<URL> image; // 도서 참고사진
+    @OneToMany(mappedBy = "bookRent")
+    private List<BookImage> image = new ArrayList<>(); // 도서 참고사진
 
     private String book_status; // 도서 상태 설명
 
@@ -44,11 +45,10 @@ public class BookRent extends BaseTimeEntity {
 //    private Book book
 
     @Builder
-    public BookRent(RentStatus rent_status, String book_rating, List<URL> image, String book_status, Integer rental_fee,
+    public BookRent(RentStatus rent_status, String book_rating, String book_status, Integer rental_fee,
                     Integer min_date, Integer max_date, String rent_location, String rent_method) {
         this.rent_status = rent_status;
         this.book_rating = book_rating;
-        this.image = image;
         this.book_status = book_status;
         this.rental_fee = rental_fee;
         this.min_date = min_date;

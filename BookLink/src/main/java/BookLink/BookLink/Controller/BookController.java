@@ -43,7 +43,7 @@ public class BookController {
     @PostMapping(value = "/register",
             consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ResponseDto> registerMyBook(@RequestPart List<MultipartFile> image,
-                                                      @RequestBody BookDto.Request bookDto,
+                                                      @RequestPart BookDto.Request bookDto,
                                                       @AuthenticationPrincipal MemberPrincipal memberPrincipal) throws IOException {
 
         Member member = memberPrincipal.getMember();
