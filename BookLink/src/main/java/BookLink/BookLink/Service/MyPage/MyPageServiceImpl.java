@@ -204,6 +204,36 @@ public class MyPageServiceImpl implements MyPageService {
 
         ResponseDto responseDto = new ResponseDto();
 
+        List<MyBookLendDto> myBookRentDtoList = new ArrayList<>();
+        List<Rent> rents = rentRepository.findByLender(member);
+
+        int chunkSize = 8;
+
+        List<Rent> chunkRent = rents.subList((page) * chunkSize, (page + 1) * chunkSize);
+
+        for (Rent rent : chunkRent) {
+
+            Book book = rent.getBook();
+            BookRent bookRent = book.getBookRent();
+            Member renter = rent.getRenter();
+
+            MyBookLendDto myBookLendDto = MyBookLendDto.builder()
+                    .title(book.getTitle())
+                    .authors(book.getAuthors())
+                    .publisher(book.getPublisher())
+                    .renter(renter.getNickname())
+                    .rent_location(bookRent.getRent_location())
+                    .rent_date(rent.getRent_date())
+                    .return_location(rent.getReturn_location())
+                    .return_date(rent.getRent_date())
+                    .rental_fee(bookRent.getRental_fee())
+                    .build();
+
+            myBookRentDtoList.add(myBookLendDto);
+        }
+
+        responseDto.setData(myBookRentDtoList);
+        return responseDto;
 
     }
 
