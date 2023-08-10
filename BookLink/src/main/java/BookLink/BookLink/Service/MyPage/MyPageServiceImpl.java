@@ -74,6 +74,10 @@ public class MyPageServiceImpl implements MyPageService {
         HistoryDto dataDto = new HistoryDto();
 
         // 1. 내 정보
+        Long canRent_cnt = bookRepository.countByRentSignalAndMember(true, member);
+        Long myBooks_cnt = bookRepository.countByMember(member);
+        Long likedBooks_cnt = bookLikeRepository.countByMember(member);
+
         HistoryDto.MyInfo myInfoDto = HistoryDto.MyInfo.builder()
                 .image(member.getImage())
                 .name(member.getName())
@@ -81,10 +85,10 @@ public class MyPageServiceImpl implements MyPageService {
                 .email(member.getEmail())
                 .birth(member.getBirth())
                 .address(member.getAddress())
-                .canRent(bookRepository.countByRentSignalAndMember(true, member))
+                .canRent(canRent_cnt)
                 .blocked(0L) // TODO dummy
-                .myBooks(bookRepository.countByMember(member))
-                .likedBooks(bookLikeRepository.countByMember(member))
+                .myBooks(myBooks_cnt)
+                .likedBooks(likedBooks_cnt)
                 .rentTo(0L)
                 .rentFrom(0L)
                 .renting(0L)
