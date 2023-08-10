@@ -71,7 +71,6 @@ public class MyPageServiceImpl implements MyPageService {
     private final BookRepository bookRepository;
     private final BookRentRepository bookRentRepository;
     private final RentRepository rentRepository;
-    private final BookRepository bookRepository;
     private final BookLikeRepository bookLikeRepository;
     private final BookReplyRepository bookReplyRepository;
     private final BookClubRepository bookClubRepository;
