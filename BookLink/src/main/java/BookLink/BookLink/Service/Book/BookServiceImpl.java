@@ -44,8 +44,8 @@ public class BookServiceImpl implements BookService {
     private final BookReplyLikeRepository bookReplyLikeRepository;
     private final BookReportRepository bookReportRepository;
 
-    private String search_url = "http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=ttbelwlahstmxjf2304001&QueryType=Title&MaxResults=32&start=1&SearchTarget=Book&Cover=Big&output=js&InputEncoding=utf-8&Version=20131101";
-    private String list_url = "http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=ttbelwlahstmxjf2304001&QueryType=Bestseller&MaxResults=32&start=1&SearchTarget=Book&Cover=Big&output=js&Version=20131101";
+    private String search_url = "http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=ttbelwlahstmxjf2304001&QueryType=Title&MaxResults=32&SearchTarget=Book&Cover=Big&output=js&InputEncoding=utf-8&Version=20131101";
+    private String list_url = "http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=ttbelwlahstmxjf2304001&QueryType=Bestseller&MaxResults=32&SearchTarget=Book&Cover=Big&output=js&Version=20131101";
     private String detail_url = "http://www.aladin.co.kr/ttb/api/ItemLookUp.aspx?ttbkey=ttbelwlahstmxjf2304001&itemIdType=ISBN13&Cover=Big&output=js&Version=20131101";
     private String key = "ttbelwlahstmxjf2057001";
 
@@ -75,7 +75,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public ResponseDto listAllBook(Integer category) {
+    public ResponseDto listAllBook(Integer category, int page) {
 
         ResponseDto responseDto = new ResponseDto();
 
@@ -85,9 +85,8 @@ public class BookServiceImpl implements BookService {
                 .fromUriString(list_url)
                 .queryParam("CategoryId", category != null ? category : 0)
                 .queryParam("outofStockfilter", 1)
-                .build()
-                .encode(StandardCharsets.UTF_8)
-                .toUri();
+                .queryParam("Start", page)
+                .build().encode(StandardCharsets.UTF_8).toUri();
 
         ResponseEntity<BookListDto> resultResponse = restTemplate.exchange(targetUrl, HttpMethod.GET, null, BookListDto.class);
 
@@ -96,46 +95,6 @@ public class BookServiceImpl implements BookService {
         if (result == null) {
             return responseDto;
         }
-
-        List<BookListDto.Item> items = result.getItem();
-
-        for (BookListDto.Item item : items) {
-            String isbn = item.getIsbn13();
-            Long like_cnt = bookLikeRepository.countByIsbn(isbn);
-            Long reply_cnt = bookReplyRepository.countByIsbn(isbn);
-
-            item.setLike_cnt(like_cnt);
-            item.setReply_cnt(reply_cnt);
-            item.setOwner_cnt(0L); // TODO dummy
-        }
-
-        responseDto.setData(result);
-
-        return responseDto;
-    }
-
-    @Override
-    public ResponseDto searchBook(Integer category, String searchWord) {
-
-        ResponseDto responseDto = new ResponseDto();
-
-        RestTemplate restTemplate = new RestTemplate();
-
-        URI targetUri = UriComponentsBuilder
-                .fromUriString(search_url)
-                .queryParam("CategoryId", category != null ? category : 0)
-                .queryParam("query", searchWord)
-                .queryParam("outofStockfilter", 1)
-                .build().encode(StandardCharsets.UTF_8).toUri();
-
-        ResponseEntity<BookListDto> resultResponse = restTemplate.exchange(targetUri, HttpMethod.GET, null, BookListDto.class);
-
-        BookListDto result = resultResponse.getBody();
-
-        if (result == null) {
-            return responseDto;
-        }
-
         List<BookListDto.Item> items = result.getItem()
                                         .stream()
                                         .filter(item -> !item.getIsbn13().isEmpty())
@@ -147,12 +106,58 @@ public class BookServiceImpl implements BookService {
 
             Long like_cnt = bookLikeRepository.countByIsbn(isbn);
             Long reply_cnt = bookReplyRepository.countByIsbn(isbn);
+            Long owner_cnt = bookRepository.countByIsbn(isbn);
+
+            item.setLike_cnt(like_cnt);
+            item.setReply_cnt(reply_cnt);
+            item.setOwner_cnt(owner_cnt);
+        }
+        result.setItem(items);
+        responseDto.setData(result);
+
+        return responseDto;
+    }
+
+    @Override
+    public ResponseDto searchBook(Integer category, String searchWord, int page) {
+
+        ResponseDto responseDto = new ResponseDto();
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        URI targetUri = UriComponentsBuilder
+                .fromUriString(search_url)
+                .queryParam("CategoryId", category != null ? category : 0)
+                .queryParam("Query", searchWord)
+                .queryParam("outofStockfilter", 1)
+                .queryParam("Start", page)
+                .build().encode(StandardCharsets.UTF_8).toUri();
+
+        ResponseEntity<BookListDto> resultResponse = restTemplate.exchange(targetUri, HttpMethod.GET, null, BookListDto.class);
+
+        BookListDto result = resultResponse.getBody();
+
+        if (result == null) {
+            return responseDto;
+        }
+        List<BookListDto.Item> items = result.getItem()
+                                        .stream()
+                                        .filter(item -> !item.getIsbn13().isEmpty())
+                                        .collect(Collectors.toList()); // isbn 필터링
+
+        for (BookListDto.Item item : items) {
+
+            String isbn = item.getIsbn13();
+
+            Long like_cnt = bookLikeRepository.countByIsbn(isbn);
+            Long reply_cnt = bookReplyRepository.countByIsbn(isbn);
+            Long owner_cnt = bookRepository.countByIsbn(isbn);
 
             item.setCategoryName(item.getCategoryName().split(">")[1]);
 
             item.setLike_cnt(like_cnt);
             item.setReply_cnt(reply_cnt);
-            item.setOwner_cnt(0L); // TODO dummy
+            item.setOwner_cnt(owner_cnt);
         }
         result.setItem(items);
         responseDto.setData(result);
@@ -177,7 +182,6 @@ public class BookServiceImpl implements BookService {
         if (result.getItem().isEmpty()) {
             responseDto.setStatus(HttpStatus.NOT_FOUND);
             responseDto.setMessage("없는 책");
-            responseDto.setData(null);
             return responseDto;
         }
 
@@ -187,6 +191,7 @@ public class BookServiceImpl implements BookService {
         String isbn = item.getIsbn13();
         Long like_cnt = bookLikeRepository.countByIsbn(isbn);
         Long reply_cnt = bookReplyRepository.countByIsbn(isbn);
+        Long owner_cnt = bookRepository.countByIsbn(isbn);
 
         boolean isLikedBook = (loginMember != null)
                 && (bookLikeRepository.existsByMemberAndIsbn(loginMember, isbn));
@@ -195,7 +200,7 @@ public class BookServiceImpl implements BookService {
 
         item.setLike_cnt(like_cnt);
         item.setReply_cnt(reply_cnt);
-        item.setOwner_cnt(0L); // TODO dummy
+        item.setOwner_cnt(owner_cnt);
         item.setLiked(isLikedBook);
 
         // 2. 댓글 정보

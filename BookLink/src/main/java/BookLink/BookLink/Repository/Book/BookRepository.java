@@ -9,8 +9,6 @@ import java.util.List;
 
 public interface BookRepository extends JpaRepository<Book, Long> {
 
-    int findByIsbn(String isbn);
-
     boolean existsByIsbnAndMember (String isbn, Member member);
 
     @Query("SELECT DISTINCT title FROM Book")
@@ -29,9 +27,8 @@ public interface BookRepository extends JpaRepository<Book, Long> {
   
     Long countByMember(Member member);
 
-//    @Query("SELECT COUNT(b) FROM Book b WHERE b.rent_signal = :rent_signal AND b.member_id = :member_id")
-//    long countByRentSignalAndMemberId(@Param("rent_signal") boolean rentSignal, @Param("member_id") Long memberId);
-
     Long countByRentSignalAndMember(boolean rentSignal, Member member);
+
+    Long countByIsbn(String isbn);
 
 }

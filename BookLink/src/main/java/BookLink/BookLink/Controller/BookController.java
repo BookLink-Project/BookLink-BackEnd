@@ -48,14 +48,15 @@ public class BookController {
 
     @GetMapping(value = {"/main/{category}", "/main"}) // 카테고리 분류 및 검색
     public ResponseEntity<ResponseDto> searchAndListBook(@PathVariable(required = false) Integer category,
-                                                         @RequestParam(required = false) String search) {
+                                                         @RequestParam(required = false) String search,
+                                                         @RequestParam(required = false, defaultValue = "1") Integer page) {
 
         ResponseDto responseDto;
 
         if (search == null) { // 분류
-            responseDto = bookService.listAllBook(category);
+            responseDto = bookService.listAllBook(category, page);
         } else { // 검색
-            responseDto = bookService.searchBook(category, search);
+            responseDto = bookService.searchBook(category, search, page);
         }
 
         return ResponseEntity.status(responseDto.getStatus())
