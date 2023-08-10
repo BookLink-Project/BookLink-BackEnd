@@ -13,8 +13,10 @@ public interface MyPageService {
 
     ResponseDto updateAccount(AccountDto.Request accountDto, Member member);
 
-    ResponseDto myRentBook(Integer page);
-
     ResponseDto myBook(Member member);
+
+    ResponseDto myRentBook(Integer page, Member member);
+
+    ResponseDto myLendBook(Integer page, Member member);
 
 }

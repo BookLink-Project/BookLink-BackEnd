@@ -88,16 +88,6 @@ public class MyPageServiceImpl implements MyPageService {
         return responseDto;
     }
 
-
-
-    @Override
-    public ResponseDto myRentBook(Integer page) {
-
-        ResponseDto responseDto = new ResponseDto();
-
-        return null;
-    }
-
     @Override
     public ResponseDto myBook(Member member) {
 
@@ -170,6 +160,51 @@ public class MyPageServiceImpl implements MyPageService {
 
         responseDto.setData(myBookDto);
         return responseDto;
+    }
+
+    @Override
+    public ResponseDto myRentBook(Integer page, Member member) {
+
+        ResponseDto responseDto = new ResponseDto();
+
+        List<MyBookRentDto> myBookRentDtoList = new ArrayList<>();
+        List<Rent> rents = rentRepository.findByRenter(member);
+
+        int chunkSize = 8;
+
+        List<Rent> chunkRent = rents.subList((page) * chunkSize, (page + 1) * chunkSize);
+
+        for (Rent rent : chunkRent) {
+
+            Book book = rent.getBook();
+            BookRent bookRent = book.getBookRent();
+            Member lender = rent.getLender();
+
+            MyBookRentDto myBookRentDto = MyBookRentDto.builder()
+                    .title(book.getTitle())
+                    .authors(book.getAuthors())
+                    .publisher(book.getPublisher())
+                    .lender(lender.getNickname())
+                    .rent_location(bookRent.getRent_location())
+                    .rent_date(rent.getRent_date())
+                    .return_location(rent.getReturn_location())
+                    .return_date(rent.getRent_date())
+                    .rental_fee(bookRent.getRental_fee())
+                    .build();
+
+            myBookRentDtoList.add(myBookRentDto);
+        }
+
+        responseDto.setData(myBookRentDtoList);
+        return responseDto;
+    }
+
+    @Override
+    public ResponseDto myLendBook(Integer page, Member member) {
+
+        ResponseDto responseDto = new ResponseDto();
+
+
     }
 
 }

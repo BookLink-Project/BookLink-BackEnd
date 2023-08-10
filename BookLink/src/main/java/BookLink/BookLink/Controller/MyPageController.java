@@ -51,11 +51,17 @@ public class MyPageController {
                 .body(responseDto);
     }
 
-//    @GetMapping("/my-book/rent/{page}")
-//    public ResponseEntity<ResponseDto> myRentBook(@PathVariable Integer page) {
-//
-//
-//    }
+    @GetMapping("/my-book/rent/{page}")
+    public ResponseEntity<ResponseDto> myRentBook(@PathVariable Integer page,
+                                                  @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
+
+        Member member = memberPrincipal.getMember();
+
+        ResponseDto responseDto = myPageService.myRentBook(page, member);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+    }
 
     @GetMapping("/my-book")
     public ResponseEntity<ResponseDto> myBook(@AuthenticationPrincipal MemberPrincipal memberPrincipal) {
