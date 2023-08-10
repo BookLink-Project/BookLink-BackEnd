@@ -74,11 +74,14 @@ public class Member extends BaseTimeEntity {
 
     public void updateAccount(URL image, String name, String nickname, String email, String password,
                                 LocalDate birth, String address) {
+
+        if (!password.equals("")) {
+            this.password = password;
+        }
         this.image = image;
         this.name = name;
         this.nickname = nickname;
         this.email = email;
-        this.password = password;
         this.birth = birth;
         this.address = address;
 //        this.card = card;

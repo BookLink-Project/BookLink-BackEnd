@@ -11,7 +11,6 @@ public class AccountDto {
     @Getter
     @NoArgsConstructor
     public static class Request {
-        private URL image;
         private String name;
         private String nickname;
         private String email;

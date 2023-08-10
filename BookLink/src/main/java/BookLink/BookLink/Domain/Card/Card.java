@@ -28,4 +28,7 @@ public class Card {
     @NotNull
     private Date valid_date; // 유효기간
 
+    @NotNull
+    private String name; // 카드 이름
+
 }

@@ -1,16 +1,12 @@
 package BookLink.BookLink.Domain.Book;
 
 import BookLink.BookLink.Domain.Common.BaseTimeEntity;
-import BookLink.BookLink.Domain.Common.RentalEnum;
 import BookLink.BookLink.Domain.Member.Member;
 import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.print.DocFlavor;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Getter
@@ -49,7 +45,8 @@ public class Book extends BaseTimeEntity {
     private LocalDate pud_date; // 출간일
 
     @NotNull
-    private Boolean rent_signal; // 대여 신청 가능 여부
+    @Column(name = "rent_signal")
+    private Boolean rentSignal; // 대여 신청 가능 여부
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer")
@@ -73,7 +70,7 @@ public class Book extends BaseTimeEntity {
         this.category_name = category_name;
         this.publisher = publisher;
         this.pud_date = pud_date;
-        this.rent_signal = rent_signal;
+        this.rentSignal = rent_signal;
         this.member = member;
         this.bookRent = bookRent;
     }

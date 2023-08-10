@@ -1,6 +1,7 @@
 package BookLink.BookLink.Repository.BookReply;
 
 import BookLink.BookLink.Domain.BookReply.BookReply;
+import BookLink.BookLink.Domain.Member.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,11 +18,8 @@ public interface BookReplyRepository extends JpaRepository<BookReply, Long> {
 
     List<BookReply> findByIsbnOrderByParentDescIdDesc(String isbn);
 
-//    Optional<BookReply> findByIdAndParent(Long parent);
-
     Optional<BookReply> findByIdAndIsbn(Long id, String isbn);
 
-//    @Query("SELECT br.lastModifiedTime FROM BookReply br WHERE br.id = :id")
-//    LocalDateTime findLastModifiedTimeById(@Param("id")Long id);
+    List<BookReply> findByWriterOrderByCreatedTimeDesc(Member writer);
 
 }
