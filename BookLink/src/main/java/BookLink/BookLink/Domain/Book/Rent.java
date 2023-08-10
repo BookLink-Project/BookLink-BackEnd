@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -30,13 +31,19 @@ public class Rent extends BaseTimeEntity {
     @JoinColumn(name = "renter_id")
     private Member renter;
 
-    private Integer rent_date;
+    private LocalDateTime rent_date;
+
+    private LocalDateTime return_date;
+
+    private String return_location;
 
     @Builder
-    public Rent(Book book, Member lender, Member renter, Integer rent_date) {
+    public Rent(Book book, Member lender, Member renter, LocalDateTime rent_date, LocalDateTime return_date, String return_location) {
         this.book = book;
         this.lender = lender;
         this.renter = renter;
         this.rent_date = rent_date;
+        this.return_date = return_date;
+        this.return_location = return_location;
     }
 }

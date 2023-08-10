@@ -15,4 +15,6 @@ public interface MyPageService {
 
     ResponseDto myRentBook(Integer page);
 
+    ResponseDto myBook(Member member);
+
 }

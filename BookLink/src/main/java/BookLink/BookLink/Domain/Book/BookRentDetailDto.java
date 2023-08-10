@@ -12,7 +12,6 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 public class BookRentDetailDto {
 
     private Integer record_cnt;

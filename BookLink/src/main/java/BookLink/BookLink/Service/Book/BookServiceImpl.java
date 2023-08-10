@@ -651,7 +651,9 @@ public class BookServiceImpl implements BookService {
                 .book(book)
                 .lender(lender)
                 .renter(renter)
-                .rent_date(rentDto.getPeriod())
+                .rent_date(rentDto.getRent_date())
+                .return_date(rentDto.getReturn_date())
+                .return_location(rentDto.getReturn_location())
                 .build();
 
         rentRepository.save(rent);
