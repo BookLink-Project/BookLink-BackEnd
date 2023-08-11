@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface BookRepository extends JpaRepository<Book, Long> {
 
+
     int findByIsbn(String isbn);
 
     boolean existsByIsbnAndWriter (String isbn, Member writer);
@@ -33,5 +34,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 //    long countByRentSignalAndMemberId(@Param("rent_signal") boolean rentSignal, @Param("member_id") Long memberId);
 
     Long countByRentSignalAndWriter(boolean rentSignal, Member member);
+
+    Long countByIsbn(String isbn);
 
 }

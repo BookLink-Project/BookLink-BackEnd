@@ -17,9 +17,9 @@ public interface BookService {
 
     ResponseDto joinMyBook(BookDto.Request bookDto, Member loginMember, List<MultipartFile> image) throws IOException;
 
-    ResponseDto listAllBook(Integer category);
+    ResponseDto listAllBook(Integer category, int page);
 
-    ResponseDto searchBook(Integer category, String searchWord);
+    ResponseDto searchBook(Integer category, String searchWord, int page);
 
     ResponseDto showBook(MemberPrincipal memberPrincipal, String isbn13);
 

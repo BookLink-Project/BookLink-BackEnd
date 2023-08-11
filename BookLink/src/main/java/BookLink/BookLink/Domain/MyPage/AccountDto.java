@@ -1,6 +1,5 @@
 package BookLink.BookLink.Domain.MyPage;
 
-import BookLink.BookLink.Domain.Card.Card;
 import lombok.*;
 
 import java.net.URL;
@@ -17,7 +16,6 @@ public class AccountDto {
         private String password;
         private LocalDate birth;
         private String address;
-//        private Card card; // ???
     }
 
     @Getter
@@ -30,7 +28,5 @@ public class AccountDto {
         private String email;
         private LocalDate birth;
         private String address;
-//        private Card card; // ???
     }
-
 }
