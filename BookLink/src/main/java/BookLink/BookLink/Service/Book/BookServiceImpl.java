@@ -10,10 +10,7 @@ import BookLink.BookLink.Domain.BookReply.BookReply;
 import BookLink.BookLink.Domain.BookReply.BookRepliesDto;
 import BookLink.BookLink.Exception.Enum.BookErrorCode;
 import BookLink.BookLink.Exception.RestApiException;
-import BookLink.BookLink.Repository.Book.BookLikeRepository;
-import BookLink.BookLink.Repository.Book.BookRentRepository;
-import BookLink.BookLink.Repository.Book.BookRepository;
-import BookLink.BookLink.Repository.Book.RentRepository;
+import BookLink.BookLink.Repository.Book.*;
 import BookLink.BookLink.Repository.BookReply.BookReplyLikeRepository;
 import BookLink.BookLink.Repository.Community.BookReport.BookReportRepository;
 import BookLink.BookLink.Repository.BookReply.BookReplyRepository;
@@ -54,6 +51,7 @@ public class BookServiceImpl implements BookService {
     private final RentRepository rentRepository;
     private final MemberRepository memberRepository;
     private final S3Service s3Service;
+    private final BookImageRepository bookImageRepository;
 
     private String search_url = "http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=ttbelwlahstmxjf2304001&QueryType=Title&SearchTarget=Book&Cover=Big&output=js&InputEncoding=utf-8&Version=20131101";
     private String list_url = "http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=ttbelwlahstmxjf2304001&QueryType=Bestseller&MaxResults=32&SearchTarget=Book&Cover=Big&output=js&Version=20131101";
@@ -354,7 +352,7 @@ public class BookServiceImpl implements BookService {
     public ResponseDto joinMyBook(BookDto.Request bookDto, Member loginMember, List<MultipartFile> image) throws IOException {
 
         ResponseDto responseDto = new ResponseDto();
-        List<URL> urlList = new ArrayList<>();
+        List<BookImage> urlList = new ArrayList<>();
 
         boolean is_exist = bookRepository.existsByIsbnAndWriter(bookDto.getIsbn13(), loginMember);
 
@@ -364,15 +362,11 @@ public class BookServiceImpl implements BookService {
 
         if(bookDto.getRent_signal()) {
 
-            for (MultipartFile multipartFile : image) {
-                URL imageUrl = s3Service.uploadImage(multipartFile);
-                urlList.add(imageUrl);
-            }
+            BookRent bookRent = new BookRent();
 
-            BookRent bookRent = BookRent.builder()
+            bookRent = BookRent.builder()
                     .rent_status(RentStatus.WAITING)
                     .book_rating(bookDto.getBook_rating())
-                    .image(urlList)
                     .book_status(bookDto.getBook_status())
                     .rental_fee(bookDto.getRental_fee())
                     .min_date(bookDto.getMin_date())
@@ -380,7 +374,16 @@ public class BookServiceImpl implements BookService {
                     .rent_location(bookDto.getRent_location())
                     .rent_method(bookDto.getRent_method())
                     .build();
-//            bookRentRepository.save(bookRent);
+
+            bookRentRepository.save(bookRent);
+
+            for (MultipartFile multipartFile : image) {
+                URL imageUrl = s3Service.uploadImage(multipartFile);
+
+                BookImage bookImage = new BookImage(imageUrl, bookRent);
+                bookImageRepository.save(bookImage);
+                urlList.add(bookImage);
+            }
 
             Book book = BookDto.Request.toBookEntity(bookDto, bookRent, loginMember);
             bookRepository.save(book);
@@ -433,6 +436,7 @@ public class BookServiceImpl implements BookService {
             BookRentDto bookRentListDto = BookRentDto.builder()
                     .title(book.getTitle())
                     .authors(book.getAuthors())
+                    .isbn(book.getIsbn())
                     .cover(book.getCover())
                     .publisher(book.getPublisher())
                     .avg_rental_fee(avg_fee)
@@ -530,6 +534,7 @@ public class BookServiceImpl implements BookService {
         BookRentDto bookRentDto = BookRentDto.builder()
                 .title(book.getTitle())
                 .authors(book.getAuthors())
+                .isbn(book.getIsbn())
                 .cover(book.getCover())
                 .publisher(book.getPublisher())
                 .avg_rental_fee(avg_fee)
@@ -554,6 +559,7 @@ public class BookServiceImpl implements BookService {
             BookRent bookRent = book.getBookRent();
 
             BookRentInfoDto bookRentInfoDto = BookRentInfoDto.builder()
+                    .isbn(book.getIsbn())
                     .writer(book.getWriter().getNickname())
                     .created_time(bookRent.getCreatedTime())
                     .book_rating(bookRent.getBook_rating())
@@ -609,6 +615,7 @@ public class BookServiceImpl implements BookService {
                     .rent_status(rent_status)
                     .title(book.getTitle())
                     .authors(book.getAuthors())
+                    .isbn(book.getIsbn())
                     .cover(book.getCover())
                     .created_time(book.getCreatedTime())
                     .publisher(book.getPublisher())
@@ -662,7 +669,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public ResponseDto rentSuccess(Long id, RentDto rentDto, Member lender) {
+    public ResponseDto rentSuccess(Long id, RentDto rentDto, Member renter) {
 
         ResponseDto responseDto = new ResponseDto();
 
@@ -674,9 +681,9 @@ public class BookServiceImpl implements BookService {
             return responseDto;
         }
 
-        Member renter = memberRepository.findByNickname(rentDto.getNickname()).orElse(null);
+        Member lender = memberRepository.findByNickname(rentDto.getNickname()).orElse(null);
 
-        if (renter == null) {
+        if (lender == null) {
             responseDto.setMessage("없는 회원입니다.");
             responseDto.setStatus(HttpStatus.BAD_REQUEST);
             return responseDto;
