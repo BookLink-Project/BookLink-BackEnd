@@ -81,8 +81,6 @@ public class BookReportServiceImpl implements BookReportService {
             return responseDto;
         }
 
-        Book book = bookRepository.findByIsbn(post.getIsbn());
-
         post.view_plus(); // 조회수 증가
 
         boolean isLiked = bookReportLikeRepository.existsByMemberAndPost(loginMember, post);
@@ -128,7 +126,6 @@ public class BookReportServiceImpl implements BookReportService {
                 post.getPublisher(),
                 post.getPud_date(),
                 post.getCover(),
-                book.getCategory_name(),
                 post.getCategory(),
                 post.getTitle(),
                 post.getContent(),
