@@ -671,7 +671,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public ResponseDto rentSuccess(Long id, RentDto rentDto, Member renter) {
+    public ResponseDto rentSuccess(Long id, RentDto rentDto, Member lender) {
 
         ResponseDto responseDto = new ResponseDto();
 
@@ -683,7 +683,7 @@ public class BookServiceImpl implements BookService {
             return responseDto;
         }
 
-        Member lender = memberRepository.findByNickname(rentDto.getNickname()).orElse(null);
+        Member renter = memberRepository.findByNickname(rentDto.getRent_nickname()).orElse(null);
 
         if (lender == null) {
             responseDto.setMessage("없는 회원입니다.");
