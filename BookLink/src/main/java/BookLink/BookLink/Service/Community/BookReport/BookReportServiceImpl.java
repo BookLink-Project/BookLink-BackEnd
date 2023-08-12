@@ -129,6 +129,7 @@ public class BookReportServiceImpl implements BookReportService {
                 post.getPud_date(),
                 post.getCover(),
                 book.getCategory_name(),
+                post.getCategory(),
                 post.getTitle(),
                 post.getContent(),
                 post.getCreatedTime(),

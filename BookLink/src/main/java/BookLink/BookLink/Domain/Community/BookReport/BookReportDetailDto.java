@@ -25,7 +25,8 @@ public class BookReportDetailDto {
     private String publisher;
     private LocalDate pud_date;
     private String cover; // 도서 표지 미리보기 URL
-    private String book_category;
+    private String book_category; // 책 카테고리
+    private String community_category; // 커뮤니티 카테고래
     private String title;
     private String content;
 
