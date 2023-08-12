@@ -11,7 +11,7 @@ import java.util.List;
 public interface BookRepository extends JpaRepository<Book, Long> {
 
 
-    int findByIsbn(String isbn);
+    Book findByIsbn(String isbn);
 
     boolean existsByIsbnAndWriter (String isbn, Member writer);
 

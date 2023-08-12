@@ -1,11 +1,13 @@
 package BookLink.BookLink.Service.Community.BookReport;
 
+import BookLink.BookLink.Domain.Book.Book;
 import BookLink.BookLink.Domain.Community.BookReport.*;
 import BookLink.BookLink.Domain.Community.BookReport.BookReportDetailDto;
 import BookLink.BookLink.Domain.CommunityReply.BookReportReply.BookReportRepliesDto;
 import BookLink.BookLink.Domain.CommunityReply.BookReportReply.BookReportReply;
 import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.ResponseDto;
+import BookLink.BookLink.Repository.Book.BookRepository;
 import BookLink.BookLink.Repository.Community.BookReport.BookReportLikeRepository;
 import BookLink.BookLink.Repository.Community.BookReport.BookReportRepository;
 import BookLink.BookLink.Repository.CommunityReply.BookReport.BookReportReplyLikeRepository;
@@ -27,6 +29,7 @@ public class BookReportServiceImpl implements BookReportService {
     private final BookReportLikeRepository bookReportLikeRepository;
     private final BookReportReplyRepository bookReportReplyRepository;
     private final BookReportReplyLikeRepository bookReportReplyLikeRepository;
+    private final BookRepository bookRepository;
 
     @Override
     public ResponseDto writeReport(BookReportDto.Request requestDto, Member loginMember) {
@@ -78,6 +81,7 @@ public class BookReportServiceImpl implements BookReportService {
             return responseDto;
         }
 
+        Book book = bookRepository.findByIsbn(post.getIsbn());
 
         post.view_plus(); // 조회수 증가
 
@@ -124,7 +128,7 @@ public class BookReportServiceImpl implements BookReportService {
                 post.getPublisher(),
                 post.getPud_date(),
                 post.getCover(),
-                post.getCategory(),
+                book.getCategory_name(),
                 post.getTitle(),
                 post.getContent(),
                 post.getCreatedTime(),
