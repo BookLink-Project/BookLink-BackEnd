@@ -65,7 +65,7 @@ public class Member extends BaseTimeEntity {
     @OneToMany(mappedBy = "writer")
     private List<BookReport> reports = new ArrayList<>();
 
-    @OneToMany(mappedBy = "writer")
+    @OneToMany(mappedBy = "writer", fetch = FetchType.EAGER)// LazyInitializationException 오류 해결하기 위해 EAGER 전략사용
     private List<Book> books = new ArrayList<>();
 
 //    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)

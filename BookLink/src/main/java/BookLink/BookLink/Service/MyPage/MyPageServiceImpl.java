@@ -451,6 +451,7 @@ public class MyPageServiceImpl implements MyPageService {
     }
 
     @Override
+    @Transactional
     public ResponseDto myBook(Member member) {
 
         ResponseDto responseDto = new ResponseDto();
@@ -533,8 +534,14 @@ public class MyPageServiceImpl implements MyPageService {
         List<Rent> rents = rentRepository.findByRenter(member);
 
         int chunkSize = 8;
+        int endSize = (page + 1) * chunkSize;
+        int size = rents.size();
 
-        List<Rent> chunkRent = rents.subList((page) * chunkSize, (page + 1) * chunkSize);
+        if (size < chunkSize) {
+            endSize = size;
+        }
+
+        List<Rent> chunkRent = rents.subList((page) * chunkSize, endSize);
 
         for (Rent rent : chunkRent) {
 
@@ -570,8 +577,14 @@ public class MyPageServiceImpl implements MyPageService {
         List<Rent> rents = rentRepository.findByLender(member);
 
         int chunkSize = 8;
+        int endSize = (page + 1) * chunkSize;
+        int size = rents.size();
 
-        List<Rent> chunkRent = rents.subList((page) * chunkSize, (page + 1) * chunkSize);
+        if (size < chunkSize) {
+            endSize = size;
+        }
+
+        List<Rent> chunkRent = rents.subList((page) * chunkSize, endSize);
 
         for (Rent rent : chunkRent) {
 

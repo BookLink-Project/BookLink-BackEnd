@@ -403,6 +403,10 @@ public class BookServiceImpl implements BookService {
         int chunkSize = 16;
         int totalSize = titles.size();
 
+        if (totalSize < chunkSize) {
+            chunkSize = totalSize;
+        }
+
         List<String> chunkDistinctTitles = titles.subList((page) * chunkSize, (page + 1) * chunkSize);
 
         List<BookRentDto> chunkBookRentList = new ArrayList<>();
@@ -512,7 +516,7 @@ public class BookServiceImpl implements BookService {
         int count = 0;
         int max_period = 0;
 
-        List<Book> books = bookRepository.findByTitle(title);
+        List<Book> books = bookRepository.findByTitleContaining(title);
         count = books.size();
 
         for (Book book : books) {
@@ -669,7 +673,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public ResponseDto rentSuccess(Long id, RentDto rentDto, Member renter) {
+    public ResponseDto rentSuccess(Long id, RentDto rentDto, Member lender) {
 
         ResponseDto responseDto = new ResponseDto();
 
@@ -681,7 +685,7 @@ public class BookServiceImpl implements BookService {
             return responseDto;
         }
 
-        Member lender = memberRepository.findByNickname(rentDto.getNickname()).orElse(null);
+        Member renter = memberRepository.findByNickname(rentDto.getRent_nickname()).orElse(null);
 
         if (lender == null) {
             responseDto.setMessage("없는 회원입니다.");

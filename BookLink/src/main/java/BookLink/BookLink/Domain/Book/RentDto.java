@@ -12,5 +12,5 @@ public class RentDto {
     private LocalDateTime rent_date;
     private LocalDateTime return_date;
     private String return_location;
-    private String nickname;
+    private String rent_nickname;
 }
