@@ -52,7 +52,7 @@ public class Book extends BaseTimeEntity {
     @JoinColumn(name = "writer")
     private Member writer;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @OneToOne(cascade = CascadeType.PERSIST) // LazyInitializationException 오류 해결하기 위해 EAGER 전략사용
     @JoinColumn(name = "rent_id")
     private BookRent bookRent;
 

@@ -187,6 +187,7 @@ public class BookController {
                 .body(responseDto);
     }
 
+    // 해당 책에 대여가 가능한 책방을 나열하기
     @GetMapping("/rent/books/{title}")
     public ResponseEntity<ResponseDto> rentBooks(@PathVariable String title) {
 

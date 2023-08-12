@@ -401,6 +401,10 @@ public class BookServiceImpl implements BookService {
         int chunkSize = 16;
         int totalSize = titles.size();
 
+        if (totalSize < chunkSize) {
+            chunkSize = totalSize;
+        }
+
         List<String> chunkDistinctTitles = titles.subList((page) * chunkSize, (page + 1) * chunkSize);
 
         List<BookRentDto> chunkBookRentList = new ArrayList<>();
@@ -510,7 +514,7 @@ public class BookServiceImpl implements BookService {
         int count = 0;
         int max_period = 0;
 
-        List<Book> books = bookRepository.findByTitle(title);
+        List<Book> books = bookRepository.findByTitleContaining(title);
         count = books.size();
 
         for (Book book : books) {

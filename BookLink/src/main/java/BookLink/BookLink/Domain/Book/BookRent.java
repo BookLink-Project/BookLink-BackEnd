@@ -28,6 +28,9 @@ public class BookRent extends BaseTimeEntity {
     @OneToMany(mappedBy = "bookRent")
     private List<BookImage> image = new ArrayList<>(); // 도서 참고사진
 
+    @OneToOne(mappedBy = "bookRent")
+    private Book book;
+
     private String book_status; // 도서 상태 설명
 
     private Integer rental_fee; // 대여료
