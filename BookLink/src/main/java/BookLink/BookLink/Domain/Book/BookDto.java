@@ -15,7 +15,7 @@ public class BookDto {
     @AllArgsConstructor
     public static class Request {
 
-        private String title;
+        private String book_title;
         private String author;
         private LocalDate pud_date; // 출간일
         private String recommendation; // 책 소개 요약
@@ -37,7 +37,7 @@ public class BookDto {
 
         public static Book toBookEntity(BookDto.Request dto, Member loginMember) {
             return Book.builder()
-                    .title(dto.getTitle())
+                    .title(dto.getBook_title())
                     .authors(dto.getAuthor())
                     .recommendation(dto.getRecommendation())
                     .isbn(dto.getIsbn13())
@@ -54,7 +54,7 @@ public class BookDto {
 
         public static Book toBookEntity(BookDto.Request dto, BookRent bookRent, Member member) {
             return Book.builder()
-                    .title(dto.getTitle())
+                    .title(dto.getBook_title())
                     .authors(dto.getAuthor())
                     .recommendation(dto.getRecommendation())
                     .isbn(dto.getIsbn13())
