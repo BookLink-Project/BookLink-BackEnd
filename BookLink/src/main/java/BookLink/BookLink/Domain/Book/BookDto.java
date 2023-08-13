@@ -19,7 +19,7 @@ public class BookDto {
         private String authors;
         private LocalDate pud_date; // 출간일
         private String recommendation; // 책 소개 요약
-        private String isbn13; // 책 고유번호 13자리
+        private String isbn; // 책 고유번호 13자리
         private Integer price_sales; // 정가
         private String cover; // 도서 표지 미리보기 URL
         private String category_name; // 카테고리 이름
@@ -40,7 +40,7 @@ public class BookDto {
                     .title(dto.getBook_title())
                     .authors(dto.getAuthors())
                     .recommendation(dto.getRecommendation())
-                    .isbn(dto.getIsbn13())
+                    .isbn(dto.getIsbn())
                     .price_sales(dto.getPrice_sales())
                     .cover(dto.getCover())
                     .category_name(dto.getCategory_name())
@@ -57,7 +57,7 @@ public class BookDto {
                     .title(dto.getBook_title())
                     .authors(dto.getAuthors())
                     .recommendation(dto.getRecommendation())
-                    .isbn(dto.getIsbn13())
+                    .isbn(dto.getIsbn())
                     .price_sales(dto.getPrice_sales())
                     .cover(dto.getCover())
                     .category_name(dto.getCategory_name())
