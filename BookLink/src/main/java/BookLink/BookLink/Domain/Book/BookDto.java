@@ -16,7 +16,7 @@ public class BookDto {
     public static class Request {
 
         private String book_title;
-        private String author;
+        private String authors;
         private LocalDate pud_date; // 출간일
         private String recommendation; // 책 소개 요약
         private String isbn13; // 책 고유번호 13자리
@@ -38,7 +38,7 @@ public class BookDto {
         public static Book toBookEntity(BookDto.Request dto, Member loginMember) {
             return Book.builder()
                     .title(dto.getBook_title())
-                    .authors(dto.getAuthor())
+                    .authors(dto.getAuthors())
                     .recommendation(dto.getRecommendation())
                     .isbn(dto.getIsbn13())
                     .price_sales(dto.getPrice_sales())
@@ -55,7 +55,7 @@ public class BookDto {
         public static Book toBookEntity(BookDto.Request dto, BookRent bookRent, Member member) {
             return Book.builder()
                     .title(dto.getBook_title())
-                    .authors(dto.getAuthor())
+                    .authors(dto.getAuthors())
                     .recommendation(dto.getRecommendation())
                     .isbn(dto.getIsbn13())
                     .price_sales(dto.getPrice_sales())
