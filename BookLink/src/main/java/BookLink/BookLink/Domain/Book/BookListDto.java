@@ -14,7 +14,8 @@ import java.util.List;
 @AllArgsConstructor
 public class BookListDto {
 
-    List<Item> item = new ArrayList<>();
+    private Integer search_cnt;
+    private List<Item> item = new ArrayList<>();
 
     @Getter
     @Setter

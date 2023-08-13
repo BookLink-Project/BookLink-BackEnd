@@ -110,6 +110,8 @@ public class BookServiceImpl implements BookService {
                                         .filter(item -> !item.getIsbn13().isEmpty())
                                         .collect(Collectors.toList()); // isbn 필터링
 
+        result.setSearch_cnt(items.size());
+
         for (BookListDto.Item item : items) {
 
             String isbn = item.getIsbn13();
@@ -155,6 +157,8 @@ public class BookServiceImpl implements BookService {
                                         .stream()
                                         .filter(item -> !item.getIsbn13().isEmpty())
                                         .collect(Collectors.toList()); // isbn 필터링
+
+        result.setSearch_cnt(items.size());
 
         for (BookListDto.Item item : items) {
 
@@ -733,6 +737,8 @@ public class BookServiceImpl implements BookService {
                 .stream()
                 .filter(item -> !item.getIsbn13().isEmpty())
                 .collect(Collectors.toList()); // isbn 필터링
+
+        result.setSearch_cnt(items.size());
 
         for (BookListDto.Item item : items) {
 
