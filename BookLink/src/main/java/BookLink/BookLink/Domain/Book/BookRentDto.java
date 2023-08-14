@@ -10,6 +10,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class BookRentDto {
 
+    private Long rent_id;
     private String title;
     private String authors;
     private String isbn;
@@ -20,8 +21,9 @@ public class BookRentDto {
     private Integer rent_period;
 
     @Builder
-    public BookRentDto(String title, String authors, String isbn, LocalDate pub_date, String cover, String publisher,
-                       Integer avg_rental_fee, Integer rent_period) {
+    public BookRentDto(Long rent_id, String title, String authors, String isbn, LocalDate pub_date, String cover,
+                       String publisher, Integer avg_rental_fee, Integer rent_period) {
+        this.rent_id = rent_id;
         this.title = title;
         this.authors = authors;
         this.isbn = isbn;

@@ -436,6 +436,7 @@ public class BookServiceImpl implements BookService {
             Book book = books.get(0);
 
             BookRentDto bookRentListDto = BookRentDto.builder()
+                    .rent_id(book.getId())
                     .title(book.getTitle())
                     .authors(book.getAuthors())
                     .isbn(book.getIsbn())
@@ -535,6 +536,7 @@ public class BookServiceImpl implements BookService {
         Book book = books.get(0);
 
         BookRentDto bookRentDto = BookRentDto.builder()
+                .rent_id(book.getId())
                 .title(book.getTitle())
                 .authors(book.getAuthors())
                 .isbn(book.getIsbn())
@@ -563,6 +565,7 @@ public class BookServiceImpl implements BookService {
             BookRent bookRent = book.getBookRent();
 
             BookRentInfoDto bookRentInfoDto = BookRentInfoDto.builder()
+                    .rent_id(book.getId())
                     .isbn(book.getIsbn())
                     .writer(book.getWriter().getNickname())
                     .created_time(bookRent.getCreatedTime())
@@ -635,6 +638,7 @@ public class BookServiceImpl implements BookService {
             BookRent bookRent = another_book.getBookRent();
 
             BookRentInfoDto bookRentInfoDto = BookRentInfoDto.builder()
+                    .rent_id(id)
                     .writer(another_book.getWriter().getNickname())
                     .created_time(bookRent.getCreatedTime())
                     .book_rating(bookRent.getBook_rating())
