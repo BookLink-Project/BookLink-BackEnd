@@ -656,11 +656,19 @@ public class BookServiceImpl implements BookService {
             bookRentInfoDtoList.add(bookRentInfoDto);
         }
 
+        List<URL> image_urls = new ArrayList<>();
+        List<BookImage> images = bookRent_byId.getImage();
+        for(BookImage image : images) {
+            URL image_url = image.getImage_url();
+            image_urls.add(image_url);
+        }
+
         BookRentDetailDto bookRentDetailDto = BookRentDetailDto.builder()
                 .record_cnt(books.size())
                 .rent_available_cnt(rent_available_cnt)
                 .renting_cnt(renting_cnt)
                 .bookRecordDtoList(bookRecordDtoList)
+                .image_urls(image_urls)
                 .title(book_byId.getTitle())
                 .authors(book_byId.getAuthors())
                 .recommendation(book_byId.getRecommendation())
