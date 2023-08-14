@@ -2,7 +2,6 @@ package BookLink.BookLink.Domain.Community.BookReport;
 
 import BookLink.BookLink.Domain.Common.BaseTimeEntity;
 import BookLink.BookLink.Domain.Member.Member;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
