@@ -358,7 +358,7 @@ public class BookServiceImpl implements BookService {
         ResponseDto responseDto = new ResponseDto();
         List<BookImage> urlList = new ArrayList<>();
 
-        boolean is_exist = bookRepository.existsByIsbnAndWriter(bookDto.getIsbn13(), loginMember);
+        boolean is_exist = bookRepository.existsByIsbnAndWriter(bookDto.getIsbn(), loginMember);
 
         if(is_exist) {
             throw new RestApiException(BookErrorCode.ALREADY_SAVED_BOOK);
