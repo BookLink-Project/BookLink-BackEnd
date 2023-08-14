@@ -442,6 +442,7 @@ public class BookServiceImpl implements BookService {
             Book book = books.get(0);
 
             BookRentDto bookRentListDto = BookRentDto.builder()
+                    .id(book.getId())
                     .title(book.getTitle())
                     .authors(book.getAuthors())
                     .isbn(book.getIsbn())
