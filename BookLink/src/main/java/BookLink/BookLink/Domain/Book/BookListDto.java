@@ -27,6 +27,7 @@ public class BookListDto {
         private String title;
         private String author;
         private String publisher;
+        private Integer priceStandard;
         private Integer priceSales;
         private String cover;
 
