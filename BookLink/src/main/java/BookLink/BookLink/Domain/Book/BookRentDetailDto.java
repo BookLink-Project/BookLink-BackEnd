@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
+import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,7 @@ public class BookRentDetailDto {
     private Integer renting_cnt;
 
     private List<BookRecordDto> bookRecordDtoList = new ArrayList<>();
+    private List<URL> image_urls = new ArrayList<>();
 
     private String title;
     private String authors;
@@ -41,13 +43,14 @@ public class BookRentDetailDto {
 
     @Builder
     public BookRentDetailDto(Integer record_cnt, Integer rent_available_cnt, Integer renting_cnt, List<BookRecordDto> bookRecordDtoList,
-                             String title, String authors, String recommendation, String isbn, String cover, String publisher, String book_rating,
-                             String rent_location, String rent_method, Integer min_date, Integer max_date, Integer rental_fee, String book_status,
-                             List<BookRentInfoDto> bookRentInfoDtoList) {
+                             List<URL> image_urls, String title, String authors, String recommendation, String isbn, String cover,
+                             String publisher, String book_rating, String rent_location, String rent_method, Integer min_date, Integer max_date,
+                             Integer rental_fee, String book_status, List<BookRentInfoDto> bookRentInfoDtoList) {
         this.record_cnt = record_cnt;
         this.rent_available_cnt = rent_available_cnt;
         this.renting_cnt = renting_cnt;
         this.bookRecordDtoList = bookRecordDtoList;
+        this.image_urls = image_urls;
         this.title = title;
         this.authors = authors;
         this.recommendation = recommendation;
