@@ -31,6 +31,7 @@ public class BookDetailDto {
         private String author;
         private String publisher;
         private String pubDate;
+        private Integer priceStandard;
         private String description;
         private String cover;
         private Integer categoryId;
@@ -43,5 +44,4 @@ public class BookDetailDto {
         private boolean isLiked;
 
     }
-
 }

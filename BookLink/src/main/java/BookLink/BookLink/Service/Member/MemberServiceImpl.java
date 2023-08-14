@@ -124,7 +124,9 @@ public class MemberServiceImpl implements MemberService{
         responseDto.setMessage("로그인 성공");
 
         Member loginMember = selectedMember.get();
-        LoginDto.Response loginData = new LoginDto.Response(loginMember.getEmail(), loginMember.getName(), loginMember.getNickname());
+        LoginDto.Response loginData = new LoginDto.Response(
+                loginMember.getEmail(), loginMember.getName(), loginMember.getNickname(), loginMember.getAddress()
+        );
 
         responseDto.setData(loginData);
 
