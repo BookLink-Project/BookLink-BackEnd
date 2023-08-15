@@ -41,7 +41,7 @@ public class BookController {
     // 소장도서 등록 및 대여 등록
     @PostMapping(value = "/register",
             consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<ResponseDto> registerMyBook(@RequestPart List<MultipartFile> image,
+    public ResponseEntity<ResponseDto> registerMyBook(@RequestPart(required = false) List<MultipartFile> image,
                                                       @RequestPart BookDto.Request bookDto,
                                                       @AuthenticationPrincipal MemberPrincipal memberPrincipal) throws IOException {
 
