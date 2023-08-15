@@ -1,25 +1,35 @@
 package BookLink.BookLink.Domain.Chat;
 
-import lombok.AllArgsConstructor;
+import BookLink.BookLink.Domain.Member.Member;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
+import javax.persistence.*;
+
+@Entity
 @Getter
-@Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class ChatMessage {
-    public enum MessageType {
-        ENTER, TALK
-    }
 
-    private MessageType type;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    private String roomId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "room_id")
+    private ChatRoom chatRoom;
 
-    private String sender;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sender")
+    private Member sender;
 
     private String message;
 
+    @Builder
+    public ChatMessage(ChatRoom chatRoom, Member sender, String message) {
+        this.chatRoom = chatRoom;
+        this.sender = sender;
+        this.message = message;
+    }
 }

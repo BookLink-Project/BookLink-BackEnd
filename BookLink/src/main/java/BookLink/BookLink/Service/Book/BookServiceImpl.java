@@ -644,7 +644,7 @@ public class BookServiceImpl implements BookService {
             BookRent bookRent = another_book.getBookRent();
 
             BookRentInfoDto bookRentInfoDto = BookRentInfoDto.builder()
-                    .rent_id(id)
+                    .rent_id(another_book.getId())
                     .writer(another_book.getWriter().getNickname())
                     .created_time(bookRent.getCreatedTime())
                     .book_rating(bookRent.getBook_rating())
