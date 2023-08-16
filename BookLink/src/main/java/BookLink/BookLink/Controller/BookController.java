@@ -221,5 +221,9 @@ public class BookController {
 
     // 대여 신청 받지 않기
 
-    // 대
+
+    // 대여취소
+
+    //반납완료
+
 }

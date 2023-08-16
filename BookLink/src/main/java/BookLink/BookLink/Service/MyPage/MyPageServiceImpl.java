@@ -494,23 +494,38 @@ public class MyPageServiceImpl implements MyPageService {
         for (Book book : books) {
             BookRent bookRent = book.getBookRent();
 
-            RentStatus rent_status = bookRent.getRent_status();
+            MyRecordBookDto myRecordBookDto = new MyRecordBookDto();
 
-            if (rent_status == RentStatus.RENTING) {
-                rent_cnt += 1;
-            } else {
-                rent_available_cnt += 1;
+            if (bookRent == null) {
+                myRecordBookDto = MyRecordBookDto.builder()
+                        .rent_status(RentStatus.DENIED)
+                        .cover(book.getCover())
+                        .title(book.getTitle())
+                        .authors(book.getAuthors())
+                        .publisher(book.getPublisher())
+                        .rental_fee(0)
+                        .max_date(0)
+                        .build();
             }
+            else {
+                RentStatus rent_status = bookRent.getRent_status();
 
-            MyRecordBookDto myRecordBookDto = MyRecordBookDto.builder()
-                    .rent_status(bookRent.getRent_status())
-                    .cover(book.getCover())
-                    .title(book.getTitle())
-                    .authors(book.getAuthors())
-                    .publisher(book.getPublisher())
-                    .rental_fee(bookRent.getRental_fee())
-                    .max_date(bookRent.getMax_date())
-                    .build();
+                if (rent_status == RentStatus.RENTING) {
+                    rent_cnt += 1;
+                } else {
+                    rent_available_cnt += 1;
+                }
+
+                myRecordBookDto = MyRecordBookDto.builder()
+                        .rent_status(bookRent.getRent_status())
+                        .cover(book.getCover())
+                        .title(book.getTitle())
+                        .authors(book.getAuthors())
+                        .publisher(book.getPublisher())
+                        .rental_fee(bookRent.getRental_fee())
+                        .max_date(bookRent.getMax_date())
+                        .build();
+            }
 
             myRecordBookDtoList.add(myRecordBookDto);
         }
