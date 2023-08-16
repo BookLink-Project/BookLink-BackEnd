@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.NotNull;
 import java.net.URL;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,7 @@ public class BookRentDetailDto {
 
     private String title;
     private String authors;
+    private LocalDateTime created_time;
     private String recommendation; // 추천사
     private String isbn; // 책 고유번호 13자리
     private String cover; // 도서 표지 미리보기 URL
@@ -43,9 +45,9 @@ public class BookRentDetailDto {
 
     @Builder
     public BookRentDetailDto(Integer record_cnt, Integer rent_available_cnt, Integer renting_cnt, List<BookRecordDto> bookRecordDtoList,
-                             List<URL> image_urls, String title, String authors, String recommendation, String isbn, String cover,
-                             String publisher, String book_rating, String rent_location, String rent_method, Integer min_date, Integer max_date,
-                             Integer rental_fee, String book_status, List<BookRentInfoDto> bookRentInfoDtoList) {
+                             List<URL> image_urls, String title, String authors, LocalDateTime created_time, String recommendation, String isbn,
+                             String cover, String publisher, String book_rating, String rent_location, String rent_method, Integer min_date,
+                             Integer max_date, Integer rental_fee, String book_status, List<BookRentInfoDto> bookRentInfoDtoList) {
         this.record_cnt = record_cnt;
         this.rent_available_cnt = rent_available_cnt;
         this.renting_cnt = renting_cnt;
@@ -53,6 +55,7 @@ public class BookRentDetailDto {
         this.image_urls = image_urls;
         this.title = title;
         this.authors = authors;
+        this.created_time = created_time;
         this.recommendation = recommendation;
         this.isbn = isbn;
         this.cover = cover;
