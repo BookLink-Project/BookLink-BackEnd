@@ -697,6 +697,7 @@ public class BookServiceImpl implements BookService {
                 .image_urls(image_urls)
                 .title(book_byId.getTitle())
                 .authors(book_byId.getAuthors())
+                .created_time(book_byId.getCreatedTime())
                 .recommendation(book_byId.getRecommendation())
                 .isbn(book_byId.getIsbn())
                 .cover(book_byId.getCover())
