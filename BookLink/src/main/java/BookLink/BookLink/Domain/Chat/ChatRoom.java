@@ -1,22 +1,39 @@
 package BookLink.BookLink.Domain.Chat;
 
+import BookLink.BookLink.Domain.Book.Book;
+import BookLink.BookLink.Domain.Book.BookRent;
+import BookLink.BookLink.Domain.Member.Member;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import java.util.UUID;
 
+import javax.persistence.*;
+
+@Entity
 @Getter
-@Setter
 @NoArgsConstructor
 public class ChatRoom {
 
-    private String roomId;
-    private String roomName;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    public static ChatRoom create(String name) { // 이후 필요 X
-        ChatRoom room = new ChatRoom();
-        room.roomId = UUID.randomUUID().toString();
-        room.roomName = name;
-        return room;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "book_id")
+    private Book book;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "renter")
+    private Member renter;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "lender")
+    private Member lender;
+
+    @Builder
+    public ChatRoom(Book book, Member renter, Member lender) {
+        this.book = book;
+        this.renter = renter;
+        this.lender = lender;
     }
 }

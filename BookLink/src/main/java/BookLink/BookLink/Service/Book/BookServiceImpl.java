@@ -366,9 +366,7 @@ public class BookServiceImpl implements BookService {
 
         if(bookDto.getRent_signal()) {
 
-            BookRent bookRent = new BookRent();
-
-            bookRent = BookRent.builder()
+            BookRent bookRent = BookRent.builder()
                     .rent_status(RentStatus.WAITING)
                     .book_rating(bookDto.getBook_rating())
                     .book_status(bookDto.getBook_status())
@@ -381,12 +379,14 @@ public class BookServiceImpl implements BookService {
 
             bookRentRepository.save(bookRent);
 
-            for (MultipartFile multipartFile : image) {
-                URL imageUrl = s3Service.uploadImage(multipartFile);
+            if (image != null) {
+                for (MultipartFile multipartFile : image) {
+                    URL imageUrl = s3Service.uploadImage(multipartFile);
 
-                BookImage bookImage = new BookImage(imageUrl, bookRent);
-                bookImageRepository.save(bookImage);
-                urlList.add(bookImage);
+                    BookImage bookImage = new BookImage(imageUrl, bookRent);
+                    bookImageRepository.save(bookImage);
+                    urlList.add(bookImage);
+                }
             }
 
             Book book = BookDto.Request.toBookEntity(bookDto, bookRent, loginMember);
@@ -427,6 +427,11 @@ public class BookServiceImpl implements BookService {
 
             for (Book book : books) {
                 BookRent bookRent = book.getBookRent();
+
+                if (bookRent == null) {
+                    continue;
+                }
+
                 Integer rental_fee = bookRent.getRental_fee();
                 Integer max_date = bookRent.getMax_date();
 
@@ -616,6 +621,10 @@ public class BookServiceImpl implements BookService {
         for (Book book : books) {
             BookRent bookRent = book.getBookRent();
 
+            if (bookRent == null) {
+                continue;
+            }
+
             RentStatus rent_status = bookRent.getRent_status();
 
             if (rent_status == RentStatus.RENTING) {
@@ -639,12 +648,14 @@ public class BookServiceImpl implements BookService {
         }
 
         List<Book> another_books = bookRepository.findByTitle(book_byId.getTitle());
+        another_books.remove(book_byId);
 
         for (Book another_book : another_books) {
             BookRent bookRent = another_book.getBookRent();
 
             BookRentInfoDto bookRentInfoDto = BookRentInfoDto.builder()
-                    .rent_id(id)
+                    .rent_id(another_book.getId())
+                    .isbn(another_book.getIsbn())
                     .writer(another_book.getWriter().getNickname())
                     .created_time(bookRent.getCreatedTime())
                     .book_rating(bookRent.getBook_rating())

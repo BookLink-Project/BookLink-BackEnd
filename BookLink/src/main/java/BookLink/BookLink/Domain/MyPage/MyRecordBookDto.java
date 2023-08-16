@@ -1,5 +1,6 @@
 package BookLink.BookLink.Domain.MyPage;
 
+import BookLink.BookLink.Domain.Common.RentStatus;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MyRecordBookDto {
 
+    private RentStatus rent_status;
     private String cover;
     private String title;
     private String authors;
@@ -16,7 +18,8 @@ public class MyRecordBookDto {
     private Integer max_date;
 
     @Builder
-    public MyRecordBookDto(String cover, String title, String authors, String publisher, Integer rental_fee, Integer max_date) {
+    public MyRecordBookDto(RentStatus rent_status, String cover, String title, String authors, String publisher, Integer rental_fee, Integer max_date) {
+        this.rent_status = rent_status;
         this.cover = cover;
         this.title = title;
         this.authors = authors;

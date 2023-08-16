@@ -468,7 +468,9 @@ public class MyPageServiceImpl implements MyPageService {
         int lend_cnt = 0;
         int rent_cnt = byLender.size();
 
-        for (Rent rent : rents) {
+        List<Rent> first_page_rents = rents.subList(0, 8);
+
+        for (Rent rent : first_page_rents) {
 
             Book book = rent.getBook();
             BookRent bookRent = book.getBookRent();
@@ -501,6 +503,7 @@ public class MyPageServiceImpl implements MyPageService {
             }
 
             MyRecordBookDto myRecordBookDto = MyRecordBookDto.builder()
+                    .rent_status(bookRent.getRent_status())
                     .cover(book.getCover())
                     .title(book.getTitle())
                     .authors(book.getAuthors())
@@ -609,7 +612,6 @@ public class MyPageServiceImpl implements MyPageService {
 
         responseDto.setData(myBookRentDtoList);
         return responseDto;
-
     }
 
 }
