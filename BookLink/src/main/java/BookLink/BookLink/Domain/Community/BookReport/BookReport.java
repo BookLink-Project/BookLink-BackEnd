@@ -16,7 +16,7 @@ import java.time.LocalDate;
 
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
 //@DynamicInsert
 //@DynamicUpdate
 public class BookReport extends BaseTimeEntity {

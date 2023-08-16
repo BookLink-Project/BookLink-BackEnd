@@ -43,11 +43,11 @@ public class FreeBoardDto {
         private Long view_cnt;
         private Long reply_cnt;
 
-        private LocalDateTime localDateTime;
+        private LocalDateTime date;
 
         @Builder
         public Response(Long id, String category, String title, String content, String writer, Long like_cnt,
-                        Long view_cnt, Long reply_cnt, LocalDateTime localDateTime) {
+                        Long view_cnt, Long reply_cnt, LocalDateTime date) {
             this.id = id;
             this.category = category;
             this.title = title;
@@ -56,7 +56,7 @@ public class FreeBoardDto {
             this.like_cnt = like_cnt;
             this.view_cnt = view_cnt;
             this.reply_cnt = reply_cnt;
-            this.localDateTime = localDateTime;
+            this.date = date;
         }
 
         public static FreeBoardDto.Response toDto(FreeBoard freeBoard) {
@@ -69,7 +69,7 @@ public class FreeBoardDto {
                     .like_cnt(freeBoard.getLike_cnt())
                     .view_cnt(freeBoard.getView_cnt())
                     .reply_cnt(freeBoard.getReply_cnt())
-                    .localDateTime(freeBoard.getLastModifiedTime())
+                    .date(freeBoard.getCreatedTime())
                     .build();
         }
     }

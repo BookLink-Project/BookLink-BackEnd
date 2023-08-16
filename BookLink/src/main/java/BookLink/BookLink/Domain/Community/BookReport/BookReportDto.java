@@ -97,7 +97,7 @@ public class BookReportDto {
                     .like_cnt(bookReport.getLike_cnt())
                     .view_cnt(bookReport.getView_cnt())
                     .reply_cnt(bookReport.getReply_cnt())
-                    .date(bookReport.getLastModifiedTime())
+                    .date(bookReport.getCreatedTime())
                     .build();
         }
     }
