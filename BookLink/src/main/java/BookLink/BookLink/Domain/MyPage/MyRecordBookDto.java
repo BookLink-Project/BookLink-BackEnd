@@ -19,7 +19,9 @@ public class MyRecordBookDto {
     private Integer max_date;
 
     @Builder
-    public MyRecordBookDto(RentStatus rent_status, String cover, String title, String authors, String publisher, Integer rental_fee, Integer max_date) {
+    public MyRecordBookDto(Long book_id, RentStatus rent_status, String cover, String title, String authors, String publisher,
+                           Integer rental_fee, Integer max_date) {
+        this.book_id = book_id;
         this.rent_status = rent_status;
         this.cover = cover;
         this.title = title;

@@ -498,6 +498,7 @@ public class MyPageServiceImpl implements MyPageService {
 
             if (bookRent == null) {
                 myRecordBookDto = MyRecordBookDto.builder()
+                        .book_id(book.getId())
                         .rent_status(RentStatus.DENIED)
                         .cover(book.getCover())
                         .title(book.getTitle())
@@ -517,6 +518,7 @@ public class MyPageServiceImpl implements MyPageService {
                 }
 
                 myRecordBookDto = MyRecordBookDto.builder()
+                        .book_id(book.getId())
                         .rent_status(bookRent.getRent_status())
                         .cover(book.getCover())
                         .title(book.getTitle())
@@ -626,6 +628,33 @@ public class MyPageServiceImpl implements MyPageService {
         }
 
         responseDto.setData(myBookRentDtoList);
+        return responseDto;
+    }
+
+    @Override
+    public ResponseDto blockRentBook(Long book_id) {
+
+        ResponseDto responseDto = new ResponseDto();
+
+        Book book = bookRepository.findById(book_id).orElse(null);
+
+        if (book == null) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("없는 책입니다.");
+            return responseDto;
+        }
+
+        BookRent bookRent = book.getBookRent();
+
+        if (bookRent == null) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("대여등록되지 않은 책입니다.");
+            return responseDto;
+        }
+
+        bookRentRepository.delete(bookRent);
+
+        responseDto.setMessage("대여등록 해제완료");
         return responseDto;
     }
 
