@@ -25,6 +25,7 @@ public class BookRentDetailDto {
 
     private String title;
     private String authors;
+    private String writer;
     private LocalDateTime created_time;
     private String recommendation; // 추천사
     private String isbn; // 책 고유번호 13자리
@@ -45,9 +46,9 @@ public class BookRentDetailDto {
 
     @Builder
     public BookRentDetailDto(Integer record_cnt, Integer rent_available_cnt, Integer renting_cnt, List<BookRecordDto> bookRecordDtoList,
-                             List<URL> image_urls, String title, String authors, LocalDateTime created_time, String recommendation, String isbn,
-                             String cover, String publisher, String book_rating, String rent_location, String rent_method, Integer min_date,
-                             Integer max_date, Integer rental_fee, String book_status, List<BookRentInfoDto> bookRentInfoDtoList) {
+                             List<URL> image_urls, String title, String authors, String writer, LocalDateTime created_time, String recommendation,
+                             String isbn, String cover, String publisher, String book_rating, String rent_location, String rent_method,
+                             Integer min_date, Integer max_date, Integer rental_fee, String book_status, List<BookRentInfoDto> bookRentInfoDtoList) {
         this.record_cnt = record_cnt;
         this.rent_available_cnt = rent_available_cnt;
         this.renting_cnt = renting_cnt;
@@ -55,6 +56,7 @@ public class BookRentDetailDto {
         this.image_urls = image_urls;
         this.title = title;
         this.authors = authors;
+        this.writer = writer;
         this.created_time = created_time;
         this.recommendation = recommendation;
         this.isbn = isbn;
