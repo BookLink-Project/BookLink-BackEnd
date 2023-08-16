@@ -427,6 +427,11 @@ public class BookServiceImpl implements BookService {
 
             for (Book book : books) {
                 BookRent bookRent = book.getBookRent();
+
+                if (bookRent == null) {
+                    continue;
+                }
+
                 Integer rental_fee = bookRent.getRental_fee();
                 Integer max_date = bookRent.getMax_date();
 
