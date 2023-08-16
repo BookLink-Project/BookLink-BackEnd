@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MyRecordBookDto {
 
+    private Long book_id;
     private RentStatus rent_status;
     private String cover;
     private String title;

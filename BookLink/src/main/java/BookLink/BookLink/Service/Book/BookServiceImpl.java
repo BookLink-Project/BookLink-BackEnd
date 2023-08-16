@@ -615,6 +615,12 @@ public class BookServiceImpl implements BookService {
 
         BookRent bookRent_byId = book_byId.getBookRent();
 
+        if (bookRent_byId == null) {
+            responseDto.setMessage("대여 등록되지 않은 책입니다.");
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            return responseDto;
+        }
+
         Member member = book_byId.getWriter();
         List<Book> books = member.getBooks(); // 해당 회원이 기록한 책들
 
@@ -653,6 +659,10 @@ public class BookServiceImpl implements BookService {
         for (Book another_book : another_books) {
             BookRent bookRent = another_book.getBookRent();
 
+            if (bookRent == null) {
+                continue;
+            }
+
             BookRentInfoDto bookRentInfoDto = BookRentInfoDto.builder()
                     .rent_id(another_book.getId())
                     .isbn(another_book.getIsbn())
@@ -670,6 +680,11 @@ public class BookServiceImpl implements BookService {
         List<URL> image_urls = new ArrayList<>();
         List<BookImage> images = bookRent_byId.getImage();
         for(BookImage image : images) {
+
+            if (image == null) {
+                continue;
+            }
+
             URL image_url = image.getImage_url();
             image_urls.add(image_url);
         }
