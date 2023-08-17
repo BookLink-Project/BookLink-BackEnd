@@ -24,5 +24,5 @@ public interface MyPageService {
 
     ResponseDto myLendBook(Integer page, Member member);
 
-    ResponseDto blockRentBook(Long book_id);
+    ResponseDto blockRentBook(Long book_id, Member loginMember);
 }

@@ -216,14 +216,22 @@ public class BookController {
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);
+    }
 
+    // 대여취소
+    @DeleteMapping("/rent/cancel/{book_id}")
+    public ResponseEntity<ResponseDto> cancelRent(@PathVariable Long book_id,
+                                                  @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
+
+        Member member = memberPrincipal.getMember();
+
+        ResponseDto responseDto = bookService.cancelRent(book_id, member);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
     }
 
 
-
-
-
-    // 대여취소
 
     //반납완료
 

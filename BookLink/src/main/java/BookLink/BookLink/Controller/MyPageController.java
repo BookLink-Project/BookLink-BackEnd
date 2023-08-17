@@ -107,9 +107,12 @@ public class MyPageController {
 
     // 대여 신청 받지 않기
     @DeleteMapping("/my-book/rent/{book_id}")
-    public ResponseEntity<ResponseDto> deleteRentBook(@PathVariable Long book_id) {
+    public ResponseEntity<ResponseDto> deleteRentBook(@PathVariable Long book_id,
+                                                      @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
 
-        ResponseDto responseDto = myPageService.blockRentBook(book_id);
+        Member member = memberPrincipal.getMember();
+
+        ResponseDto responseDto = myPageService.blockRentBook(book_id, member);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);

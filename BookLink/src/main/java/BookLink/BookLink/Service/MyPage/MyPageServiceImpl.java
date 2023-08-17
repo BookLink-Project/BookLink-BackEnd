@@ -1,11 +1,7 @@
 package BookLink.BookLink.Service.MyPage;
 
-import BookLink.BookLink.Domain.Book.Book;
-import BookLink.BookLink.Domain.Book.BookRecordDto;
-import BookLink.BookLink.Domain.Book.BookRent;
-import BookLink.BookLink.Domain.Book.Rent;
+import BookLink.BookLink.Domain.Book.*;
 import BookLink.BookLink.Domain.Common.RentStatus;
-import BookLink.BookLink.Domain.Book.BookDetailDto;
 import BookLink.BookLink.Domain.BookReply.BookReply;
 import BookLink.BookLink.Domain.Community.BookClub.BookClub;
 import BookLink.BookLink.Domain.Community.BookReport.BookReport;
@@ -19,12 +15,9 @@ import BookLink.BookLink.Domain.MyPage.AccountDto;
 import BookLink.BookLink.Domain.MyPage.HistoryDto;
 import BookLink.BookLink.Domain.MyPage.VerifyDto;
 import BookLink.BookLink.Domain.ResponseDto;
-import BookLink.BookLink.Repository.Book.BookRentRepository;
-import BookLink.BookLink.Repository.Book.BookRepository;
-import BookLink.BookLink.Repository.Book.RentRepository;
+import BookLink.BookLink.Repository.Book.*;
 import BookLink.BookLink.Exception.Enum.CommonErrorCode;
 import BookLink.BookLink.Exception.RestApiException;
-import BookLink.BookLink.Repository.Book.BookLikeRepository;
 import BookLink.BookLink.Repository.Book.BookRepository;
 import BookLink.BookLink.Repository.BookReply.BookReplyRepository;
 import BookLink.BookLink.Repository.Community.BookClub.BookClubRepository;
@@ -79,6 +72,7 @@ public class MyPageServiceImpl implements MyPageService {
     private final BookReportReplyRepository bookReportReplyRepository;
     private final FreeBoardRepository freeBoardRepository;
     private final FreeBoardReplyRepository freeBoardReplyRepository;
+    private final BookImageRepository bookImageRepository;
 
     @Override
     public ResponseDto showHistory(Member member, String rentType, String communityType) {
@@ -632,7 +626,8 @@ public class MyPageServiceImpl implements MyPageService {
     }
 
     @Override
-    public ResponseDto blockRentBook(Long book_id) {
+    @Transactional
+    public ResponseDto blockRentBook(Long book_id, Member loginMember) {
 
         ResponseDto responseDto = new ResponseDto();
 
@@ -644,7 +639,18 @@ public class MyPageServiceImpl implements MyPageService {
             return responseDto;
         }
 
+        Member writer = book.getWriter();
+
+        if (!writer.getNickname(). equals(loginMember.getNickname())) {
+            responseDto.setMessage("일치하지 않는 회원입니다.");
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            return responseDto;
+        }
+
         BookRent bookRent = book.getBookRent();
+
+        List<BookImage> images = bookRent.getImages();
+        bookImageRepository.deleteAll(images);
 
         if (bookRent == null) {
             responseDto.setStatus(HttpStatus.BAD_REQUEST);
@@ -652,7 +658,13 @@ public class MyPageServiceImpl implements MyPageService {
             return responseDto;
         }
 
-        bookRentRepository.delete(bookRent);
+        log.info("-------------");
+
+        book.detachBookRent();
+
+        bookRentRepository.deleteById(bookRent.getId());
+
+        log.info("-------------");
 
         responseDto.setMessage("대여등록 해제완료");
         return responseDto;

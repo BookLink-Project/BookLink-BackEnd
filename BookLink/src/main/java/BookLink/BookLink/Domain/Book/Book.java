@@ -52,7 +52,7 @@ public class Book extends BaseTimeEntity {
     @JoinColumn(name = "writer")
     private Member writer;
 
-    @OneToOne(cascade = CascadeType.PERSIST) // LazyInitializationException 오류 해결하기 위해 EAGER 전략사용
+    @OneToOne(cascade = CascadeType.REMOVE) // LazyInitializationException 오류 해결하기 위해 EAGER 전략사용
     @JoinColumn(name = "rent_id")
     private BookRent bookRent;
 
@@ -73,5 +73,9 @@ public class Book extends BaseTimeEntity {
         this.rentSignal = rent_signal;
         this.writer = writer;
         this.bookRent = bookRent;
+    }
+
+    public void detachBookRent() {
+        this.bookRent = null;
     }
 }
