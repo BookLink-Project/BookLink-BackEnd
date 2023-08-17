@@ -30,43 +30,45 @@ public class JwtFilter extends OncePerRequestFilter { // 토큰 매번 인증
         String accessToken = jwtUtil.getCookieToken(request, "Access");
         String refreshToken = jwtUtil.getCookieToken(request, "Refresh");
 
-        if(accessToken != null) {
+        if (accessToken != null) {
 
             if (jwtUtil.tokenValid(accessToken)) {
 
                 log.info("Access Token 유효");
 
-                setAuthentication(request, accessToken);
+                setAuthentication(accessToken);
+            }
 
-            } else if (refreshToken != null) {
+        } else if (refreshToken != null) {
 
-                log.info("Access Token 만료");
+            log.info("Access Token 만료");
 
-                boolean isRefreshTokenValid = jwtUtil.refreshTokenValid(refreshToken);
+            boolean isRefreshTokenValid = jwtUtil.refreshTokenValid(refreshToken);
 
-                if (isRefreshTokenValid) {
-                    log.info("Access Token 만료 + Refresh Token 유효");
+            if (isRefreshTokenValid) {
 
-                    String loginEmail = jwtUtil.getEmailFromToken(refreshToken);
-                    String newAccessToken = jwtUtil.createToken(loginEmail, "Access");
-                    jwtUtil.setCookieAccessToken(response, newAccessToken);
-                    setAuthentication(request, newAccessToken);
+                log.info("Access Token 만료 + Refresh Token 유효");
 
-                } else {
-                    log.info("Access Token 만료 + Refresh Token 만료");
+                String loginEmail = jwtUtil.getEmailFromToken(refreshToken);
+                String newAccessToken = jwtUtil.createToken(loginEmail, "Access");
 
-                    refreshTokenRepository.findByToken(refreshToken).ifPresent(refreshTokenRepository::delete);
+                jwtUtil.setCookieAccessToken(response, newAccessToken);
+                setAuthentication(newAccessToken);
 
-                    jwtUtil.invalidTokenResponse(response);
+            } else {
+                log.info("Access Token 만료 + Refresh Token 만료");
 
-                    return;
-                }
+                refreshTokenRepository.findByToken(refreshToken).ifPresent(refreshTokenRepository::delete);
+
+                jwtUtil.invalidTokenResponse(response);
+
+                return;
             }
         }
         filterChain.doFilter(request, response);
     }
 
-    public void setAuthentication(HttpServletRequest request, String token) {
+    public void setAuthentication(String token) {
 
         // SecurityContextHolder >> SecurityContext >> Authentication
         // SecurityContext 에 Authentication 객체(인증 정보) 저장
