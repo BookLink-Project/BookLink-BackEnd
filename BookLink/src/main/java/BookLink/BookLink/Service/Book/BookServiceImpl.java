@@ -841,6 +841,8 @@ public class BookServiceImpl implements BookService {
 
         Rent rent = rentRepository.findByLenderAndBook(loginMember, book);
 
+        List<Book> books = loginMember.getBooks();
+
         rent.rentStatusUpdate(); // End로 변경
 
         responseDto.setMessage("반납완료 처리 성공");

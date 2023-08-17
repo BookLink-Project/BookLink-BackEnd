@@ -14,4 +14,6 @@ public interface RentRepository extends JpaRepository<Rent, Long> {
     List<Rent> findByRenter(Member renter);
 
     Rent findByLenderAndBook(Member lender, Book book);
+
+    Rent findByRenterAndBook(Member renter,Book book);
 }

@@ -78,4 +78,8 @@ public class Book extends BaseTimeEntity {
     public void detachBookRent() {
         this.bookRent = null;
     }
+
+    public void combineBookRent(BookRent bookRent) {
+        this.bookRent = bookRent;
+    }
 }

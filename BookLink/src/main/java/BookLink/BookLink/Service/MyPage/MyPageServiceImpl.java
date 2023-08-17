@@ -31,6 +31,7 @@ import BookLink.BookLink.Service.Book.BookServiceImpl;
 import BookLink.BookLink.Service.S3.S3Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -627,6 +628,58 @@ public class MyPageServiceImpl implements MyPageService {
 
     @Override
     @Transactional
+    public ResponseDto openRentBook(BookDto.Request bookDto, Long book_id, Member member, List<MultipartFile> image) throws IOException {
+
+        ResponseDto responseDto = new ResponseDto();
+        List<BookImage> urlList = new ArrayList<>();
+
+        Book book = bookRepository.findById(book_id).orElse(null);
+
+        if (book == null) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("대여등록되지 않은 책입니다.");
+            return responseDto;
+        }
+
+        Hibernate.initialize(book.getWriter());
+        Member writer = book.getWriter();
+
+        if (writer.getNickname() != member.getNickname()) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("올바르지 않은 접근입니다.");
+            return responseDto;
+        }
+
+        BookRent bookRent = BookRent.builder()
+                .rent_status(RentStatus.WAITING)
+                .book_rating(bookDto.getBook_rating())
+                .book_status(bookDto.getBook_status())
+                .rental_fee(bookDto.getRental_fee())
+                .min_date(bookDto.getMin_date())
+                .max_date(bookDto.getMax_date())
+                .rent_location(bookDto.getRent_location())
+                .rent_method(bookDto.getRent_method())
+                .build();
+
+        bookRentRepository.save(bookRent);
+
+        if (image != null) {
+            for (MultipartFile multipartFile : image) {
+                URL imageUrl = s3Service.uploadImage(multipartFile);
+
+                BookImage bookImage = new BookImage(imageUrl, bookRent);
+                bookImageRepository.save(bookImage);
+                urlList.add(bookImage);
+            }
+        }
+
+        book.combineBookRent(bookRent);
+
+        return responseDto;
+    }
+
+    @Override
+    @Transactional
     public ResponseDto blockRentBook(Long book_id, Member loginMember) {
 
         ResponseDto responseDto = new ResponseDto();
@@ -650,6 +703,7 @@ public class MyPageServiceImpl implements MyPageService {
         BookRent bookRent = book.getBookRent();
 
         List<BookImage> images = bookRent.getImages();
+
         bookImageRepository.deleteAll(images);
 
         if (bookRent == null) {
