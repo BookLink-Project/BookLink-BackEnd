@@ -1,5 +1,6 @@
 package BookLink.BookLink.Controller;
 
+import BookLink.BookLink.Domain.Book.BookDto;
 import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.Member.MemberPrincipal;
 import BookLink.BookLink.Domain.MyPage.AccountDto;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -105,11 +107,30 @@ public class MyPageController {
                 .body(responseDto);
     }
 
+    // 대여 신청 활성화하기
+    @PostMapping(value = "/book-rent/register/{book_id}",
+            consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<ResponseDto> registerMyBook(@RequestPart(required = false) List<MultipartFile> image,
+                                                      @RequestPart BookDto.Request bookDto,
+                                                      @PathVariable Long book_id,
+                                                      @AuthenticationPrincipal MemberPrincipal memberPrincipal) throws IOException {
+
+        Member member = memberPrincipal.getMember();
+
+        ResponseDto responseDto = myPageService.openRentBook(bookDto, book_id, member, image);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+    }
+
     // 대여 신청 받지 않기
     @DeleteMapping("/my-book/rent/{book_id}")
-    public ResponseEntity<ResponseDto> deleteRentBook(@PathVariable Long book_id) {
+    public ResponseEntity<ResponseDto> deleteRentBook(@PathVariable Long book_id,
+                                                      @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
 
-        ResponseDto responseDto = myPageService.blockRentBook(book_id);
+        Member member = memberPrincipal.getMember();
+
+        ResponseDto responseDto = myPageService.blockRentBook(book_id, member);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);

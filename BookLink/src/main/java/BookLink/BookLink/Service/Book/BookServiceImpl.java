@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -678,7 +679,7 @@ public class BookServiceImpl implements BookService {
         }
 
         List<URL> image_urls = new ArrayList<>();
-        List<BookImage> images = bookRent_byId.getImage();
+        List<BookImage> images = bookRent_byId.getImages();
         for(BookImage image : images) {
 
             if (image == null) {
@@ -743,6 +744,7 @@ public class BookServiceImpl implements BookService {
                 .book(book)
                 .lender(lender)
                 .renter(renter)
+                .rent_status(RentStatus.RENTING)
                 .rent_date(rentDto.getRent_date())
                 .return_date(rentDto.getReturn_date())
                 .return_location(rentDto.getReturn_location())
@@ -801,7 +803,53 @@ public class BookServiceImpl implements BookService {
 
         return responseDto;
     }
+
+    @Override
+    @Transactional
+    public ResponseDto cancelRent(Long book_id, Member loginMember) {
+
+        ResponseDto responseDto = new ResponseDto();
+
+        Book book = bookRepository.findById(book_id).orElse(null);
+
+        if (book == null) {
+            responseDto.setMessage("없는 책 입니다.");
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            return responseDto;
+        }
+
+        Rent rent = rentRepository.findByLenderAndBook(loginMember, book);
+
+        rentRepository.delete(rent);
+
+        responseDto.setMessage("대여항목 삭제 완료");
+        return responseDto;
+    }
+
+    @Override
+    public ResponseDto returnSuccess(Long book_id, Member loginMember) {
+
+        ResponseDto responseDto = new ResponseDto();
+
+        Book book = bookRepository.findById(book_id).orElse(null);
+
+        if (book == null) {
+            responseDto.setMessage("없는 책 입니다.");
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            return responseDto;
+        }
+
+        Rent rent = rentRepository.findByLenderAndBook(loginMember, book);
+
+        List<Book> books = loginMember.getBooks();
+
+        rent.rentStatusUpdate(); // End로 변경
+
+        responseDto.setMessage("반납완료 처리 성공");
+        return responseDto;
+    }
 }
+
 
 
 

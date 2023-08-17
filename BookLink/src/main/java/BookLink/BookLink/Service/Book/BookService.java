@@ -43,4 +43,7 @@ public interface BookService {
 
     ResponseDto searchHeaderBook(String search, Integer page);
 
+    ResponseDto cancelRent(Long book_id, Member loginMember);
+
+    ResponseDto returnSuccess(Long book_id, Member loginMember);
 }

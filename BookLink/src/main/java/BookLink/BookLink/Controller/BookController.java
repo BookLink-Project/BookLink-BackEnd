@@ -216,15 +216,33 @@ public class BookController {
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);
-
     }
 
-
-
-
-
     // 대여취소
+    @DeleteMapping("/rent/cancel/{book_id}")
+    public ResponseEntity<ResponseDto> cancelRent(@PathVariable Long book_id,
+                                                  @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
 
-    //반납완료
+        Member member = memberPrincipal.getMember();
+
+        ResponseDto responseDto = bookService.cancelRent(book_id, member);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+    }
+
+    //반납완료(빌려주는 사람만 가능)
+    @PostMapping("/rent/return/{book_id}")
+    public ResponseEntity<ResponseDto> returnSuccess(@PathVariable Long book_id,
+                                                     @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
+
+        Member member = memberPrincipal.getMember();
+
+        ResponseDto responseDto = bookService.returnSuccess(book_id, member);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+    }
+
 
 }

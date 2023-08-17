@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface BookRentRepository extends JpaRepository<BookRent, Long> {
 
+    void deleteById(Long id);
 }
