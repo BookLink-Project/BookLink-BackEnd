@@ -14,14 +14,16 @@ import java.util.List;
 @AllArgsConstructor
 public class HistoryDto {
 
-    private MyInfo myInfo;
+    private Profile profile;
+    private MyBook myBook;
+    private MyRent myRent;
     private List<RentHistory> rentHistory = new ArrayList<>();
     private List<CommunityHistory> communityHistory = new ArrayList<>();
 
     @Getter
     @Setter
     @Builder
-    public static class MyInfo {
+    public static class Profile {
 
         private URL image;
         private String name;
@@ -29,20 +31,32 @@ public class HistoryDto {
         private String email;
         private LocalDate birth;
         private String address;
+    }
 
-        private Long canRent; // 대여 가능한 도서
+    @Getter
+    @Setter
+    @Builder
+    public static class MyBook {
 
-        private Long blocked; // 이용 제한
+        private Long register; // 기록한 도서
+        private Long rent; // 대여 등록된 도서
 
-        private Long myBooks;
-        private Long likedBooks;
-        private Long rentTo;
-        private Long rentFrom;
+        private Long like; // 좋아요한 도서
+        private Long report; // 독후감 작성 도서
 
-        private Long renting;
-        private Long goodReturn;
-        private Long badReturn;
-        private Long overdue;
+    }
+
+    @Getter
+    @Setter
+    @Builder
+    public static class MyRent {
+
+        private Long renting; // 빌린 도서 현황
+        private Long lending; // 빌려준 도서 현황
+
+        private Long rentTotal; // 빌린 횟수
+        private Long lendTotal; // 빌려준 횟수
+
     }
 
     @Getter
