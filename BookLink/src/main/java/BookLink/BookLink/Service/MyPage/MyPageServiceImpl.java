@@ -96,8 +96,8 @@ public class MyPageServiceImpl implements MyPageService {
                 .build();
         dataDto.setProfile(profileDto);
 
-        Long rent_cnt = bookRepository.countByRentSignalAndWriter(true, member);
         Long register_cnt = bookRepository.countByWriter(member);
+        Long rent_cnt = bookRepository.countByRentSignalAndWriter(true, member);
         Long like_cnt = bookLikeRepository.countByMember(member);
         Long report_cnt = bookReportRepository.countIsbnByWriter(member);
 
@@ -109,16 +109,16 @@ public class MyPageServiceImpl implements MyPageService {
                 .build();
         dataDto.setMyBook(myBookDto);
 
-//        Long renting_cnt = rentRepository.countByRenterAndRentStatus(member, RentStatus.RENTING);
-//        Long lending_cnt = rentRepository.countByLenderAndRentStatus(member, RentStatus.RENTING);
-//        Long rentTotal_cnt = rentRepository.countByRenter(member); // 사용하려면 rentStatus 에 종료 타입 필요
-//        Long lendTotal_cnt = rentRepository.countByLender(member); // 사용하려면 rentStatus 에 종료 타입 필요
+        Long renting_cnt = rentRepository.countByRenterAndRentStatus(member, RentStatus.RENTING);
+        Long lending_cnt = rentRepository.countByRenterAndLendStatus(member, RentStatus.RENTING);
+        Long rentTotal_cnt = rentRepository.countByRenter(member);
+        Long lendTotal_cnt = rentRepository.countByLender(member);
 
         HistoryDto.MyRent myRentDto = HistoryDto.MyRent.builder()
-                .renting(0L)
-                .lending(0L)
-                .rentTotal(0L)
-                .lendTotal(0L)
+                .renting(renting_cnt)
+                .lending(lending_cnt)
+                .rentTotal(rentTotal_cnt)
+                .lendTotal(lendTotal_cnt)
                 .build();
         dataDto.setMyRent(myRentDto);
 
