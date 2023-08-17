@@ -295,10 +295,11 @@ public class BookServiceImpl implements BookService {
             String[] addressArr = loginMember.getAddress().split(" ");
             String address = addressArr[0] + " " + addressArr[1];
 
-            List<BookRent> bookRents = bookRentRepository.findByRentLocation(address);
+            List<BookRent> bookRents = bookRentRepository.findTop5ByRentLocation(address);
 
             for (BookRent bookRent : bookRents) {
                 Book book = bookRent.getBook();
+                log.info("book's id = {}", book.getId());
                 BookRentAroundDto info = BookRentAroundDto.builder()
                         .id(book.getId())
                         .owner_nickname(book.getWriter().getNickname())

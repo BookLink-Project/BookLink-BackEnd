@@ -10,7 +10,8 @@ import java.util.List;
 public interface BookRentRepository extends JpaRepository<BookRent, Long> {
 
     void deleteById(Long id);
-    @Query("SELECT br FROM BookRent br WHERE br.rent_location LIKE :location%")
-    List<BookRent> findByRentLocation(@Param("location") String location);
+    @Query(value = "SELECT * FROM book_rent WHERE rent_location LIKE :location% " +
+                   "ORDER BY created_time DESC LIMIT 5", nativeQuery = true)
+    List<BookRent> findTop5ByRentLocation(@Param("location") String location);
 
 }
