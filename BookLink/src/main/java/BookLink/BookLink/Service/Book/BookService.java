@@ -45,4 +45,5 @@ public interface BookService {
 
     ResponseDto cancelRent(Long book_id, Member loginMember);
 
+    ResponseDto returnSuccess(Long book_id, Member loginMember);
 }

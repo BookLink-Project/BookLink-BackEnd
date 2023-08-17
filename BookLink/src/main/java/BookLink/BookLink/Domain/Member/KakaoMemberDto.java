@@ -27,7 +27,6 @@ public class KakaoMemberDto {
                     .email(email)
                     .nickname(request.getNickname())
                     .image(toUrl(request.profile_image_url))
-                    .social_type(SocialType.KAKAO)
                     .build();
         }
 

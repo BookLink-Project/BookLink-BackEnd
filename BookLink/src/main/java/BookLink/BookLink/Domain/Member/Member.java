@@ -35,7 +35,7 @@ public class Member extends BaseTimeEntity {
     @NotNull
     private String email; // 아이디
 
-    private String socialId; // 새로 추가
+//    private String socialId; // 새로 추가
 
     private String password;
 
@@ -51,9 +51,18 @@ public class Member extends BaseTimeEntity {
     @ColumnDefault("'https://soccerquick.s3.ap-northeast-2.amazonaws.com/1689834239634.png'")
     private URL image;
 
-    private SocialType socialType; // 새로 추가
+//    private SocialType socialType; // 새로 추가
 
     private Role role; // 새로 추가
+
+//    @ColumnDefault("0")
+//    private Integer lend_cnt;
+//
+//    @ColumnDefault("0")
+//    private Integer rent_cnt;
+//
+//    @ColumnDefault("0")
+//    private Integer delay_return_cnt;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "card_id")
@@ -70,7 +79,24 @@ public class Member extends BaseTimeEntity {
 
 //    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
 //    @JoinColumn(name = "rent_id")
+
 //    private List<BookRent> bookRent;
+
+//    public void plus_LendCnt() {
+//        this.lend_cnt += 1;
+//    }
+//
+//    public void plus_RentCnt() {
+//        this.rent_cnt += 1;
+//    }
+//
+//    public void plus_delayReturnCnt() {
+//        this.delay_return_cnt += 1;
+//    }
+//
+//    public void minus_delayReturnCnt() {
+//        this.delay_return_cnt -= 1;
+//    }
 
     public void updateAccount(URL image, String name, String nickname, String email, String password,
                                 LocalDate birth, String address) {
@@ -88,26 +114,23 @@ public class Member extends BaseTimeEntity {
     }
 
     @Builder
-    public Member(String email, String social_id, String password, String nickname, String name,
-                  LocalDate birth, String address, URL image, SocialType social_type, Role role) {
+    public Member(String email, String password, String nickname, String name,
+                  LocalDate birth, String address, URL image, Role role) {
         this.email = email;
-        this.socialId = social_id;
         this.password = password;
         this.nickname = nickname;
         this.name = name;
         this.birth = birth;
         this.address = address;
         this.image = image;
-        this.socialType = social_type;
         this.role = role;
     }
 
     @Builder
-    public Member(String email, String password, String nickname, URL image, SocialType socialType) {
+    public Member(String email, String password, String nickname, URL image) {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
         this.image = image;
-        this.socialType = socialType;
     }
 }

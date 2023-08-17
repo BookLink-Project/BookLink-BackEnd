@@ -744,6 +744,7 @@ public class BookServiceImpl implements BookService {
                 .book(book)
                 .lender(lender)
                 .renter(renter)
+                .rent_status(RentStatus.RENTING)
                 .rent_date(rentDto.getRent_date())
                 .return_date(rentDto.getReturn_date())
                 .return_location(rentDto.getReturn_location())
@@ -825,7 +826,26 @@ public class BookServiceImpl implements BookService {
         return responseDto;
     }
 
+    @Override
+    public ResponseDto returnSuccess(Long book_id, Member loginMember) {
 
+        ResponseDto responseDto = new ResponseDto();
+
+        Book book = bookRepository.findById(book_id).orElse(null);
+
+        if (book == null) {
+            responseDto.setMessage("없는 책 입니다.");
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            return responseDto;
+        }
+
+        Rent rent = rentRepository.findByLenderAndBook(loginMember, book);
+
+        rent.rentStatusUpdate(); // End로 변경
+
+        responseDto.setMessage("반납완료 처리 성공");
+        return responseDto;
+    }
 }
 
 
