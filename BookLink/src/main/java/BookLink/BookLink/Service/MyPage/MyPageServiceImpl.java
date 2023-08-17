@@ -1,6 +1,9 @@
 package BookLink.BookLink.Service.MyPage;
 
 import BookLink.BookLink.Domain.Book.*;
+import BookLink.BookLink.Domain.Book.Book;
+import BookLink.BookLink.Domain.Book.BookRent;
+import BookLink.BookLink.Domain.Book.Rent;
 import BookLink.BookLink.Domain.Common.RentStatus;
 import BookLink.BookLink.Domain.BookReply.BookReply;
 import BookLink.BookLink.Domain.Community.BookClub.BookClub;
@@ -19,6 +22,10 @@ import BookLink.BookLink.Repository.Book.*;
 import BookLink.BookLink.Exception.Enum.CommonErrorCode;
 import BookLink.BookLink.Exception.RestApiException;
 import BookLink.BookLink.Repository.Book.BookRepository;
+import BookLink.BookLink.Repository.Book.BookRentRepository;
+import BookLink.BookLink.Repository.Book.BookRepository;
+import BookLink.BookLink.Repository.Book.RentRepository;
+import BookLink.BookLink.Repository.Book.BookLikeRepository;
 import BookLink.BookLink.Repository.BookReply.BookReplyRepository;
 import BookLink.BookLink.Repository.Community.BookClub.BookClubRepository;
 import BookLink.BookLink.Repository.Community.BookReport.BookReportRepository;
@@ -46,11 +53,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Slf4j
 @Service
@@ -83,29 +86,41 @@ public class MyPageServiceImpl implements MyPageService {
         HistoryDto dataDto = new HistoryDto();
 
         // 1. 내 정보
-        Long canRent_cnt = bookRepository.countByRentSignalAndWriter(true, member);
-        Long myBooks_cnt = bookRepository.countByWriter(member);
-        Long likedBooks_cnt = bookLikeRepository.countByMember(member);
-
-        HistoryDto.MyInfo myInfoDto = HistoryDto.MyInfo.builder()
+        HistoryDto.Profile profileDto = HistoryDto.Profile.builder()
                 .image(member.getImage())
                 .name(member.getName())
                 .nickname(member.getNickname())
                 .email(member.getEmail())
                 .birth(member.getBirth())
                 .address(member.getAddress())
-                .canRent(canRent_cnt)
-                .blocked(0L) // TODO dummy
-                .myBooks(myBooks_cnt)
-                .likedBooks(likedBooks_cnt)
-                .rentTo(0L)
-                .rentFrom(0L)
-                .renting(0L)
-                .goodReturn(0L)
-                .badReturn(0L)
-                .overdue(0L)
                 .build();
-        dataDto.setMyInfo(myInfoDto);
+        dataDto.setProfile(profileDto);
+
+        Long rent_cnt = bookRepository.countByRentSignalAndWriter(true, member);
+        Long register_cnt = bookRepository.countByWriter(member);
+        Long like_cnt = bookLikeRepository.countByMember(member);
+        Long report_cnt = bookReportRepository.countIsbnByWriter(member);
+
+        HistoryDto.MyBook myBookDto = HistoryDto.MyBook.builder()
+                .register(register_cnt)
+                .rent(rent_cnt)
+                .like(like_cnt)
+                .report(report_cnt)
+                .build();
+        dataDto.setMyBook(myBookDto);
+
+//        Long renting_cnt = rentRepository.countByRenterAndRentStatus(member, RentStatus.RENTING);
+//        Long lending_cnt = rentRepository.countByLenderAndRentStatus(member, RentStatus.RENTING);
+//        Long rentTotal_cnt = rentRepository.countByRenter(member); // 사용하려면 rentStatus 에 종료 타입 필요
+//        Long lendTotal_cnt = rentRepository.countByLender(member); // 사용하려면 rentStatus 에 종료 타입 필요
+
+        HistoryDto.MyRent myRentDto = HistoryDto.MyRent.builder()
+                .renting(0L)
+                .lending(0L)
+                .rentTotal(0L)
+                .lendTotal(0L)
+                .build();
+        dataDto.setMyRent(myRentDto);
 
         // 2. 대여
         List<HistoryDto.RentHistory> rentHistoryDto;
