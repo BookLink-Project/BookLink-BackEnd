@@ -244,5 +244,18 @@ public class BookController {
                 .body(responseDto);
     }
 
+    // 소장도서 삭제
+    @DeleteMapping("/rent/{book_id}")
+    public ResponseEntity<ResponseDto> deleteBook(@PathVariable Long book_id,
+                                                     @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
+
+        Member member = memberPrincipal.getMember();
+
+        ResponseDto responseDto = bookService.deleteBook(book_id, member);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+    }
+
 
 }
