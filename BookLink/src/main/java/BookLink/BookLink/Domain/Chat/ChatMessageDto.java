@@ -14,7 +14,6 @@ public class ChatMessageDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Request{
-//        private MessageType type;
 
         private Long room_id;
 
