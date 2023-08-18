@@ -77,7 +77,7 @@ public class ChatRoomController {
 
         ResponseDto responseDto = chatService.sendMessage(message, sender);
 
-        sendingOperations.convertAndSend("/topic/chat/room/"+ message.getRoom_id(),message);
+        sendingOperations.convertAndSend("/sub/chat/room/"+ message.getRoom_id(),message);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);

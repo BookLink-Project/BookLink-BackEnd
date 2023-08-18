@@ -19,10 +19,11 @@ public class MyBookLendDto {
     private String return_location;
     private LocalDateTime return_date;
     private Integer rental_fee;
+    private Integer left_days;
 
     @Builder
     public MyBookLendDto(String title, String authors, String publisher, String renter, String rent_location, LocalDateTime rent_date,
-                         String return_location, LocalDateTime return_date, Integer rental_fee) {
+                         String return_location, LocalDateTime return_date, Integer rental_fee, Integer left_days) {
         this.title = title;
         this.authors = authors;
         this.publisher = publisher;
@@ -32,5 +33,6 @@ public class MyBookLendDto {
         this.return_location = return_location;
         this.return_date = return_date;
         this.rental_fee = rental_fee;
+        this.left_days = left_days;
     }
 }

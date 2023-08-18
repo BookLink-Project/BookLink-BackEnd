@@ -50,6 +50,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -486,6 +487,15 @@ public class MyPageServiceImpl implements MyPageService {
             BookRent bookRent = book.getBookRent();
             Member lender = rent.getLender();
 
+            LocalDateTime return_dateTime = rent.getReturn_date();
+            LocalDate return_date = return_dateTime.toLocalDate();
+
+            LocalDate now_date = LocalDate.now();
+
+            Period period = Period.between(now_date, return_date);
+
+            int daysDifference = period.getDays();
+
             MyBookRentDto myBookRentDto = MyBookRentDto.builder()
                     .title(book.getTitle())
                     .authors(book.getAuthors())
@@ -496,6 +506,7 @@ public class MyPageServiceImpl implements MyPageService {
                     .return_location(rent.getReturn_location())
                     .return_date(rent.getRent_date())
                     .rental_fee(bookRent.getRental_fee())
+                    .left_days(daysDifference)
                     .build();
 
             myBookRentDtoList.add(myBookRentDto);
@@ -579,6 +590,15 @@ public class MyPageServiceImpl implements MyPageService {
             BookRent bookRent = book.getBookRent();
             Member lender = rent.getLender();
 
+            LocalDateTime return_dateTime = rent.getReturn_date();
+            LocalDate return_date = return_dateTime.toLocalDate();
+
+            LocalDate now_date = LocalDate.now();
+
+            Period period = Period.between(now_date, return_date);
+
+            int daysDifference = period.getDays();
+
             MyBookRentDto myBookRentDto = MyBookRentDto.builder()
                     .title(book.getTitle())
                     .authors(book.getAuthors())
@@ -589,6 +609,7 @@ public class MyPageServiceImpl implements MyPageService {
                     .return_location(rent.getReturn_location())
                     .return_date(rent.getRent_date())
                     .rental_fee(bookRent.getRental_fee())
+                    .left_days(daysDifference)
                     .build();
 
             myBookRentDtoList.add(myBookRentDto);
@@ -622,6 +643,15 @@ public class MyPageServiceImpl implements MyPageService {
             BookRent bookRent = book.getBookRent();
             Member renter = rent.getRenter();
 
+            LocalDateTime return_dateTime = rent.getReturn_date();
+            LocalDate return_date = return_dateTime.toLocalDate();
+
+            LocalDate now_date = LocalDate.now();
+
+            Period period = Period.between(now_date, return_date);
+
+            int daysDifference = period.getDays();
+
             MyBookLendDto myBookLendDto = MyBookLendDto.builder()
                     .title(book.getTitle())
                     .authors(book.getAuthors())
@@ -632,6 +662,7 @@ public class MyPageServiceImpl implements MyPageService {
                     .return_location(rent.getReturn_location())
                     .return_date(rent.getRent_date())
                     .rental_fee(bookRent.getRental_fee())
+                    .left_days(daysDifference)
                     .build();
 
             myBookRentDtoList.add(myBookLendDto);

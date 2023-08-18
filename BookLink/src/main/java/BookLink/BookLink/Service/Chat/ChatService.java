@@ -24,9 +24,9 @@ import java.util.*;
 @RequiredArgsConstructor
 public class ChatService { // DB 연결 후 변경해야 함
 
-    private BookRepository bookRepository;
-    private ChatRoomRepository chatRoomRepository;
-    private ChatMessageRepository chatMessageRepository;
+    private final BookRepository bookRepository;
+    private final ChatRoomRepository chatRoomRepository;
+    private final ChatMessageRepository chatMessageRepository;
 
     private Map<String, ChatRoomDto> chatRooms;
 
