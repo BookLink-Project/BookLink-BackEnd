@@ -17,7 +17,8 @@ public class BookDetailDto {
 
     private List<Item> item = new ArrayList<>();
     private List<BookRepliesDto> replies = new ArrayList<>();
-    private List<BookRecommendDto.Item> recommended_books;
+    private List<BookRecommendDto.Item> recommended_books = new ArrayList<>();
+    private List<BookRentAroundDto> around_books = new ArrayList<>();
     private List<BookRelatedPostDto> related_posts = new ArrayList<>();
 
     @Getter

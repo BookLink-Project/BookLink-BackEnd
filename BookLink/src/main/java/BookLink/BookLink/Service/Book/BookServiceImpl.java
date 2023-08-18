@@ -51,8 +51,8 @@ public class BookServiceImpl implements BookService {
     private final BookReportRepository bookReportRepository;
     private final RentRepository rentRepository;
     private final MemberRepository memberRepository;
-    private final S3Service s3Service;
     private final BookImageRepository bookImageRepository;
+    private final S3Service s3Service;
 
     private String search_url = "http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=ttbelwlahstmxjf2304001&QueryType=Title&SearchTarget=Book&Cover=Big&output=js&InputEncoding=utf-8&Version=20131101";
     private String list_url = "http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=ttbelwlahstmxjf2304001&QueryType=Bestseller&MaxResults=32&SearchTarget=Book&Cover=Big&output=js&Version=20131101";
@@ -287,7 +287,32 @@ public class BookServiceImpl implements BookService {
         }
         result.setRecommended_books(recommend_books);
 
-        // 4. 관련 게시글
+        // 4. 내 주변 대여 정보
+        List<BookRentAroundDto> around_books = new ArrayList<>();
+
+        if (loginMember != null) {
+
+            String[] addressArr = loginMember.getAddress().split(" ");
+            String address = addressArr[0] + " " + addressArr[1];
+
+            List<BookRent> bookRents = bookRentRepository.findTop5ByRentLocation(address);
+
+            for (BookRent bookRent : bookRents) {
+                Book book = bookRent.getBook();
+                log.info("book's id = {}", book.getId());
+                BookRentAroundDto info = BookRentAroundDto.builder()
+                        .id(book.getId())
+                        .owner_nickname(book.getWriter().getNickname())
+                        .owner_image(book.getWriter().getImage())
+                        .max_date(bookRent.getMax_date())
+                        .fee(bookRent.getRental_fee())
+                        .build();
+                around_books.add(info);
+            }
+        }
+        result.setAround_books(around_books);
+
+        // 5. 관련 게시글
         List<BookRelatedPostDto> related_posts = new ArrayList<>();
 
         List<BookReport> reports = bookReportRepository.findTop5ByIsbnOrderByCreatedTimeDesc(isbn);
