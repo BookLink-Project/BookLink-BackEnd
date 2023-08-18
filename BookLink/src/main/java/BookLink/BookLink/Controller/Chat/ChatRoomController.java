@@ -69,9 +69,9 @@ public class ChatRoomController {
 
     @MessageMapping("/message")
     public ResponseEntity<ResponseDto> enter(@RequestBody ChatMessageDto.Request message, @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
-        if (ChatMessageDto.MessageType.ENTER.equals(message.getType())) {
-            message.setMessage(message.getSender()+"님이 입장하였습니다.");
-        }
+//        if (ChatMessageDto.MessageType.ENTER.equals(message.getType())) {
+//            message.setMessage(message.getSender()+"님이 입장하였습니다.");
+//        }
 
         Member sender = memberPrincipal.getMember();
 
