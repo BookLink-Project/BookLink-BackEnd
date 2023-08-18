@@ -21,7 +21,8 @@ public class BookRent extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private RentStatus rent_status; // renting/waiting
+//    @Enumerated(EnumType.STRING)
+    private RentStatus rent_status;
 
     private String book_rating; // 책 상태 등급
 

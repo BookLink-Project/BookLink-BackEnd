@@ -48,7 +48,7 @@ public class Book extends BaseTimeEntity {
     @Column(name = "rent_signal")
     private Boolean rentSignal; // 대여 신청 가능 여부
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne // 대여 도서 활성화할 떄 필요한건데 EAGER 방식을 이용해도 괜찮은지 추후해 알아보기
     @JoinColumn(name = "writer")
     private Member writer;
 

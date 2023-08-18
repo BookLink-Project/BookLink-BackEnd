@@ -32,4 +32,5 @@ public interface RentRepository extends JpaRepository<Rent, Long> {
 
     Long countByLender(Member renter);
 
+    Rent findByBook(Book book);
 }

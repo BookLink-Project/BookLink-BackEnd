@@ -659,7 +659,7 @@ public class MyPageServiceImpl implements MyPageService {
         Hibernate.initialize(book.getWriter());
         Member writer = book.getWriter();
 
-        if (writer.getNickname() != member.getNickname()) {
+        if (!writer.getNickname().equals(member.getNickname())) {
             responseDto.setStatus(HttpStatus.BAD_REQUEST);
             responseDto.setMessage("올바르지 않은 접근입니다.");
             return responseDto;

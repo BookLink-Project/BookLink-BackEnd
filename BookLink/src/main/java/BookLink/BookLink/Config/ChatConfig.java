@@ -21,11 +21,12 @@ public class ChatConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-
-        registry.enableSimpleBroker("/queue", "/topic"); // 메시지 받을 때의 경로
+        // 서버 -> 클라이언트로 발행하는 메세지에 대한 endpoint 설정 : 구독
+        registry.enableSimpleBroker("/sub"); // 메시지 받을 때의 경로
         // prefix 에 붙으면 해당 채팅방을 구독한 클라이언트에게 메시지 전달
         // queue 1 대 1, topic 1 대 다
 
-        registry.setApplicationDestinationPrefixes("/app"); // 메시지 보낼 때의 경로
+        // 클라이언트->서버로 발행하는 메세지에 대한 endpoint 설정 : 구독에 대한 메세지
+        registry.setApplicationDestinationPrefixes("/pub"); // 메시지 보낼 때의 경로
     }
 }

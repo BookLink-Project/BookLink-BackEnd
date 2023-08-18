@@ -852,6 +852,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Transactional
     public ResponseDto returnSuccess(Long book_id, Member loginMember) {
 
         ResponseDto responseDto = new ResponseDto();
@@ -866,12 +867,52 @@ public class BookServiceImpl implements BookService {
 
         Rent rent = rentRepository.findByLenderAndBook(loginMember, book);
 
+        if (!loginMember.getNickname().equals(rent.getLender().getNickname())) {
+            responseDto.setMessage("대여해준 사람이 아닙니다.");
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            return responseDto;
+        }
+
         List<Book> books = loginMember.getBooks();
 
         rent.rentStatusUpdate(); // End로 변경
 
         responseDto.setMessage("반납완료 처리 성공");
         return responseDto;
+    }
+
+    @Override
+    @Transactional
+    public ResponseDto deleteBook(Long book_id, Member loginMember) {
+
+        ResponseDto responseDto = new ResponseDto();
+
+        Book book = bookRepository.findById(book_id).orElse(null);
+
+        if (book == null) {
+            responseDto.setMessage("없는 책 입니다.");
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            return responseDto;
+        }
+
+
+
+        Rent rent = rentRepository.findByBook(book);
+
+        if (rent != null) {
+            rentRepository.delete(rent);
+        }
+
+        List<BookImage> images = book.getBookRent().getImages();
+
+        bookImageRepository.deleteAll(images);
+
+        bookRepository.delete(book);
+
+        responseDto.setMessage("소장도서 삭제완료");
+
+        return responseDto;
+
     }
 }
 
