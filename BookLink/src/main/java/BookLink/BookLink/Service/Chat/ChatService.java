@@ -120,7 +120,7 @@ public class ChatService { // DB 연결 후 변경해야 함
         return responseDto;
     }
 
-    public ResponseDto sendMessage(ChatMessageDto.Request chatMessageDto, Member sender) { // check
+    public ResponseDto sendMessage(ChatMessageDto.Request chatMessageDto) { // + Member
 
         ResponseDto responseDto = new ResponseDto();
 
@@ -131,12 +131,12 @@ public class ChatService { // DB 연결 후 변경해야 함
             return responseDto;
         }
 
-//        Member sender = memberRepository.findByNickname(chatMessageDto.getSender()).orElse(null);
-//        if (sender == null) {
-//            responseDto.setStatus(HttpStatus.BAD_REQUEST);
-//            responseDto.setMessage("없는 사용자입니다.");
-//            return responseDto;
-//        }
+        Member sender = memberRepository.findByNickname(chatMessageDto.getSender()).orElse(null);
+        if (sender == null) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("없는 사용자입니다.");
+            return responseDto;
+        }
 
         ChatMessage chatMessage = ChatMessage.builder()
                 .chatRoom(chatRoom)

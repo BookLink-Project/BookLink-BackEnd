@@ -23,8 +23,7 @@ public class ChatMessageController {
     private final ChatService chatService;
 
     @MessageMapping("/api/v1/chat/message")
-    public ResponseEntity<ResponseDto> enter(@RequestBody ChatMessageDto.Request message,
-                                             @AuthenticationPrincipal MemberPrincipal memberPrincipal) { // check
+    public ResponseEntity<ResponseDto> enter(@RequestBody ChatMessageDto.Request message) { // @AuthenticationPrincipal
 
 //        if (ChatMessageDto.MessageType.ENTER.equals(message.getType())) {
 //            message.setMessage(message.getSender()+"님이 입장하였습니다.");
@@ -32,11 +31,11 @@ public class ChatMessageController {
 
         log.info("===MessageMapping START===");
 
-        Member sender = memberPrincipal.getMember();
-        log.info("sender={}", sender.getNickname());
+//        Member sender = memberPrincipal.getMember();
+//        log.info("sender={}", sender.getNickname());
 //
-        ResponseDto responseDto = chatService.sendMessage(message, sender);
-//        ResponseDto responseDto = chatService.sendMessage(message);
+//        ResponseDto responseDto = chatService.sendMessage(message, sender);
+        ResponseDto responseDto = chatService.sendMessage(message);
 
         simpMessagingTemplate.convertAndSend("/sub/api/v1/chat/room/"+ message.getRoom_id(), message);
 
