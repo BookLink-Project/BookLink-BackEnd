@@ -473,13 +473,18 @@ public class MyPageServiceImpl implements MyPageService {
 
         List<MyBookRentDto> myBookRentDtoList = new ArrayList<>();
         List<MyRecordBookDto> myRecordBookDtoList = new ArrayList<>();
+        List<Rent> first_page_rents = new ArrayList<>();
 
         int record_cnt = books.size();
         int rent_available_cnt = 0;
         int lend_cnt = 0;
         int rent_cnt = byLender.size();
 
-        List<Rent> first_page_rents = rents.subList(0, 8);
+        if (rents.size() < 8) {
+            first_page_rents = rents;
+        } else {
+            first_page_rents = rents.subList(0, 8);
+        }
 
         for (Rent rent : first_page_rents) {
 

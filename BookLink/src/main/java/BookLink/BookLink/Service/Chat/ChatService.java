@@ -10,6 +10,7 @@ import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Repository.Book.BookRepository;
 import BookLink.BookLink.Repository.Chat.ChatMessageRepository;
 import BookLink.BookLink.Repository.Chat.ChatRoomRepository;
+import BookLink.BookLink.Repository.Member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class ChatService { // DB 연결 후 변경해야 함
 
+    private final MemberRepository memberRepository;
     private final BookRepository bookRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
@@ -126,6 +128,14 @@ public class ChatService { // DB 연결 후 변경해야 함
         if (chatRoom == null) {
             responseDto.setStatus(HttpStatus.BAD_REQUEST);
             responseDto.setMessage("없는 채팅방입니다.");
+            return responseDto;
+        }
+
+        String nickname = sender.getNickname();
+
+        if (!nickname.equals(chatMessageDto.getSender())) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("일치하지 않는 사용자입니다.");
             return responseDto;
         }
 

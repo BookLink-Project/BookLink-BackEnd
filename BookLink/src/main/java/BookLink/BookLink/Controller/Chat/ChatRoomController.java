@@ -7,6 +7,7 @@ import BookLink.BookLink.Domain.Member.MemberPrincipal;
 import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Service.Chat.ChatService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/v1/chat")
@@ -77,7 +79,10 @@ public class ChatRoomController {
 
         ResponseDto responseDto = chatService.sendMessage(message, sender);
 
-        sendingOperations.convertAndSend("/sub/api/v1/chat/room/"+ message.getRoom_id(),message);
+        log.info("room_id : " + message.getRoom_id());
+        log.info("sender : " + message.getSender());
+        log.info("message : " + message.getMessage());
+        sendingOperations.convertAndSend("/sub/api/v1/chat/room/"+ message.getRoom_id(), message);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);
