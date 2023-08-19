@@ -5,15 +5,17 @@ import lombok.*;
 
 public class ChatMessageDto {
 
-//    public enum MessageType {
-//        ENTER, TALK
-//    }
+    public enum MessageType {
+        ENTER, TALK
+    }
 
     @Getter
     @Setter
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Request{
+
+        private MessageType type;
 
         private Long room_id;
 
