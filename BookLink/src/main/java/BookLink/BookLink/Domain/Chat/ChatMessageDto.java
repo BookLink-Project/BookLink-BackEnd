@@ -17,7 +17,7 @@ public class ChatMessageDto {
 
         private Long room_id;
 
-        private String sender;
+        private String sender; // 보내는 사람 닉네임
 
         private String message;
     }
