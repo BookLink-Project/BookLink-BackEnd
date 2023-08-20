@@ -100,24 +100,61 @@ public class JwtUtil {
 
     public void setCookieAccessToken(HttpServletResponse response, String accessToken) {
 
+        String cookieName = "cookieName";
+        String cookieValue = "cookieValue";
+
         Cookie cookie = new Cookie("Access_Token", accessToken);
 
         cookie.setPath("/");
-        cookie.setHttpOnly(false);
-        cookie.setSecure(false);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
         cookie.setMaxAge(60 * 60 * 24 * 3); // 3 day
 
+        String userAgent = response.getHeader("User-Agent");
+        String sameSite;
+
+        if (userAgent != null) {
+            if (userAgent.contains("Chrome") || userAgent.contains("Firefox") || userAgent.contains("Edge") || userAgent.contains("Edg")) {
+                sameSite = "None";
+            } else {
+                sameSite = "Lax"; // 기타 브라우저
+            }
+        } else {
+            sameSite = "Lax"; // User-Agent 정보가 없는 경우
+        }
+
+        String cookieHeader = String.format("%s=%s; Secure; HttpOnly; Path=/; SameSite=%s", cookieName, cookieValue, sameSite);
+        response.setHeader("Set-Cookie", cookieHeader);
         response.addCookie(cookie);
     }
 
     public void setCookieRefreshToken(HttpServletResponse response, String refreshToken) {
 
+        String cookieName = "cookieName";
+        String cookieValue = "cookieValue";
+
         Cookie cookie = new Cookie("Refresh_Token", refreshToken);
 
         cookie.setPath("/");
-        cookie.setHttpOnly(false);
-        cookie.setSecure(false);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
         cookie.setMaxAge(60 * 60 * 24 * 15); // 15 day
+
+        String userAgent = response.getHeader("User-Agent");
+        String sameSite;
+
+        if (userAgent != null) {
+            if (userAgent.contains("Chrome") || userAgent.contains("Firefox") || userAgent.contains("Edge") || userAgent.contains("Edg")) {
+                sameSite = "None";
+            } else {
+                sameSite = "Lax"; // 기타 브라우저
+            }
+        } else {
+            sameSite = "Lax"; // User-Agent 정보가 없는 경우
+        }
+
+        String cookieHeader = String.format("%s=%s; Secure; HttpOnly; Path=/; SameSite=%s", cookieName, cookieValue, sameSite);
+        response.setHeader("Set-Cookie", cookieHeader);
 
         response.addCookie(cookie);
     }
