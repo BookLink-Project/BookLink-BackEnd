@@ -14,7 +14,7 @@ public class ChatConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws/chat") // websocket 연결할 때 사용할 API 경로
                 .setAllowedOriginPatterns("*")
-                .withSockJS(); // 없어야 apic 테스트 가능!!!!!!!
+                .withSockJS(); // apic 테스트 시 주석 처리하기
 
         // roomDetail.html var sock = new SockJS("/ws/chat"); 에서 새로운 핸드쉐이크 커넥션 생성할 때 사용
     }
