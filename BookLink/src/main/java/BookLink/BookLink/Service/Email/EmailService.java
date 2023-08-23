@@ -4,7 +4,8 @@ import BookLink.BookLink.Domain.Email.EmailDto;
 import BookLink.BookLink.Domain.ResponseDto;
 
 public interface EmailService {
-    EmailDto.Response sendSimpleMessage(String to)throws Exception;
+
+    ResponseDto sendSimpleMessage(String to) throws Exception;
 
     ResponseDto confirmMessage(EmailDto.Request emailDto);
 }

@@ -4,6 +4,7 @@ import BookLink.BookLink.Domain.Community.FreeBoard.*;
 import BookLink.BookLink.Domain.CommunityReply.FreeBoardReply.FreeBoardRepliesDto;
 import BookLink.BookLink.Domain.CommunityReply.FreeBoardReply.FreeBoardReply;
 import BookLink.BookLink.Domain.Member.Member;
+import BookLink.BookLink.Domain.Member.MemberPrincipal;
 import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Repository.Community.FreeBoard.FreeBoardLikeRepository;
 import BookLink.BookLink.Repository.Community.FreeBoard.FreeBoardRepository;
@@ -79,7 +80,9 @@ public class FreeBoardServiceImpl implements FreeBoardService {
 
     @Override
     @Transactional
-    public ResponseDto freeBoardDetail(Long id, Member loginMember) {
+    public ResponseDto freeBoardDetail(Long id, MemberPrincipal memberPrincipal) {
+
+        Member loginMember = (memberPrincipal == null) ? null : memberPrincipal.getMember();
 
         ResponseDto responseDto = new ResponseDto();
 
@@ -94,7 +97,7 @@ public class FreeBoardServiceImpl implements FreeBoardService {
 
         post.view_plus(); // 조회수 증가
 
-        boolean isLiked = freeBoardLikeRepository.existsByMemberAndPost(loginMember, post);
+        boolean isLiked = (loginMember != null) && freeBoardLikeRepository.existsByMemberAndPost(loginMember, post);
 
         // 댓글 조회
         List<FreeBoardReply> replyList = freeBoardReplyRepository.findByPostOrderByParentDescIdDesc(post);
@@ -110,7 +113,7 @@ public class FreeBoardServiceImpl implements FreeBoardService {
             Long sub_reply_cnt = parentId.equals(replyId) ? freeBoardReplyRepository.countByParentId(parentId) - 1 : 0; // 대댓글 수
 
             // 좋아요 상태
-            boolean isLikedReply = freeBoardReplyLikeRepository.existsByMemberAndReply(loginMember, reply);
+            boolean isLikedReply = (loginMember != null) &&  freeBoardReplyLikeRepository.existsByMemberAndReply(loginMember, reply);
 
             FreeBoardRepliesDto rv;
 
