@@ -3,6 +3,7 @@ package BookLink.BookLink.Service.Community.FreeBoard;
 import BookLink.BookLink.Domain.Community.FreeBoard.FreeBoardDto;
 import BookLink.BookLink.Domain.Community.FreeBoard.FreeBoardUpdateDto;
 import BookLink.BookLink.Domain.Member.Member;
+import BookLink.BookLink.Domain.Member.MemberPrincipal;
 import BookLink.BookLink.Domain.ResponseDto;
 
 public interface FreeBoardService {
@@ -11,7 +12,7 @@ public interface FreeBoardService {
 
     ResponseDto freeBoardList();
 
-    ResponseDto freeBoardDetail(Long id, Member member);
+    ResponseDto freeBoardDetail(Long id, MemberPrincipal memberPrincipal);
 
     ResponseDto freeBoardUpdate(Long id, FreeBoardUpdateDto requestDto);
 

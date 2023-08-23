@@ -6,6 +6,7 @@ import BookLink.BookLink.Domain.Community.BookReport.BookReportDetailDto;
 import BookLink.BookLink.Domain.CommunityReply.BookReportReply.BookReportRepliesDto;
 import BookLink.BookLink.Domain.CommunityReply.BookReportReply.BookReportReply;
 import BookLink.BookLink.Domain.Member.Member;
+import BookLink.BookLink.Domain.Member.MemberPrincipal;
 import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Repository.Book.BookRepository;
 import BookLink.BookLink.Repository.Community.BookReport.BookReportLikeRepository;
@@ -69,7 +70,9 @@ public class BookReportServiceImpl implements BookReportService {
     //
     @Override
     @Transactional
-    public ResponseDto reportDetail(Long id, Member loginMember) {
+    public ResponseDto reportDetail(Long id, MemberPrincipal memberPrincipal) {
+
+        Member loginMember = (memberPrincipal == null) ? null : memberPrincipal.getMember();
 
         ResponseDto responseDto = new ResponseDto();
 
@@ -83,7 +86,7 @@ public class BookReportServiceImpl implements BookReportService {
 
         post.view_plus(); // 조회수 증가
 
-        boolean isLiked = bookReportLikeRepository.existsByMemberAndPost(loginMember, post);
+        boolean isLiked = (loginMember != null) && bookReportLikeRepository.existsByMemberAndPost(loginMember, post);
 
         // 댓글 조회
         List<BookReportReply> replyList = bookReportReplyRepository.findByPostOrderByParentDescIdDesc(post);
@@ -99,7 +102,7 @@ public class BookReportServiceImpl implements BookReportService {
             Long sub_reply_cnt = parentId.equals(replyId) ? bookReportReplyRepository.countByParentId(parentId) - 1 : 0; // 대댓글 수
 
             // 좋아요 상태
-            boolean isLikedReply = bookReportReplyLikeRepository.existsByMemberAndReply(loginMember, reply);
+            boolean isLikedReply = (loginMember != null) && bookReportReplyLikeRepository.existsByMemberAndReply(loginMember, reply);
 
             BookReportRepliesDto rv;
 

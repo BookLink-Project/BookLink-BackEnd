@@ -79,9 +79,10 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    public EmailDto.Response sendSimpleMessage(String email)throws Exception {
+    public ResponseDto sendSimpleMessage(String email)throws Exception {
 
-        EmailDto.Response responseDto = new EmailDto.Response();
+        ResponseDto responseDto = new ResponseDto();
+        EmailDto.Response emailDto = new EmailDto.Response();
 
         // TODO Auto-generated method stub
         MimeMessage message = createMessage(email);
@@ -95,8 +96,9 @@ public class EmailServiceImpl implements EmailService {
         Email email_entity = EmailDto.Request.toEntity(email, ePw);
         emailRepository.save(email_entity);
 
-        responseDto.setAuthentication_number(ePw);
+        emailDto.setAuthentication_number(ePw);
 
+        responseDto.setData(emailDto);
         return responseDto;
     }
 

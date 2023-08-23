@@ -48,8 +48,7 @@ public class BookReportController {
     @GetMapping("/board/report/{id}")
     public ResponseEntity<ResponseDto> reportDetail(@PathVariable Long id, @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
 
-        Member member = memberPrincipal.getMember();
-        ResponseDto responseDto = bookReportService.reportDetail(id, member);
+        ResponseDto responseDto = bookReportService.reportDetail(id, memberPrincipal);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);

@@ -58,8 +58,7 @@ public class FreeBoardController {
     @GetMapping("/board/free/{id}")
     public ResponseEntity<ResponseDto> freeBoardDetail(@PathVariable Long id, @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
 
-        Member member = memberPrincipal.getMember();
-        ResponseDto responseDto = freeBoardService.freeBoardDetail(id, member);
+        ResponseDto responseDto = freeBoardService.freeBoardDetail(id, memberPrincipal);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);
