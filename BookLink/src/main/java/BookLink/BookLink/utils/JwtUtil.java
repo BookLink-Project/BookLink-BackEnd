@@ -30,7 +30,7 @@ public class JwtUtil {
     @Value("${jwt.secret}")
     private String secretKey;
 
-    private static final Long expired_access = 1000 * 60 * 60 * 24 * 3L; // 3 day
+    private static final Long expired_access = 1000 * 60 * 60L; // 1 hour
     private static final Long expired_refresh = 1000 * 60 * 60 * 24 * 15L; // 15 day
 
     private final RefreshTokenRepository refreshTokenRepository;
@@ -108,7 +108,7 @@ public class JwtUtil {
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
-        cookie.setMaxAge(60 * 60 * 24 * 3); // 3 day
+        cookie.setMaxAge(60 * 60); // 1 hour
 
         String userAgent = response.getHeader("User-Agent");
         String sameSite;
