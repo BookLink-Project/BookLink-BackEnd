@@ -1,13 +1,12 @@
 package BookLink.BookLink.Domain.Member;
 
 import BookLink.BookLink.Domain.Book.Book;
-import BookLink.BookLink.Domain.Card.Card;
 import BookLink.BookLink.Domain.Common.BaseTimeEntity;
 import BookLink.BookLink.Domain.Community.BookReport.BookReport;
 import BookLink.BookLink.Domain.BookReply.BookReply;
 
 import BookLink.BookLink.Domain.Common.Role;
-import BookLink.BookLink.Domain.Common.SocialType;
+import BookLink.BookLink.Domain.Message.Message;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.ColumnDefault;
@@ -64,10 +63,6 @@ public class Member extends BaseTimeEntity {
 //    @ColumnDefault("0")
 //    private Integer delay_return_cnt;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "card_id")
-    private Card card;
-
     @OneToMany(mappedBy = "writer")
     private List<BookReply> bookReplies = new ArrayList<>();
 
@@ -77,26 +72,11 @@ public class Member extends BaseTimeEntity {
     @OneToMany(mappedBy = "writer", fetch = FetchType.EAGER)// LazyInitializationException 오류 해결하기 위해 EAGER 전략사용
     private List<Book> books = new ArrayList<>();
 
-//    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-//    @JoinColumn(name = "rent_id")
+    @OneToMany(mappedBy = "sender")
+    private List<Message> sentMessages = new ArrayList<>();
 
-//    private List<BookRent> bookRent;
-
-//    public void plus_LendCnt() {
-//        this.lend_cnt += 1;
-//    }
-//
-//    public void plus_RentCnt() {
-//        this.rent_cnt += 1;
-//    }
-//
-//    public void plus_delayReturnCnt() {
-//        this.delay_return_cnt += 1;
-//    }
-//
-//    public void minus_delayReturnCnt() {
-//        this.delay_return_cnt -= 1;
-//    }
+    @OneToMany(mappedBy = "receiver")
+    private List<Message> receivedMessages = new ArrayList<>();
 
     public void updateAccount(URL image, String name, String nickname, String email, String password,
                                 LocalDate birth, String address) {
