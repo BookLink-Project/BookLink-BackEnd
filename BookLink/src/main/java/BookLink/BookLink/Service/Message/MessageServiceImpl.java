@@ -4,6 +4,7 @@ import BookLink.BookLink.Domain.Book.BookRent;
 import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.Member.MemberPrincipal;
 import BookLink.BookLink.Domain.Message.Message;
+import BookLink.BookLink.Domain.Message.MessageDto;
 import BookLink.BookLink.Domain.Message.MessageRoom;
 import BookLink.BookLink.Domain.Message.MessageStartDto;
 import BookLink.BookLink.Domain.Message.MessageStartDto.Request;
@@ -75,6 +76,45 @@ public class MessageServiceImpl implements MessageService {
                 .book_title(book_title)
                 .rent_date(rent_date)
                 .rental_fee(rental_fee)
+                .created_time(message.getCreatedTime())
+                .build();
+
+        responseDto.setData(response);
+        return responseDto;
+    }
+
+    @Override
+    public ResponseDto sendMessage(MessageDto.Request messageDto, MemberPrincipal memberPrincipal) {
+
+        ResponseDto responseDto = new ResponseDto();
+
+        if (memberPrincipal == null) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("잘못된 접근입니다.");
+            return responseDto;
+        }
+
+        Member sender = memberPrincipal.getMember();
+        String receiver_nickname = messageDto.getReceiver();
+
+        Member receiver = memberRepository.findByNickname(receiver_nickname).orElse(null);
+
+        if (receiver == null) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("받는 사람의 정보가 불명확합니다.");
+            return responseDto;
+        }
+
+        Long message_id = messageDto.getMessage_id();
+        MessageRoom messageRoom = messageRoomRepository.findById(message_id).orElse(null);
+
+        Message message = MessageDto.Request.toEntity(messageDto, sender, receiver, messageRoom);
+        messageRepository.save(message);
+
+        MessageDto.Response response = MessageDto.Response.builder()
+                .content(messageDto.getContent())
+                .sender(sender.getNickname())
+                .receiver(messageDto.getReceiver())
                 .created_time(message.getCreatedTime())
                 .build();
 

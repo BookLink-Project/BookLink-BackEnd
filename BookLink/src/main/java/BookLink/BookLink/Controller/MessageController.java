@@ -2,6 +2,7 @@ package BookLink.BookLink.Controller;
 
 import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.Member.MemberPrincipal;
+import BookLink.BookLink.Domain.Message.MessageDto;
 import BookLink.BookLink.Domain.Message.MessageStartDto;
 import BookLink.BookLink.Domain.MyPage.VerifyDto;
 import BookLink.BookLink.Domain.ResponseDto;
@@ -23,7 +24,7 @@ public class MessageController {
 
     // 처음 메세지를 보내는
     @PostMapping("/start")
-    public ResponseEntity<ResponseDto> verifyAccount(@RequestBody MessageStartDto.Request request, @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
+    public ResponseEntity<ResponseDto> startMessage(@RequestBody MessageStartDto.Request request, @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
 
 
         ResponseDto responseDto = messageService.startMessage(request, memberPrincipal);
@@ -33,6 +34,15 @@ public class MessageController {
     }
 
     // 이미 시작된 쪽지를 보낼 때
+    @PostMapping("/send")
+    public ResponseEntity<ResponseDto> sendMessage(@RequestBody MessageDto.Request request, @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
+
+
+        ResponseDto responseDto = messageService.sendMessage(request, memberPrincipal);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+    }
 
     //
 }
