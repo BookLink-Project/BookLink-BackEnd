@@ -2,6 +2,7 @@ package BookLink.BookLink.Domain.Book;
 
 import BookLink.BookLink.Domain.Common.BaseTimeEntity;
 import BookLink.BookLink.Domain.Common.RentStatus;
+import BookLink.BookLink.Domain.Message.MessageRoom;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
@@ -43,6 +44,9 @@ public class BookRent extends BaseTimeEntity {
     private String rent_location; //대여장소
 
     private String rent_method; // 도서 대여 방법
+
+    @OneToMany(mappedBy = "bookRent")
+    private List<MessageRoom> messageRooms = new ArrayList<>();
 
 //    @OneToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "book_id")

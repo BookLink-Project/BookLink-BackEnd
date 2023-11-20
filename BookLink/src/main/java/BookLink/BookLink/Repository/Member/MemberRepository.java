@@ -2,9 +2,13 @@ package BookLink.BookLink.Repository.Member;
 
 import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.Common.SocialType;
+import BookLink.BookLink.Domain.Message.MessageRoom;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
@@ -15,6 +19,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     Optional<Member> findByEmail(String email);
 
     Optional<Member> findByNickname(String nickname);
+
+
 
     /**
      * 소셜 타입과 소셜의 식별값으로 회원 찾는 메소드
