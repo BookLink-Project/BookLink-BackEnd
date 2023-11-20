@@ -23,6 +23,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -195,6 +196,30 @@ public class MessageServiceImpl implements MessageService {
         messagesDto.setMessages(responseList);
 
         responseDto.setData(messagesDto);
+        return responseDto;
+    }
+
+    @Override
+    public ResponseDto deleteMessage(Long message_id, Member loginMember) {
+        ResponseDto responseDto = new ResponseDto();
+
+        Message message = messageRepository.findById(message_id).orElse(null);
+        if (message == null) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("잘못된 접근입니다.");
+            return responseDto;
+        }
+
+        Member sender = message.getSender();
+
+        if (!Objects.equals(loginMember.getNickname(), sender.getNickname())) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("잘못된 접근입니다.");
+            return responseDto;
+        }
+
+        messageRepository.deleteById(message_id);
+
         return responseDto;
     }
 }
