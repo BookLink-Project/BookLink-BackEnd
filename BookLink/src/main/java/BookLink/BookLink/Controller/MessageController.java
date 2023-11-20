@@ -71,7 +71,14 @@ public class MessageController {
     }
 
 
-//    // 메세지 삭제하기
-//    @DeleteMapping("")
-//    public ResponseEntity<ResponseDto> deleteMessage()
+    //    // 메세지 삭제하기
+    @DeleteMapping("/{message_id}")
+    public ResponseEntity<ResponseDto> deleteMessage(@PathVariable Long message_id, @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
+
+        Member member = memberPrincipal.getMember();
+        ResponseDto responseDto = messageService.deleteMessage(message_id, member);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+    }
 }
