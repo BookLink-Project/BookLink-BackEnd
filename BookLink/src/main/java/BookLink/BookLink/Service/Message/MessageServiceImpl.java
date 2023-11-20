@@ -5,6 +5,7 @@ import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.Member.MemberPrincipal;
 import BookLink.BookLink.Domain.Message.Message;
 import BookLink.BookLink.Domain.Message.MessageDto;
+import BookLink.BookLink.Domain.Message.MessageListDto;
 import BookLink.BookLink.Domain.Message.MessageRoom;
 import BookLink.BookLink.Domain.Message.MessageStartDto;
 import BookLink.BookLink.Domain.Message.MessageStartDto.Request;
@@ -14,10 +15,18 @@ import BookLink.BookLink.Repository.Book.BookRentRepository;
 import BookLink.BookLink.Repository.Member.MemberRepository;
 import BookLink.BookLink.Repository.Message.MessageRepository;
 import BookLink.BookLink.Repository.Message.MessageRoomRepository;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,17 +38,16 @@ public class MessageServiceImpl implements MessageService {
     private final BookRentRepository bookRentRepository;
 
     @Override
-    public ResponseDto startMessage(MessageStartDto.Request messageDto, MemberPrincipal memberPrincipal) {
+    public ResponseDto startMessage(MessageStartDto.Request messageDto, Member loginMember) {
 
         ResponseDto responseDto = new ResponseDto();
 
-        if (memberPrincipal == null) {
+        if (loginMember == null) {
             responseDto.setStatus(HttpStatus.BAD_REQUEST);
             responseDto.setMessage("잘못된 접근입니다.");
             return responseDto;
         }
 
-        Member sender = memberPrincipal.getMember();
         String receiver_nickname = messageDto.getReceiver();
 
         Member receiver = memberRepository.findByNickname(receiver_nickname).orElse(null);
@@ -50,14 +58,15 @@ public class MessageServiceImpl implements MessageService {
             return responseDto;
         }
 
-        MessageRoom messageRoom = new MessageRoom();
-        messageRoomRepository.save(messageRoom);
-
-        Message message = Request.toEntity(messageDto, sender, receiver, messageRoom);
-        messageRepository.save(message);
-
         Long rent_id = messageDto.getRent_id();
         BookRent bookRent = bookRentRepository.findById(rent_id).orElse(null);
+
+        MessageRoom messageRoom = new MessageRoom(loginMember, receiver, bookRent);
+        messageRoomRepository.save(messageRoom);
+
+        Message message = Request.toEntity(messageDto, loginMember, receiver, messageRoom);
+        messageRepository.save(message);
+
 
         if(bookRent == null) {
             responseDto.setStatus(HttpStatus.BAD_REQUEST);
@@ -71,7 +80,7 @@ public class MessageServiceImpl implements MessageService {
 
         Response response = Response.builder()
                 .content(messageDto.getContent())
-                .sender(sender.getNickname())
+                .sender(loginMember.getNickname())
                 .receiver(messageDto.getReceiver())
                 .book_title(book_title)
                 .rent_date(rent_date)
@@ -84,17 +93,16 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public ResponseDto sendMessage(MessageDto.Request messageDto, MemberPrincipal memberPrincipal) {
+    public ResponseDto sendMessage(MessageDto.Request messageDto, Member loginMember) {
 
         ResponseDto responseDto = new ResponseDto();
 
-        if (memberPrincipal == null) {
+        if (loginMember == null) {
             responseDto.setStatus(HttpStatus.BAD_REQUEST);
             responseDto.setMessage("잘못된 접근입니다.");
             return responseDto;
         }
 
-        Member sender = memberPrincipal.getMember();
         String receiver_nickname = messageDto.getReceiver();
 
         Member receiver = memberRepository.findByNickname(receiver_nickname).orElse(null);
@@ -108,17 +116,50 @@ public class MessageServiceImpl implements MessageService {
         Long message_id = messageDto.getMessage_id();
         MessageRoom messageRoom = messageRoomRepository.findById(message_id).orElse(null);
 
-        Message message = MessageDto.Request.toEntity(messageDto, sender, receiver, messageRoom);
+        Message message = MessageDto.Request.toEntity(messageDto, loginMember, receiver, messageRoom);
         messageRepository.save(message);
 
         MessageDto.Response response = MessageDto.Response.builder()
                 .content(messageDto.getContent())
-                .sender(sender.getNickname())
+                .sender(loginMember.getNickname())
                 .receiver(messageDto.getReceiver())
                 .created_time(message.getCreatedTime())
                 .build();
 
         responseDto.setData(response);
+        return responseDto;
+    }
+
+    @Override
+    @Transactional
+    public ResponseDto messageRoomList(Member loginMember) {
+        ResponseDto responseDto = new ResponseDto();
+        MessageListDto messageListDto = new MessageListDto();
+        Map<Long, String> room_list = new HashMap<>();
+
+        if (loginMember == null) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("잘못된 접근입니다.");
+            return responseDto;
+        }
+
+        List<MessageRoom> messageRooms = messageRoomRepository.findMessageRoomsByMemberNickname(
+                loginMember.getNickname());
+
+        Comparator<MessageRoom> comparedMessageRoom = Comparator.comparing(
+                messageRoom -> messageRoom.getMessages().get(messageRoom.getMessages().size() - 1).getCreatedTime()
+        );
+
+        messageRooms.sort(comparedMessageRoom);
+
+        for (MessageRoom messageRoom : messageRooms) {
+            Long id = messageRoom.getId();
+            String title = messageRoom.getBookRent().getBook().getTitle();
+            room_list.put(id, title);
+        }
+
+        messageListDto.setRoom_list(room_list);
+        responseDto.setData(messageListDto);
         return responseDto;
     }
 }

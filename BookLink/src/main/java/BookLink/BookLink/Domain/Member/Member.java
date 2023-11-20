@@ -7,6 +7,7 @@ import BookLink.BookLink.Domain.BookReply.BookReply;
 
 import BookLink.BookLink.Domain.Common.Role;
 import BookLink.BookLink.Domain.Message.Message;
+import BookLink.BookLink.Domain.Message.MessageRoom;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.ColumnDefault;
@@ -33,8 +34,6 @@ public class Member extends BaseTimeEntity {
 
     @NotNull
     private String email; // 아이디
-
-//    private String socialId; // 새로 추가
 
     private String password;
 
@@ -73,10 +72,10 @@ public class Member extends BaseTimeEntity {
     private List<Book> books = new ArrayList<>();
 
     @OneToMany(mappedBy = "sender")
-    private List<Message> sentMessages = new ArrayList<>();
+    private List<MessageRoom> sender = new ArrayList<>();
 
     @OneToMany(mappedBy = "receiver")
-    private List<Message> receivedMessages = new ArrayList<>();
+    private List<MessageRoom> receiver = new ArrayList<>();
 
     public void updateAccount(URL image, String name, String nickname, String email, String password,
                                 LocalDate birth, String address) {
