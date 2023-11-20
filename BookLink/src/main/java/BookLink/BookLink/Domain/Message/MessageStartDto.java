@@ -25,7 +25,7 @@ public class MessageStartDto {
                     .contents(requestDto.getContent())
                     .sender(sender)
                     .receiver(receiver)
-                    .message_id(messageRoom)
+                    .room_id(messageRoom)
                     .build();
         }
     }

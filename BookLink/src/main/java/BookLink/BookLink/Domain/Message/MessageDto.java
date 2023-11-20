@@ -17,14 +17,14 @@ public class MessageDto {
     public static class Request {
         private String content;
         private String receiver;
-        private Long message_id;
+        private Long room_id;
 
         public static Message toEntity(MessageDto.Request requestDto, Member sender, Member receiver, MessageRoom messageRoom) {
             return Message.builder()
                     .contents(requestDto.getContent())
                     .sender(sender)
                     .receiver(receiver)
-                    .message_id(messageRoom)
+                    .room_id(messageRoom)
                     .build();
         }
     }
@@ -35,6 +35,7 @@ public class MessageDto {
     @AllArgsConstructor
     @Builder
     public static class Response {
+        private Long message_id;
         private String content;
         private String sender;
         private String receiver;

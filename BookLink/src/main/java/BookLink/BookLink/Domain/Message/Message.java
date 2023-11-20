@@ -36,14 +36,14 @@ public class Message extends BaseTimeEntity {
     private Member receiver;
 
     @ManyToOne
-    @JoinColumn(name = "message_id")
-    private MessageRoom message_id;
+    @JoinColumn(name = "room_id")
+    private MessageRoom room_id;
 
     @Builder
-    public Message(String contents, Member sender, Member receiver, MessageRoom message_id) {
+    public Message(String contents, Member sender, Member receiver, MessageRoom room_id) {
         this.contents = contents;
         this.sender = sender;
         this.receiver = receiver;
-        this.message_id = message_id;
+        this.room_id = room_id;
     }
 }

@@ -24,7 +24,7 @@ public class MessageRoom {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "message_id")
+    @OneToMany(mappedBy = "room_id")
     private List<Message> messages = new ArrayList<>();
 
     @ManyToOne

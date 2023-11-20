@@ -13,6 +13,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -59,7 +60,18 @@ public class MessageController {
                 .body(responseDto);
     }
 
-    // 메세지 삭제하기
+    // 쪽지방 입장하기 (쪽지들 뿌려주기)
+    @GetMapping("/entrance/{room_id}")
+    public ResponseEntity<ResponseDto> entranceMessageRoom(@PathVariable Long room_id) {
+
+        ResponseDto responseDto = messageService.entranceMessageRoom(room_id);
+
+        return ResponseEntity.status(responseDto.getStatus())
+                .body(responseDto);
+    }
+
+
+//    // 메세지 삭제하기
 //    @DeleteMapping("")
 //    public ResponseEntity<ResponseDto> deleteMessage()
 }

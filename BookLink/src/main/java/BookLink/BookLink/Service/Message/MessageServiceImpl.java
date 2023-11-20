@@ -10,6 +10,7 @@ import BookLink.BookLink.Domain.Message.MessageRoom;
 import BookLink.BookLink.Domain.Message.MessageStartDto;
 import BookLink.BookLink.Domain.Message.MessageStartDto.Request;
 import BookLink.BookLink.Domain.Message.MessageStartDto.Response;
+import BookLink.BookLink.Domain.Message.MessagesDto;
 import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Repository.Book.BookRentRepository;
 import BookLink.BookLink.Repository.Member.MemberRepository;
@@ -113,7 +114,7 @@ public class MessageServiceImpl implements MessageService {
             return responseDto;
         }
 
-        Long message_id = messageDto.getMessage_id();
+        Long message_id = messageDto.getRoom_id();
         MessageRoom messageRoom = messageRoomRepository.findById(message_id).orElse(null);
 
         Message message = MessageDto.Request.toEntity(messageDto, loginMember, receiver, messageRoom);
@@ -124,6 +125,7 @@ public class MessageServiceImpl implements MessageService {
                 .sender(loginMember.getNickname())
                 .receiver(messageDto.getReceiver())
                 .created_time(message.getCreatedTime())
+                .message_id(message.getId())
                 .build();
 
         responseDto.setData(response);
@@ -160,6 +162,39 @@ public class MessageServiceImpl implements MessageService {
 
         messageListDto.setRoom_list(room_list);
         responseDto.setData(messageListDto);
+        return responseDto;
+    }
+
+    @Override
+    public ResponseDto entranceMessageRoom(Long room_id) {
+        ResponseDto responseDto = new ResponseDto();
+        MessagesDto messagesDto = new MessagesDto();
+        List<MessageDto.Response> responseList = new ArrayList<>();
+
+        MessageRoom messageRoom = messageRoomRepository.findById(room_id).orElse(null);
+
+        if (messageRoom == null) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("잘못된 접근입니다.");
+            return responseDto;
+        }
+
+        List<Message> messages = messageRoom.getMessages();
+
+        for (Message message : messages) {
+            MessageDto.Response response = new MessageDto.Response();
+            response.setContent(message.getContents());
+            response.setSender(message.getSender().getNickname());
+            response.setReceiver(message.getReceiver().getNickname());
+            response.setCreated_time(message.getCreatedTime());
+            response.setMessage_id(message.getId());
+
+            responseList.add(response);
+        }
+
+        messagesDto.setMessages(responseList);
+
+        responseDto.setData(messagesDto);
         return responseDto;
     }
 }

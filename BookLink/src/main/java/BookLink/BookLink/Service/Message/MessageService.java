@@ -13,4 +13,6 @@ public interface MessageService {
     ResponseDto sendMessage(MessageDto.Request messageDto, Member loginMember);
 
     ResponseDto messageRoomList(Member loginMember);
+
+    ResponseDto entranceMessageRoom(Long room_id);
 }
