@@ -7,6 +7,7 @@ import BookLink.BookLink.Domain.Message.Message;
 import BookLink.BookLink.Domain.Message.MessageDto;
 import BookLink.BookLink.Domain.Message.MessageListDto;
 import BookLink.BookLink.Domain.Message.MessageRoom;
+import BookLink.BookLink.Domain.Message.MessageRoomDto;
 import BookLink.BookLink.Domain.Message.MessageStartDto;
 import BookLink.BookLink.Domain.Message.MessageStartDto.Request;
 import BookLink.BookLink.Domain.Message.MessageStartDto.Response;
@@ -137,7 +138,7 @@ public class MessageServiceImpl implements MessageService {
     @Transactional
     public ResponseDto messageRoomList(Member loginMember) {
         ResponseDto responseDto = new ResponseDto();
-        MessageListDto messageListDto = new MessageListDto();
+        List<MessageRoomDto> messageRoomDtoList = new ArrayList<>();
         Map<Long, String> room_list = new HashMap<>();
 
         if (loginMember == null) {
@@ -156,13 +157,18 @@ public class MessageServiceImpl implements MessageService {
         messageRooms.sort(comparedMessageRoom);
 
         for (MessageRoom messageRoom : messageRooms) {
+
+            List<Message> messages = messageRoom.getMessages();
+            Message message = messages.get(messages.size() - 1);
+            String contents = message.getContents();
             Long id = messageRoom.getId();
             String title = messageRoom.getBookRent().getBook().getTitle();
-            room_list.put(id, title);
+
+            MessageRoomDto messageRoomDto = new MessageRoomDto(id, title, contents);
+            messageRoomDtoList.add(messageRoomDto);
         }
 
-        messageListDto.setRoom_list(room_list);
-        responseDto.setData(messageListDto);
+        responseDto.setData(messageRoomDtoList);
         return responseDto;
     }
 
