@@ -1,5 +1,6 @@
 package BookLink.BookLink.Repository.Message;
 
+import BookLink.BookLink.Domain.Member.Member;
 import BookLink.BookLink.Domain.Message.MessageRoom;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,4 +15,7 @@ public interface MessageRoomRepository extends JpaRepository<MessageRoom, Long> 
             "LEFT JOIN FETCH mr.receiver r " +
             "WHERE s.nickname = :nickname OR r.nickname = :nickname")
     List<MessageRoom> findMessageRoomsByMemberNickname(@Param("nickname") String nickname);
+
+    @Query("SELECT mr FROM MessageRoom mr WHERE mr.sender = :sender AND mr.receiver = :receiver")
+    MessageRoom findMessageRoomBySenderAndReceiver(@Param("sender") Member sender, @Param("receiver") Member receiver);
 }
