@@ -27,11 +27,11 @@ public class MessageRoom {
     @OneToMany(mappedBy = "room_id")
     private List<Message> messages = new ArrayList<>();
 
-    @ManyToOne
+    @ManyToOne // 대여 신청하는 사람
     @JoinColumn(name = "sender")
     private Member sender;
 
-    @ManyToOne
+    @ManyToOne // 대여 해주는 사람
     @JoinColumn(name = "receiver")
     private Member receiver;
 

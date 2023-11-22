@@ -197,10 +197,17 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public ResponseDto entranceMessageRoom(Long room_id) {
+    public ResponseDto entranceMessageRoom(Long room_id, Member loginMember) {
         ResponseDto responseDto = new ResponseDto();
         MessagesDto messagesDto = new MessagesDto();
         List<MessageDto.Response> responseList = new ArrayList<>();
+
+        String role = messageRoomRepository.findRoleInMessageRoom(loginMember);
+        boolean role_boolean = false;
+
+        if (Objects.equals(role, "sender")) {
+            role_boolean = true;
+        }
 
         MessageRoom messageRoom = messageRoomRepository.findById(room_id).orElse(null);
 
@@ -224,6 +231,7 @@ public class MessageServiceImpl implements MessageService {
         }
 
         messagesDto.setMessages(responseList);
+        messagesDto.setApplyInfo(role_boolean);
 
         responseDto.setData(messagesDto);
         return responseDto;

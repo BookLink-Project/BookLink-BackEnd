@@ -14,7 +14,7 @@ public interface MessageService {
 
     ResponseDto messageRoomList(Member loginMember);
 
-    ResponseDto entranceMessageRoom(Long room_id);
+    ResponseDto entranceMessageRoom(Long room_id, Member loginMember);
 
     ResponseDto deleteMessage(Long message_id, Member loginMember);
 }

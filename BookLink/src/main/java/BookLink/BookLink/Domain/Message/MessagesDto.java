@@ -14,4 +14,5 @@ import lombok.Setter;
 public class MessagesDto {
 
     private List<Response> messages;
+    private boolean applyInfo;
 }

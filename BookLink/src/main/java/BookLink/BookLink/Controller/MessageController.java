@@ -62,9 +62,10 @@ public class MessageController {
 
     // 쪽지방 입장하기 (쪽지들 뿌려주기)
     @GetMapping("/entrance/{room_id}")
-    public ResponseEntity<ResponseDto> entranceMessageRoom(@PathVariable Long room_id) {
+    public ResponseEntity<ResponseDto> entranceMessageRoom(@PathVariable Long room_id, @AuthenticationPrincipal MemberPrincipal memberPrincipal) {
 
-        ResponseDto responseDto = messageService.entranceMessageRoom(room_id);
+        Member member = memberPrincipal.getMember();
+        ResponseDto responseDto = messageService.entranceMessageRoom(room_id, member);
 
         return ResponseEntity.status(responseDto.getStatus())
                 .body(responseDto);
