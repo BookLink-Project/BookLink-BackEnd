@@ -55,7 +55,7 @@ public class MessageServiceImpl implements MessageService {
 
         Member receiver = memberRepository.findByNickname(receiver_nickname).orElse(null);
 
-        MessageRoom messageRoomBySenderAndReceiver = messageRoomRepository.findMessageRoomBySenderAndReceiver(
+        MessageRoom messageRoomBySenderAndReceiver = messageRoomRepository.findMessageRoomByMembers(
                 loginMember, receiver);
 
         if (messageRoomBySenderAndReceiver != null) {
@@ -119,7 +119,7 @@ public class MessageServiceImpl implements MessageService {
 
         Member receiver = memberRepository.findByNickname(receiver_nickname).orElse(null);
 
-        MessageRoom messageRoomBySenderAndReceiver = messageRoomRepository.findMessageRoomBySenderAndReceiver(
+        MessageRoom messageRoomBySenderAndReceiver = messageRoomRepository.findMessageRoomByMembers(
                 loginMember, receiver);
 
         if (messageRoomBySenderAndReceiver == null) {
