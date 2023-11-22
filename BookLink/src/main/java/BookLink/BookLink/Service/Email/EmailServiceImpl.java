@@ -4,6 +4,8 @@ import BookLink.BookLink.Domain.Email.Email;
 import BookLink.BookLink.Domain.Email.EmailDto;
 import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Repository.Email.EmailRepository;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.MailException;
@@ -23,11 +25,15 @@ public class EmailServiceImpl implements EmailService {
     private final JavaMailSender emailSender;
     private final EmailRepository emailRepository;
 
-    public static final String ePw = createKey();
+//    public String ePw = createKey();
 
-    private MimeMessage createMessage(String to)throws Exception{
+    private Map<MimeMessage, String> createMessage(String to)throws Exception{
         System.out.println("보내는 대상 : "+ to);
+        String ePw = createKey();
         System.out.println("인증 번호 : "+ePw);
+
+        Map<MimeMessage, String> messageInfo = new HashMap<>();
+
         MimeMessage  message = emailSender.createMimeMessage();
 
         message.addRecipients(MimeMessage.RecipientType.TO, to);//보내는 대상
@@ -50,7 +56,9 @@ public class EmailServiceImpl implements EmailService {
         message.setText(msgg, "utf-8", "html");//내용
         message.setFrom(new InternetAddress("poweragain0215@gmail.com","BookLink"));//보내는 사람
 
-        return message;
+        messageInfo.put(message, ePw);
+
+        return messageInfo;
     }
 
     public static String createKey() {
@@ -81,11 +89,16 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public ResponseDto sendSimpleMessage(String email)throws Exception {
 
+        emailRepository.findByEmail(email).ifPresent(emailRepository::delete);
+
         ResponseDto responseDto = new ResponseDto();
         EmailDto.Response emailDto = new EmailDto.Response();
 
         // TODO Auto-generated method stub
-        MimeMessage message = createMessage(email);
+        Map<MimeMessage, String> messageInfo = createMessage(email);
+        MimeMessage message = messageInfo.keySet().iterator().next();
+        String ePw = messageInfo.get(message);
+
         try{//예외처리
             emailSender.send(message);
         }catch(MailException es){

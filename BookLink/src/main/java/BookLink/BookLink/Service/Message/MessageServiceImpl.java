@@ -55,6 +55,15 @@ public class MessageServiceImpl implements MessageService {
 
         Member receiver = memberRepository.findByNickname(receiver_nickname).orElse(null);
 
+        MessageRoom messageRoomBySenderAndReceiver = messageRoomRepository.findMessageRoomBySenderAndReceiver(
+                loginMember, receiver);
+
+        if (messageRoomBySenderAndReceiver != null) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("이미 쪽지방이 존재합니다. 다시 확인해주세요.");
+            return responseDto;
+        }
+
         if (receiver == null) {
             responseDto.setStatus(HttpStatus.BAD_REQUEST);
             responseDto.setMessage("받는 사람의 정보가 불명확합니다.");
@@ -110,6 +119,15 @@ public class MessageServiceImpl implements MessageService {
 
         Member receiver = memberRepository.findByNickname(receiver_nickname).orElse(null);
 
+        MessageRoom messageRoomBySenderAndReceiver = messageRoomRepository.findMessageRoomBySenderAndReceiver(
+                loginMember, receiver);
+
+        if (messageRoomBySenderAndReceiver == null) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("존재하는 쪽지방이 아닙니다.");
+            return responseDto;
+        }
+
         if (receiver == null) {
             responseDto.setStatus(HttpStatus.BAD_REQUEST);
             responseDto.setMessage("받는 사람의 정보가 불명확합니다.");
@@ -150,6 +168,12 @@ public class MessageServiceImpl implements MessageService {
         List<MessageRoom> messageRooms = messageRoomRepository.findMessageRoomsByMemberNickname(
                 loginMember.getNickname());
 
+        if (messageRooms == null) {
+            responseDto.setStatus(HttpStatus.BAD_REQUEST);
+            responseDto.setMessage("참여한 쪽지방이 없습니다.");
+            return responseDto;
+        }
+
         Comparator<MessageRoom> comparedMessageRoom = Comparator.comparing(
                 messageRoom -> messageRoom.getMessages().get(messageRoom.getMessages().size() - 1).getCreatedTime()
         );
@@ -182,7 +206,7 @@ public class MessageServiceImpl implements MessageService {
 
         if (messageRoom == null) {
             responseDto.setStatus(HttpStatus.BAD_REQUEST);
-            responseDto.setMessage("잘못된 접근입니다.");
+            responseDto.setMessage("존재하는 쪽지방이 아닙니다.");
             return responseDto;
         }
 
