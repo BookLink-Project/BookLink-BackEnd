@@ -18,4 +18,9 @@ public interface MessageRoomRepository extends JpaRepository<MessageRoom, Long> 
 
     @Query("SELECT mr FROM MessageRoom mr WHERE mr.sender = :sender AND mr.receiver = :receiver")
     MessageRoom findMessageRoomBySenderAndReceiver(@Param("sender") Member sender, @Param("receiver") Member receiver);
+
+    @Query("SELECT CASE WHEN mr.sender = :member THEN 'sender' WHEN mr.receiver = :member THEN 'receiver' ELSE 'Not Found' END FROM MessageRoom mr WHERE mr.sender = :member OR mr.receiver = :member")
+    String findRoleInMessageRoom(@Param("member") Member member);
+
+
 }
