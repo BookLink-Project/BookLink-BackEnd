@@ -126,15 +126,13 @@ public class EmailServiceImpl implements EmailService {
         if(Objects.equals(emailDto.getAuthentication_number(), email.getNumber())) {
             responseDto.setStatus(HttpStatus.OK);
             responseDto.setMessage("올바른 인증번호입니다.");
-
+            emailRepository.delete(email); // 확인 후 삭제해야지 재요청시에 다시 검증을 할 수 있다
         }
         else {
             responseDto.setStatus(HttpStatus.BAD_REQUEST);
             responseDto.setMessage("올바르지 않은 인증번호입니다.");
 
         }
-
-        emailRepository.delete(email); // 확인 후 삭제해야지 재요청시에 다시 검증을 할 수 있다.
 
         return responseDto;
 
