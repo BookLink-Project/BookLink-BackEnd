@@ -297,15 +297,19 @@ public class BookServiceImpl implements BookService {
 
             List<BookRent> bookRents = bookRentRepository.findTop5ByRentLocation(address);
 
+            if (bookRents == null) {
+                responseDto.setMessage("주변 대여정보가 없습니다.");
+                responseDto.setData(null);
+                return responseDto;
+            }
 
             for (BookRent bookRent : bookRents) {
                 Book book = bookRent.getBook();
 
-                if (book == null) {
-                    responseDto.setStatus(HttpStatus.BAD_REQUEST);
-                    responseDto.setMessage("주변 대여정보가 없습니다.");
-                    return responseDto;
+                if(book == null) {
+                    continue;
                 }
+
                 log.info("book's id = {}", book.getId());
                 BookRentAroundDto info = BookRentAroundDto.builder()
                         .id(book.getId())
