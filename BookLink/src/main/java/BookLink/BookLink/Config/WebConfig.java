@@ -11,7 +11,8 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOriginPatterns("http://localhost:3000", "http://localhost:5173", "http://127.0.0.1:5173")
+                .allowedOriginPatterns("http://localhost:3000", "http://localhost:5173", "http://book-link.store/", "http://www.book-link.store/",
+                        "http://127.0.0.1:5173","http://52.79.70.115", "https://www.book-link.store/", "https://book-link.store/")
                 .allowCredentials(true)
                 .allowedMethods(
                         HttpMethod.GET.name(),
@@ -21,4 +22,5 @@ public class WebConfig implements WebMvcConfigurer {
                         HttpMethod.DELETE.name()
                 );
     }
+
 }

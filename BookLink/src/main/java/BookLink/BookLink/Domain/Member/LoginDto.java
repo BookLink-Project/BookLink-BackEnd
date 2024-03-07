@@ -24,5 +24,6 @@ public class LoginDto {
         private String email;
         private String name;
         private String nickname;
+        private String address;
     }
 }

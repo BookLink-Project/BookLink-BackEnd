@@ -1,23 +1,26 @@
 package BookLink.BookLink.utils;
 
+import BookLink.BookLink.Domain.ResponseDto;
 import BookLink.BookLink.Domain.Token.RefreshToken;
 import BookLink.BookLink.Domain.Token.TokenDto;
 import BookLink.BookLink.Repository.Token.RefreshTokenRepository;
+import BookLink.BookLink.Service.Member.MemberPrincipalService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.security.Key;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Optional;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.*;
 
 @Slf4j
 @Component
@@ -26,24 +29,19 @@ public class JwtUtil {
 
     @Value("${jwt.secret}")
     private String secretKey;
-    // private Key key;
 
-    private static final Long expired_access = 1000 * 60 * 30L; // 30 minute
-    private static final Long expired_refresh = 1000 * 60 * 60 * 24L; // 1 day
+    private static final Long expired_access = 1000 * 60 * 60L; // 1 hour
+    private static final Long expired_refresh = 1000 * 60 * 60 * 24 * 15L; // 15 day
 
     private final RefreshTokenRepository refreshTokenRepository;
+    private final MemberPrincipalService memberPrincipalService;
 
+//    @PostConstruct
+//    public void init() { // 객체 초기화 및 secretKey 인코딩
+//        secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
+//    }
 
-    /*
-    @PostConstruct
-    public void init() {
-        byte[] bytes = Base64.getDecoder().decode(secretKey);
-        // this.key = Keys.hmacShaKeyFor(bytes);
-        this.key = new SecretKeySpec(bytes, "HmacSHA256");
-    }
-    */
-
-    public String getEmailFromToken(String token) {
+    public String getEmailFromToken(String token) { // 토큰에서 이메일 추출
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token)
                 .getBody().get("email", String.class);
     }
@@ -80,15 +78,15 @@ public class JwtUtil {
 
         long time = type.equals("Access") ? expired_access : expired_refresh;
 
-        return Jwts.builder()
-                .setClaims(claims)
+        return Jwts.builder() // JWT 토큰을 생성하는 빌더 반환
+                .setClaims(claims)  // 클레임으로 email 식별자 설정
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + time))
-                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .setExpiration(new Date(System.currentTimeMillis() + time)) // 토큰 만료시간 설정
+                .signWith(SignatureAlgorithm.HS256, secretKey) // HS256 알고리즘 사용
                 .compact();
     }
 
-    public String getCookieToken(HttpServletRequest request, String type) {
+    public String getCookieToken(HttpServletRequest request, String type) { // 쿠키에서 토큰 뽑기
 
         String token = type.equals("Access") ? "Access_Token" : "Refresh_Token";
 
@@ -101,37 +99,99 @@ public class JwtUtil {
     }
 
     public void setCookieAccessToken(HttpServletResponse response, String accessToken) {
+
+        String cookieName = "cookieName";
+        String cookieValue = "cookieValue";
+
         Cookie cookie = new Cookie("Access_Token", accessToken);
 
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
-        cookie.setMaxAge(60 * 60 * 24 * 30); // 30일
+        cookie.setMaxAge(60 * 60); // 1 hour
 
+        String userAgent = response.getHeader("User-Agent");
+        String sameSite;
+
+        if (userAgent != null) {
+            if (userAgent.contains("Chrome") || userAgent.contains("Firefox") || userAgent.contains("Edge") || userAgent.contains("Edg")) {
+                sameSite = "None";
+            } else {
+                sameSite = "Lax"; // 기타 브라우저
+            }
+        } else {
+            sameSite = "Lax"; // User-Agent 정보가 없는 경우
+        }
+
+        String cookieHeader = String.format("%s=%s; Secure; HttpOnly; Path=/; SameSite=%s", cookieName, cookieValue, sameSite);
+        response.setHeader("Set-Cookie", cookieHeader);
         response.addCookie(cookie);
     }
 
     public void setCookieRefreshToken(HttpServletResponse response, String refreshToken) {
+
+        String cookieName = "cookieName";
+        String cookieValue = "cookieValue";
+
         Cookie cookie = new Cookie("Refresh_Token", refreshToken);
 
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
-        cookie.setMaxAge(60 * 60 * 24 * 30); // 30일
+        cookie.setMaxAge(60 * 60 * 24 * 15); // 15 day
+
+        String userAgent = response.getHeader("User-Agent");
+        String sameSite;
+
+        if (userAgent != null) {
+            if (userAgent.contains("Chrome") || userAgent.contains("Firefox") || userAgent.contains("Edge") || userAgent.contains("Edg")) {
+                sameSite = "None";
+            } else {
+                sameSite = "Lax"; // 기타 브라우저
+            }
+        } else {
+            sameSite = "Lax"; // User-Agent 정보가 없는 경우
+        }
+
+        String cookieHeader = String.format("%s=%s; Secure; HttpOnly; Path=/; SameSite=%s", cookieName, cookieValue, sameSite);
+        response.setHeader("Set-Cookie", cookieHeader);
 
         response.addCookie(cookie);
     }
-    /*
-    public String getHeaderToken(HttpServletRequest request, String type) { // 헤더에서 Token 가져오기
-        return type.equals("Access") ? request.getHeader("Access_Token") : request.getHeader("Refresh_Token");
+
+    public void invalidTokenResponse(HttpServletResponse response) throws IOException {
+
+        removeTokenCookie(response);
+
+        // 메시지 반환
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+
+        response.setContentType("application/json;charset=UTF-8");
+        response.setCharacterEncoding("utf-8");
+
+        ResponseDto responseDto = new ResponseDto();
+        responseDto.setStatus(HttpStatus.UNAUTHORIZED);
+        responseDto.setMessage("토큰 만료");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String result = objectMapper.writeValueAsString(responseDto);
+
+        PrintWriter writer = response.getWriter();
+        writer.print(result);
     }
 
-    public void setHeaderAccessToken(HttpServletResponse response, String accessToken) {
-        response.setHeader("Access_Token", accessToken);
-    }
+    public void removeTokenCookie(HttpServletResponse response) {
 
-    public void setHeaderRefreshToken(HttpServletResponse response, String refreshToken) {
-        response.setHeader("Refresh_Token", refreshToken);
+        Cookie access_cookie = new Cookie("Access_Token", null);
+        Cookie refresh_cookie = new Cookie("Refresh_Token", null);
+
+        access_cookie.setPath("/");
+        refresh_cookie.setPath("/");
+
+        access_cookie.setMaxAge(0);
+        refresh_cookie.setMaxAge(0);
+
+        response.addCookie(access_cookie);
+        response.addCookie(refresh_cookie);
     }
-    */
 }

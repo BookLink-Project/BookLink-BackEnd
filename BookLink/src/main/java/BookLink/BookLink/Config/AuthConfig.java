@@ -1,6 +1,8 @@
 package BookLink.BookLink.Config;
 
 
+import BookLink.BookLink.Repository.Token.RefreshTokenRepository;
+import BookLink.BookLink.Service.Member.MemberPrincipalService;
 import BookLink.BookLink.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -20,27 +22,38 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class AuthConfig {
 
     private final JwtUtil jwtUtil;
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final MemberPrincipalService memberPrincipalService;
 
     @Bean
-    public PasswordEncoder passwordEncoder() { // 회원가입 시 비밀번호 암호화
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity
+        httpSecurity
                 .httpBasic().disable()
                 .csrf().disable()
-                .cors().and()
+                .cors()
+                .and()
+
                 .authorizeRequests()
-                .antMatchers("/api/v1/member/**").permitAll()
-                .antMatchers("/api/v1/book/**").permitAll()
+                .antMatchers("/api/v1/members/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/login/oauth2/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/**").authenticated()
+                .antMatchers(HttpMethod.PATCH, "/api/**").authenticated()
+                .antMatchers(HttpMethod.DELETE, "/api/**").authenticated()
+                .antMatchers( "/api/v1/mypage/**").authenticated()
                 .and()
+
                 .sessionManagement() // 세션을 사용하지 않기 때문에 STATELESS
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
-                .build();
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+
+        httpSecurity.addFilterBefore(new JwtFilter(jwtUtil, refreshTokenRepository, memberPrincipalService),
+                UsernamePasswordAuthenticationFilter.class);
+
+        return httpSecurity.build();
     }
 }
